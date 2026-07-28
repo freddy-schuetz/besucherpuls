@@ -147,12 +147,27 @@ export default function LiveMap({
     else m.once("bp:bereit", einspielen);
   }, [daten]);
 
-  // --- Auswahl hervorheben
+  // --- Auswahl hervorheben und anfliegen
   useEffect(() => {
     const m = map.current;
     if (!m || !bereit.current || !m.getLayer("sensoren-halo")) return;
     m.setFilter("sensoren-halo", ["==", ["get", "id"], ausgewaehlt ?? "___keiner___"]);
-  }, [ausgewaehlt]);
+
+    // Ohne das Anfliegen passiert beim Klick auf einen Listeneintrag sichtbar
+    // nichts, sobald der Sensor ausserhalb des Ausschnitts liegt — und die
+    // Punkte liegen ueber vier Laender verteilt.
+    if (!ausgewaehlt || !daten) return;
+    const f = daten.features.find((x) => x.properties.id === ausgewaehlt);
+    if (!f) return;
+    const ziel = f.geometry.coordinates as [number, number];
+    m.easeTo({
+      center: ziel,
+      zoom: Math.max(m.getZoom(), 9),
+      duration: 700,
+      // Platz fuer das Detailpanel rechts lassen
+      padding: { top: 0, bottom: 0, left: 0, right: 0 },
+    });
+  }, [ausgewaehlt, daten]);
 
   return <div ref={container} className="h-full w-full" />;
 }

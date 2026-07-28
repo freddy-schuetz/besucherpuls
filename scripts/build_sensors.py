@@ -22,8 +22,12 @@ UA = {"User-Agent": "besucherpuls/0.1 (+https://friedemann-schuetz.de)"}
 HIER = os.path.dirname(os.path.abspath(__file__))
 ZIEL = os.path.join(HIER, "..", "lib", "sensors.json")
 
+# Der Luzerner Devicecounter braucht einen Zugangsschluessel. Er ist Teil des
+# offenen Datenangebots der Stadt, steht aber bewusst nicht im Repo — setze
+# LUZERN_API_KEY in der Umgebung (siehe .env.example).
+LUZERN_KEY = os.environ.get("LUZERN_API_KEY", "")
 LUZERN_API = ("https://portal.alfons.io/app/devicecounter/api/sensors"
-              "?api_key=3ad08d9e67919877e4c9f364974ce07e36cbdc9e")
+              f"?api_key={LUZERN_KEY}")
 ZH_LIVE = "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell/download/crowd-monitor.csv"
 ZH_KOORD = "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_besuch/download/koordinaten.csv"
 ODH = "https://mobility.api.opendatahub.com/v2"
@@ -95,6 +99,9 @@ def slug(s):
         s = s.replace("--", "-")
     return s.strip("-")
 
+
+if not LUZERN_KEY:
+    raise SystemExit("LUZERN_API_KEY fehlt — siehe .env.example")
 
 sensoren = []
 

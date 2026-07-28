@@ -85,7 +85,7 @@ export default function Seite() {
   const z = daten?.zusammenfassung;
 
   return (
-    <main className="flex h-dvh flex-col bg-slate-50">
+    <main className="flex min-h-dvh flex-col bg-slate-50 lg:h-dvh">
       <header className="border-b border-slate-200 bg-white px-5 py-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
           <div>
@@ -114,12 +114,12 @@ export default function Seite() {
         )}
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[1fr_22rem_20rem]">
-        <div className="min-h-[45vh] lg:min-h-0">
+      <div className="grid flex-1 grid-cols-1 lg:min-h-0 lg:grid-cols-[1fr_22rem_20rem]">
+        <div className="h-[50vh] lg:h-auto lg:min-h-0">
           <LiveMap daten={daten} ausgewaehlt={gewaehlt} onSelect={setGewaehlt} />
         </div>
 
-        <section className="min-h-0 overflow-y-auto border-l border-slate-200 bg-white">
+        <section className="border-t border-slate-200 bg-white lg:min-h-0 lg:overflow-y-auto lg:border-l lg:border-t-0">
           <h2 className="sticky top-0 border-b border-slate-100 bg-white px-4 py-2 text-xs font-medium uppercase tracking-wide text-slate-500">
             Nach Abweichung sortiert
           </h2>
@@ -152,7 +152,7 @@ export default function Seite() {
           </ul>
         </section>
 
-        <div className="min-h-0">
+        <div className="lg:min-h-0">
           {gewaehltProps ? (
             <Detail p={gewaehltProps} onClose={() => setGewaehlt(null)} />
           ) : (

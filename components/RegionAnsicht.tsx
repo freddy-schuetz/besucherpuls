@@ -36,9 +36,15 @@ function antwort(ziele: SensorProps[], region: Region) {
     (p) => gastStatus(p).ampel === "rot" && p.alternative,
   );
   if (mitAlternative) {
+    // Wortlaut an die Tatsache binden: Bei 100 % Belegung ist es schlicht voll.
+    // "voller als sonst" ist ein Vergleich und klingt bei einem randvollen
+    // Parkplatz nach Beschoenigung.
+    const wirklichVoll = (mitAlternative.auslastung ?? 0) >= 92;
     return {
       art: "empfehlung" as const,
-      kopf: `${mitAlternative.name} ist voller als sonst`,
+      kopf: wirklichVoll
+        ? `${mitAlternative.name} ist voll`
+        : `${mitAlternative.name} ist voller als sonst`,
       text: `Bei ${mitAlternative.alternative!.name} ist gerade deutlich mehr Platz — ${mitAlternative.alternative!.km} km entfernt.`,
       ziel: mitAlternative.alternative!.id,
     };
@@ -288,8 +294,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
         {/* --------------------------------------------------------- Ziele */}
         <section className="py-12 sm:py-14">
           <h2 className="text-xl font-semibold text-tinte">
-            {vorhaben || zeit !== "jetzt" ? "Passend dazu" : `Alle ${region.zielPlural}`}
-            <span className="ml-2 text-sm font-normal text-tinte-zart">
+            {vorhaben || zeit !== "jetzt" ? "Passend dazu" : `Alle ${region.zielPlural}`}{" "}
+            <span className="text-sm font-normal text-tinte-zart">
               {zeit === "jetzt"
                 ? "— die mit dem meisten Platz zuerst"
                 : `— nach dem typischen Wert um ${ZEITEN.find((z) => z.wert === zeit)?.stunde}:00 Uhr`}

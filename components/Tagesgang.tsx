@@ -30,19 +30,24 @@ export default function Tagesgang({
   const nutzH = height - pad - bodenH;
   const bw = (width - 2 * pad) / 24;
 
-  // Ruhigste Stunde in den naechsten sechs — das ist die eigentliche Empfehlung
+  // Ruhigste Stunde in den naechsten sechs — das ist die eigentliche Empfehlung.
+  // Nur Stunden, zu denen ein Besuch ueberhaupt in Frage kommt: Ohne diese Grenze
+  // riet die Seite um 23 Uhr zu "0:00 Uhr, typischerweise deutlich ruhiger" —
+  // rechnerisch richtig, als Rat an einen Wanderer unsinnig.
   const spaeter: { h: number; v: number }[] = [];
   for (let i = 1; i <= 6; i++) {
     const h = (jetztStunde + i) % 24;
     const v = kurve[h];
-    if (v != null) spaeter.push({ h, v });
+    if (v != null && h >= 7 && h <= 20) spaeter.push({ h, v });
   }
   const jetztWert = kurve[jetztStunde];
   const besser =
     jetztWert != null && spaeter.length
       ? spaeter.reduce((a, b) => (b.v < a.v ? b : a))
       : null;
-  const lohnt = besser && jetztWert != null && besser.v < jetztWert * 0.7;
+  // Und nur, wenn jetzt ueberhaupt etwas los ist — sonst vergleicht man Stille
+  // mit Stille und verkauft das als Tipp.
+  const lohnt = besser && jetztWert != null && jetztWert > max * 0.25 && besser.v < jetztWert * 0.7;
 
   return (
     <figure className="space-y-1">

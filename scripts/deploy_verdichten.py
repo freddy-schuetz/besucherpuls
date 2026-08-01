@@ -27,6 +27,12 @@ PUFFER = "nVawEogJkPNKOCHp"
 PROFIL = "OPyMv8bkUvAwtMCc"
 TROCKEN = "--dry" in sys.argv
 AKTIVIEREN = "--aktivieren" in sys.argv
+# --minuetlich laesst den Verdichter im Minutentakt laufen. Nur zum Pruefen: die
+# Fortschreibung ist idempotent (Zellen desselben Tages werden ersetzt, nicht
+# angehaengt), ein Lauf zu viel schadet also nicht.
+SCHNELL = "--minuetlich" in sys.argv
+TAKT = ([{"field": "minutes", "minutesInterval": 1}] if SCHNELL
+        else [{"field": "hours", "hoursInterval": 1, "triggerAtMinute": 5}])
 
 
 def n8n():
@@ -63,8 +69,10 @@ nodes = [
         "id": "trg", "name": "Stündlich", "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2, "position": [0, 0],
         # Minute 5, damit die Zielstunde sicher abgeschlossen und im Puffer ist.
-        "parameters": {"rule": {"interval": [{"field": "cronExpression",
-                                              "expression": "5 * * * *"}]}},
+        # NICHT ueber field: "cronExpression" — damit wurde der Workflow zwar als
+        # aktiv gefuehrt (triggerCount 1), feuerte aber nachweislich nie. Der
+        # funktionierende Sammler nutzt dieselbe Interval-Form wie hier.
+        "parameters": {"rule": {"interval": TAKT}},
     },
     {
         # Liest Puffer und Profil selbst ueber die API — der Data-Table-Knoten

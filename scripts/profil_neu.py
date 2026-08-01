@@ -254,16 +254,26 @@ for s in sensoren:
         dh[f"{d.weekday()}_{h}"].append((d, round(v, 1)))
 
     raster = {}
+    letzte = {}
     for k, paare in dh.items():
         paare.sort()                                   # aelteste zuerst
-        raster[k] = [v for _, v in paare[-MAX_TAGE:]]  # nur die juengsten behalten
+        behalten = paare[-MAX_TAGE:]
+        raster[k] = [v for _, v in behalten]           # nur die juengsten behalten
+        # Datum des letzten Eintrags je Zelle. Ohne dieses Feld haengt der
+        # stuendliche Verdichter am selben Tag mehrfach an statt zu ersetzen.
+        letzte[k] = behalten[-1][0].isoformat()
 
     tage = {d for d, _ in tageswerte}
     zeiten = [t for t, _ in werte]
     max_tage_je_zelle = max((len(v) for v in raster.values()), default=0)
+    # Die Liste der beobachteten Tage MUSS mitgeschrieben werden: Der Verdichter
+    # leitet basis_tage daraus ab. Fehlte sie, fing er bei null an und setzte
+    # nach dem ersten Lauf jeden Sensor auf "1 Tag Basis" zurueck — obwohl die
+    # Zellenwerte aus 15 Tagen stammten.
+    beob_tage = sorted(d.isoformat() for d in tage)[-60:]
     zeilen.append({
         "sensor_id": s["id"],
-        "raster": json.dumps({"v": 2, "dh": raster,
+        "raster": json.dumps({"v": 2, "dh": raster, "d": beob_tage, "letzte": letzte,
                               "stand": max(zeiten).date().isoformat()},
                              separators=(",", ":")),
         "n_gesamt": len(werte),
@@ -283,23 +293,19 @@ if TROCKEN:
     sys.exit(0)
 
 # ---------------------------------------------------------------- schreiben
-# Erst leeren, dann neu — sonst stehen alte v1-Zeilen daneben und der
+# WICHTIG: Die Tabelle muss VORHER leer sein. Ein DELETE auf
+# /data-tables/{id}/rows beantwortet die REST-API mit 405 — leeren geht nur
+# ueber das MCP-Werkzeug n8n_manage_datatable (action deleteRows) oder die
+# Oberflaeche. Wird das vergessen, stehen alte Zeilen neben den neuen und der
 # Status-Webhook liest je Sensor eine zufaellige von beiden.
 alt = jget(f"{BASE}/data-tables/{PROFIL_TABLE}/rows?limit=250", headers=H_API)
 alt_zeilen = alt.get("data") if isinstance(alt, dict) else alt
 if isinstance(alt_zeilen, dict):
     alt_zeilen = alt_zeilen.get("data") or []
-print(f"{len(alt_zeilen)} alte Zeilen werden ersetzt")
-
-for z in alt_zeilen:
-    try:
-        f = urllib.parse.quote(json.dumps({"type": "and", "filters": [
-            {"columnName": "id", "condition": "eq", "value": z["id"]}]}))
-        urllib.request.urlopen(urllib.request.Request(
-            f"{BASE}/data-tables/{PROFIL_TABLE}/rows?filter={f}",
-            headers=H_API, method="DELETE"), timeout=60).read()
-    except urllib.error.HTTPError as e:
-        print(f"   ! loeschen id={z['id']}: {e.code}")
+if alt_zeilen:
+    print(f"\nABBRUCH: Die Profil-Tabelle enthaelt noch {len(alt_zeilen)} Zeilen.")
+    print("Erst leeren (MCP: n8n_manage_datatable deleteRows), dann erneut starten.")
+    sys.exit(1)
 
 req = urllib.request.Request(f"{BASE}/data-tables/{PROFIL_TABLE}/rows",
                              data=json.dumps({"data": zeilen}).encode("utf-8"),

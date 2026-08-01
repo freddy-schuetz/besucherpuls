@@ -1,9 +1,29 @@
 import Verlauf from "./Verlauf";
-import { AMPEL_FARBE, AMPEL_TEXT, QUELLE_LABEL, alterText, type SensorProps } from "@/lib/types";
+import Tagesgang from "./Tagesgang";
+import {
+  AMPEL_FARBE,
+  AMPEL_TEXT,
+  QUELLE_LABEL,
+  alterText,
+  einordnungText,
+  type SensorProps,
+} from "@/lib/types";
+
+const VERGLEICH_TEXT: Record<string, string> = {
+  wochentag_stunde: "gleicher Wochentag, gleiche Stunde",
+  werktag_stunde: "Werktage, gleiche Stunde",
+  wochenende_stunde: "Wochenende, gleiche Stunde",
+  stunde: "alle Tage, gleiche Stunde",
+};
 
 /** Die Kernaussage in einem Satz — das ist der eigentliche Produktinhalt. */
 function Kernsatz({ p }: { p: SensorProps }) {
-  const ist = p.auslastung != null ? `${Math.round(p.auslastung)} %` : `${Math.round(p.wert)} ${p.einheit}`;
+  const ist =
+    p.metrik === "ampelstufe"
+      ? `Stufe ${p.wert} von 5`
+      : p.auslastung != null
+        ? `${Math.round(p.auslastung)} %`
+        : `${Math.round(p.wert)} ${p.einheit}`;
 
   if (p.ampel === "veraltet") {
     return (
@@ -17,19 +37,43 @@ function Kernsatz({ p }: { p: SensorProps }) {
     return (
       <p className="text-sm text-slate-600">
         Aktuell <strong>{ist}</strong>. Für eine Einordnung fehlt noch die Vergleichsbasis — sie wird
-        seit {p.basis_tage > 0 ? `${p.basis_tage} Tagen` : "heute"} aufgebaut.
+        seit {p.basis_tage > 0 ? `${p.basis_tage} Tagen` : "heute"} aufgebaut. Belastbar wird sie
+        ab etwa fünf Tagen.
       </p>
     );
   }
-  const ref =
-    p.auslastung != null && p.vergleichswert != null
-      ? `${Math.round(p.vergleichswert)} %`
-      : `${Math.round(p.vergleichswert ?? 0)} ${p.einheit}`;
   return (
-    <p className="text-sm text-slate-700">
-      Aktuell <strong>{ist}</strong>. Üblich sind zu dieser Zeit <strong>{ref}</strong> — das sind{" "}
-      <strong>{p.quote} %</strong> des Normalwerts.
-    </p>
+    <div className="space-y-1">
+      <p className="text-sm text-slate-700">
+        Aktuell <strong>{ist}</strong>.
+      </p>
+      <p className="text-sm text-slate-700">{einordnungText(p)}</p>
+    </div>
+  );
+}
+
+/** Der Schritt von „ist voll" zu „geh dorthin". */
+function Empfehlung({ p }: { p: SensorProps }) {
+  if (p.ampel !== "rot" && p.ampel !== "gelb") return null;
+
+  if (!p.alternative) {
+    return (
+      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+        Keine leerere Alternative in der Nähe — hier hilft nur ein anderer Zeitpunkt.
+      </p>
+    );
+  }
+  const a = p.alternative;
+  return (
+    <div className="rounded border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+      <p className="text-xs font-medium uppercase tracking-wide text-emerald-800">Ausweichen</p>
+      <p className="mt-1 text-sm text-emerald-950">
+        <strong>{a.name}</strong> ist gerade deutlich leerer — {a.km} km entfernt.
+      </p>
+      <p className="mt-0.5 text-xs text-emerald-800">
+        Dort {a.quote} % statt {p.quote} % Auslastungsrang.
+      </p>
+    </div>
   );
 }
 
@@ -62,6 +106,13 @@ export default function Detail({ p, onClose }: { p: SensorProps; onClose: () => 
       </div>
 
       <Kernsatz p={p} />
+      <Empfehlung p={p} />
+
+      {p.tagesgang && (
+        <div className="border-t border-slate-100 pt-3">
+          <Tagesgang kurve={p.tagesgang} einheit={p.auslastung != null ? "%" : p.einheit} />
+        </div>
+      )}
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-slate-100 pt-3 text-sm">
         <dt className="text-slate-500">Messwert</dt>
@@ -75,7 +126,7 @@ export default function Detail({ p, onClose }: { p: SensorProps; onClose: () => 
             <dd className="text-right tabular-nums text-slate-900">{p.auslastung} %</dd>
           </>
         )}
-        {p.kapazitaet != null && (
+        {p.kapazitaet != null && p.metrik !== "ampelstufe" && (
           <>
             <dt className="text-slate-500">Kapazität</dt>
             <dd className="text-right tabular-nums text-slate-900">{p.kapazitaet}</dd>
@@ -85,17 +136,23 @@ export default function Detail({ p, onClose }: { p: SensorProps; onClose: () => 
         <dt className="text-slate-500">Stand</dt>
         <dd className="text-right text-slate-900">{alterText(p.alter_min)}</dd>
 
-        {p.vergleichswert != null && (
+        {p.vergleich_art && (
           <>
-            <dt className="text-slate-500">Vergleich</dt>
+            <dt className="text-slate-500">Verglichen mit</dt>
             <dd className="text-right text-slate-900">
-              {p.vergleich_art === "wochentag_stunde" ? "Wochentag + Stunde" : "Tageszeit"}
+              {VERGLEICH_TEXT[p.vergleich_art] ?? p.vergleich_art}
             </dd>
+          </>
+        )}
+        {p.vergleich_tage > 0 && (
+          <>
+            <dt className="text-slate-500">Vergleichstage</dt>
+            <dd className="text-right tabular-nums text-slate-900">{p.vergleich_tage}</dd>
           </>
         )}
         {p.basis_tage > 0 && (
           <>
-            <dt className="text-slate-500">Basis</dt>
+            <dt className="text-slate-500">Basis insgesamt</dt>
             <dd className="text-right tabular-nums text-slate-900">
               {p.basis_tage} Tage · {p.basis_n.toLocaleString("de-CH")} Messwerte
             </dd>
@@ -113,7 +170,12 @@ export default function Detail({ p, onClose }: { p: SensorProps; onClose: () => 
 
       <p className="text-xs text-slate-400">
         Quelle:{" "}
-        <a href={p.quelle_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">
+        <a
+          href={p.quelle_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-slate-600"
+        >
           {QUELLE_LABEL[p.quelle]}
         </a>
       </p>

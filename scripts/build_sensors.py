@@ -79,6 +79,32 @@ GBFS = [
     ("nextbike_eq", "Neusiedler See", "AT", "raeder_absolut"),
 ]
 
+# Wien: alle staedtischen Baeder auf einem WFS-Layer, je Bad eine Ampelstufe.
+# Nur 33 der 46 fuehren ueberhaupt einen Wert (13 melden -99); welche das sind,
+# entscheidet der Feed zur Bauzeit, nicht diese Liste.
+WIEN_WFS = ("https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0"
+            "&typeName=ogdwien:SCHWIMMBADOGD&srsName=EPSG:4326&outputFormat=json")
+
+# Kieler Foerde: Leihrad-Stationen der SprottenFlotte (GBFS 3.0, CC0).
+# Gemessen wird die DOCK-Belegung, nicht "Besucher". Ein volles Dock heisst:
+# hier kannst du dein Rad nicht abgeben — das ist eine ehrliche Lenkungsaussage.
+# "Fuellgrad = Besucherzahl" waere eine Unterstellung.
+KIEL_GBFS = "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile"
+KIEL_WORTE = ("strand", "laboe", "foerde", "förde", "kiellinie", "falckenstein",
+              "schilksee", "bellevue", "hafen", "seebad", "duesternbrook",
+              "düsternbrook", "moltkestr", "reventlou", "wendtorf", "schoenberg",
+              "schönberg", "kalifornien", "brasilien", "stein", "heikendorf",
+              "moenkeberg", "mönkeberg", "eckernfoerde", "eckernförde")
+
+# Gruppen = Mengen austauschbarer Ziele. Nur innerhalb einer Gruppe darf die
+# Demo eine Alternative empfehlen; ein Parkhaus ersetzt kein Bad.
+GRUPPEN_ORT = {
+    "Luzern": "luzern-altstadt",
+    "Zürich": "zuerich-baeder",
+    "valgardena": "groeden",
+    "Meran - Merano": "meran",
+}
+
 
 def norm(s):
     """Namensnormalisierung fuer den Koordinaten-Abgleich (Umlaute, Gattungswoerter)."""
@@ -231,6 +257,84 @@ for sys_id, label, land, metrik in GBFS:
     time.sleep(1)
 print(f"GBFS: {len(GBFS)} Regionalpunkte")
 
+# ---------------------------------------------------------------- Wien Baeder
+d = jget(WIEN_WFS, 180)
+n_w = 0
+for f in d.get("features", []):
+    p = f.get("properties") or {}
+    kat = p.get("AUSLASTUNG_AMPEL_KATEGORIE_0")
+    # -99 = das Bad meldet nichts. Solche Punkte gar nicht erst aufnehmen —
+    # sie wuerden auf der Karte dauerhaft grau stehen und nichts erklaeren.
+    if kat is None or int(kat) < 0:
+        continue
+    g = f.get("geometry") or {}
+    c = g.get("coordinates") or []
+    if len(c) < 2:
+        continue
+    name = (p.get("NAME") or "").strip()
+    sensoren.append({
+        "id": f"wien-{slug(name)}"[:44], "name": name,
+        "ort": "Wien", "land": "AT",
+        "lat": round(float(c[1]), 6), "lon": round(float(c[0]), 6),
+        "quelle": "wien_baeder", "quelle_id": name,
+        "metrik": "ampelstufe", "einheit": "Auslastungsstufe", "kapazitaet": 5,
+        "hinweis": ("Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) "
+                    "bis 5 (derzeit voll). 0 heisst geschlossen."),
+        "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+        "bezirk": p.get("BEZIRK"),
+    })
+    n_w += 1
+print(f"Wien Bäder: {n_w} Sensoren (von {len(d.get('features', []))} im Layer)")
+
+# ---------------------------------------------------------------- Kieler Foerde
+info = jget(f"{KIEL_GBFS}/station_information.json", 180)
+stationen = info["data"]["stations"]
+
+
+def gbfs3_name(v):
+    """GBFS 3.0 fuehrt name als Sprach-Array [{language, text}], nicht als String."""
+    if isinstance(v, list):
+        for e in v:
+            if isinstance(e, dict) and e.get("text"):
+                return e["text"]
+        return ""
+    return str(v or "")
+
+
+n_k = 0
+for st in stationen:
+    name = gbfs3_name(st.get("name")).strip()
+    kap = st.get("capacity")
+    if not name or not kap or st.get("lat") is None:
+        continue
+    if not any(w in name.lower() for w in KIEL_WORTE):
+        continue
+    sensoren.append({
+        "id": f"kiel-{slug(name)}"[:44], "name": name,
+        "ort": "Kieler Förde", "land": "DE",
+        "lat": round(float(st["lat"]), 6), "lon": round(float(st["lon"]), 6),
+        "quelle": "kiel_gbfs", "quelle_id": str(st.get("station_id")),
+        "metrik": "dock_belegung", "einheit": "% belegte Docks", "kapazitaet": int(kap),
+        "hinweis": ("Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt "
+                    "sich kein Rad abgeben — nicht, dass hier viele Menschen sind."),
+        "quelle_url": f"{KIEL_GBFS}/gbfs.json",
+    })
+    n_k += 1
+print(f"Kieler Förde: {n_k} Stationen (von {len(stationen)} im System)")
+
+# ---------------------------------------------------------------- Gruppen setzen
+for s in sensoren:
+    if s["quelle"] == "wien_baeder":
+        s["gruppe"] = "wien-baeder"
+    elif s["quelle"] == "kiel_gbfs":
+        s["gruppe"] = "kiel-foerde"
+    elif s["quelle"] == "st_rad":
+        s["gruppe"] = "suedtirol-rad"
+    elif s["quelle"] == "gbfs":
+        s["gruppe"] = None          # Regionalaggregate sind keine Alternativen zueinander
+    else:
+        s["gruppe"] = GRUPPEN_ORT.get(s["ort"])
+
 # ---------------------------------------------------------------- schreiben
 ausgabe = {
     "erzeugt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -241,5 +345,12 @@ os.makedirs(os.path.dirname(ZIEL), exist_ok=True)
 with open(ZIEL, "w", encoding="utf-8") as f:
     json.dump(ausgabe, f, ensure_ascii=False, indent=2)
 print(f"\n{len(sensoren)} Sensoren geschrieben nach lib/sensors.json")
-for q in ("luzern", "zh_baeder", "st_parken", "st_rad", "gbfs"):
+for q in ("luzern", "zh_baeder", "st_parken", "st_rad", "gbfs", "wien_baeder", "kiel_gbfs"):
     print(f"  {q:<12} {sum(1 for s in sensoren if s['quelle'] == q)}")
+print("\nGruppen (Mengen austauschbarer Ziele):")
+gr = {}
+for s in sensoren:
+    gr[s.get("gruppe")] = gr.get(s.get("gruppe"), 0) + 1
+for g, n in sorted(gr.items(), key=lambda x: (x[0] is None, str(x[0]))):
+    warn = "  <- Einzelpunkt, kann nicht lenken" if g and n < 2 else ""
+    print(f"  {str(g):<18} {n}{warn}")

@@ -16,10 +16,13 @@ export default function LiveMap({
   daten,
   ausgewaehlt,
   onSelect,
+  start,
 }: {
   daten: StatusAntwort | null;
   ausgewaehlt: string | null;
   onSelect: (id: string) => void;
+  /** Fester Startausschnitt (Schaufenster). Ohne diesen wird auf alle Punkte gezoomt. */
+  start?: { mitte: [number, number]; zoom: number };
 }) {
   const container = useRef<HTMLDivElement | null>(null);
   const map = useRef<MlMap | null>(null);
@@ -51,8 +54,8 @@ export default function LiveMap({
         },
         layers: [{ id: "carto", type: "raster", source: "carto" }],
       },
-      center: [10.5, 48.5],
-      zoom: 4.6,
+      center: start ? start.mitte : [10.5, 48.5],
+      zoom: start ? start.zoom : 4.6,
       attributionControl: false,
     });
 
@@ -135,7 +138,9 @@ export default function LiveMap({
         })),
       } as GeoJSON.FeatureCollection);
 
-      if (ersteDaten.current && daten.features.length) {
+      // Beim Schaufenster bleibt der vorgegebene Ausschnitt stehen — sonst
+      // springt die Karte beim ersten Datensatz aus dem gemeinten Bildausschnitt.
+      if (ersteDaten.current && daten.features.length && !start) {
         const b = new maplibregl.LngLatBounds();
         for (const f of daten.features) b.extend(f.geometry.coordinates);
         m.fitBounds(b, { padding: 60, maxZoom: 8, duration: 0 });
@@ -145,7 +150,7 @@ export default function LiveMap({
 
     if (bereit.current) einspielen();
     else m.once("bp:bereit", einspielen);
-  }, [daten]);
+  }, [daten, start]);
 
   // --- Auswahl hervorheben und anfliegen
   useEffect(() => {

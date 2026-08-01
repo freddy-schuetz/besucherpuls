@@ -1,6 +1,6 @@
 {
-  "erzeugt": "2026-07-28T06:31:09+00:00",
-  "anzahl": 39,
+  "erzeugt": "2026-08-01T19:42:29+00:00",
+  "anzahl": 102,
   "sensoren": [
     {
       "id": "lu-kapellbruecke",
@@ -15,7 +15,8 @@
       "einheit": "Personen",
       "kapazitaet": null,
       "hinweis": "Radarsensor auf der Brücke — zählt den Fussgängerstrom direkt",
-      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern"
+      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern",
+      "gruppe": "luzern-altstadt"
     },
     {
       "id": "lu-rathausquai",
@@ -30,7 +31,8 @@
       "einheit": "Personen",
       "kapazitaet": null,
       "hinweis": "WLAN-Geräte am Reussufer",
-      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern"
+      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern",
+      "gruppe": "luzern-altstadt"
     },
     {
       "id": "lu-loewendenkmal",
@@ -45,7 +47,8 @@
       "einheit": "Personen",
       "kapazitaet": null,
       "hinweis": "WLAN-Geräte",
-      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern"
+      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern",
+      "gruppe": "luzern-altstadt"
     },
     {
       "id": "lu-schwanenplatz",
@@ -60,7 +63,8 @@
       "einheit": "Personen",
       "kapazitaet": null,
       "hinweis": "WLAN-Geräte am Cars-Halteplatz",
-      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern"
+      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern",
+      "gruppe": "luzern-altstadt"
     },
     {
       "id": "lu-hertensteinstrasse",
@@ -75,7 +79,8 @@
       "einheit": "Personen",
       "kapazitaet": null,
       "hinweis": "WLAN-Geräte",
-      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern"
+      "quelle_url": "https://opendata.swiss/de/organization/stadt-luzern",
+      "gruppe": "luzern-altstadt"
     },
     {
       "id": "zh-flb6939",
@@ -90,7 +95,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-flb6940",
@@ -105,7 +111,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-flb6941",
@@ -120,7 +127,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-flb6942",
@@ -135,7 +143,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-letzi-1",
@@ -150,7 +159,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-seb6946",
@@ -165,7 +175,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-seb6947",
@@ -180,7 +191,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-seb6948",
@@ -195,7 +207,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-ssd-10",
@@ -210,7 +223,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "zh-ssd-13",
@@ -225,7 +239,8 @@
       "einheit": "Badegäste",
       "kapazitaet": null,
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
-      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell"
+      "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
+      "gruppe": "zuerich-baeder"
     },
     {
       "id": "st-p-passo-gardena",
@@ -240,7 +255,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 500,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-passo-sella",
@@ -255,7 +271,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 199,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-plan-de-gralba",
@@ -270,7 +287,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 400,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-garage-dantercepies",
@@ -285,7 +303,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 500,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-parcheggio-garage-seceda",
@@ -300,7 +319,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 210,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-parcheggio-vallunga",
@@ -315,7 +335,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 109,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-parcheggio-p1-monte-pana",
@@ -330,7 +351,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 340,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "groeden"
     },
     {
       "id": "st-p-park-terme",
@@ -345,7 +367,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 545,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "meran"
     },
     {
       "id": "st-p-park-plaza",
@@ -360,7 +383,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 321,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "meran"
     },
     {
       "id": "st-p-parcheggio-falzeben-merano-2000",
@@ -375,7 +399,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 520,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": null
     },
     {
       "id": "st-p-parcheggio-p4-senales",
@@ -390,7 +415,8 @@
       "einheit": "freie Plätze",
       "kapazitaet": 42,
       "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": null
     },
     {
       "id": "st-r-toblach",
@@ -405,7 +431,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-bruneck",
@@ -420,7 +447,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-brixen",
@@ -435,7 +463,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-sterzing",
@@ -450,7 +479,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-marling",
@@ -465,7 +495,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-staben",
@@ -480,7 +511,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-st-leonhard",
@@ -495,7 +527,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-riffian",
@@ -510,7 +543,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-muehlbach",
@@ -525,7 +559,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "st-r-ehrenburg",
@@ -540,7 +575,8 @@
       "einheit": "Räder/h",
       "kapazitaet": null,
       "hinweis": "Eco-Counter am Radweg — Feed liefert mit rund einem Tag Verzug",
-      "quelle_url": "https://mobility.api.opendatahub.com"
+      "quelle_url": "https://mobility.api.opendatahub.com",
+      "gruppe": "suedtirol-rad"
     },
     {
       "id": "gbfs-nextbike_ch",
@@ -556,7 +592,8 @@
       "kapazitaet": null,
       "stationen": 394,
       "hinweis": "Regionalaggregat über alle Stationen. Weniger Räder an den Stationen heisst mehr Räder unterwegs.",
-      "quelle_url": "https://gbfs.nextbike.net/maps/gbfs/v2/nextbike_ch/gbfs.json"
+      "quelle_url": "https://gbfs.nextbike.net/maps/gbfs/v2/nextbike_ch/gbfs.json",
+      "gruppe": null
     },
     {
       "id": "gbfs-nextbike_ur",
@@ -572,7 +609,8 @@
       "kapazitaet": null,
       "stationen": 97,
       "hinweis": "Regionalaggregat: Anteil der Räder, die an einer Station stehen.",
-      "quelle_url": "https://gbfs.nextbike.net/maps/gbfs/v2/nextbike_ur/gbfs.json"
+      "quelle_url": "https://gbfs.nextbike.net/maps/gbfs/v2/nextbike_ur/gbfs.json",
+      "gruppe": null
     },
     {
       "id": "gbfs-nextbike_eq",
@@ -588,7 +626,1049 @@
       "kapazitaet": null,
       "stationen": 21,
       "hinweis": "Regionalaggregat über alle Stationen. Weniger Räder an den Stationen heisst mehr Räder unterwegs.",
-      "quelle_url": "https://gbfs.nextbike.net/maps/gbfs/v2/nextbike_eq/gbfs.json"
+      "quelle_url": "https://gbfs.nextbike.net/maps/gbfs/v2/nextbike_eq/gbfs.json",
+      "gruppe": null
+    },
+    {
+      "id": "wien-kombibad-doebling",
+      "name": "Kombibad Döbling",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.250848,
+      "lon": 16.358049,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kombibad Döbling",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 19,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-hofferplatz",
+      "name": "Familienbad Hofferplatz",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.209088,
+      "lon": 16.333372,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Hofferplatz",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 16,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-hugo-wolf-park",
+      "name": "Familienbad-Hugo-Wolf-Park",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.23982,
+      "lon": 16.334692,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad-Hugo-Wolf-Park",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 19,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-gudrunstrasse",
+      "name": "Familienbad Gudrunstraße",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.175791,
+      "lon": 16.389868,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Gudrunstraße",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 10,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-herderplatz",
+      "name": "Familienbad Herderplatz",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.173199,
+      "lon": 16.409846,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Herderplatz",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 11,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-einsiedlerplatz",
+      "name": "Familienbad Einsiedlerplatz",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.185651,
+      "lon": 16.349391,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Einsiedlerplatz",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 5,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-waehringer-park",
+      "name": "Familienbad Währinger Park",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.231258,
+      "lon": 16.348841,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Währinger Park",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 18,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-augarten",
+      "name": "Familienbad Augarten",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.228101,
+      "lon": 16.375415,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Augarten",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 2,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-stammersdorf",
+      "name": "Familienbad Stammersdorf",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.300111,
+      "lon": 16.411577,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Stammersdorf",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 21,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-strebersdorf",
+      "name": "Familienbad Strebersdorf",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.29266,
+      "lon": 16.384711,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Strebersdorf",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 21,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-strandbad-alte-donau",
+      "name": "Strandbad Alte Donau",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.242194,
+      "lon": 16.416815,
+      "quelle": "wien_baeder",
+      "quelle_id": "Strandbad Alte Donau",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 22,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-kombibad-brigittenau",
+      "name": "Kombibad Brigittenau",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.235558,
+      "lon": 16.364957,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kombibad Brigittenau",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 20,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-laaerbergbad",
+      "name": "Laaerbergbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.15935,
+      "lon": 16.384734,
+      "quelle": "wien_baeder",
+      "quelle_id": "Laaerbergbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 10,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-strandbad-gaensehaeufel",
+      "name": "Strandbad Gänsehäufel",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.227839,
+      "lon": 16.427394,
+      "quelle": "wien_baeder",
+      "quelle_id": "Strandbad Gänsehäufel",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 22,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-liesinger-bad",
+      "name": "Liesinger Bad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.132669,
+      "lon": 16.281118,
+      "quelle": "wien_baeder",
+      "quelle_id": "Liesinger Bad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 23,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-schafbergbad",
+      "name": "Schafbergbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.237475,
+      "lon": 16.301039,
+      "quelle": "wien_baeder",
+      "quelle_id": "Schafbergbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 18,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-hietzinger-bad",
+      "name": "Hietzinger Bad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.168923,
+      "lon": 16.29454,
+      "quelle": "wien_baeder",
+      "quelle_id": "Hietzinger Bad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 13,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-kombibad-joergerbad",
+      "name": "Kombibad Jörgerbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.218124,
+      "lon": 16.335007,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kombibad Jörgerbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 17,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-kombibad-simmering",
+      "name": "Kombibad Simmering",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.163505,
+      "lon": 16.429548,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kombibad Simmering",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 11,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-hallenbad-huetteldorf",
+      "name": "Hallenbad Hütteldorf",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.20284,
+      "lon": 16.264293,
+      "quelle": "wien_baeder",
+      "quelle_id": "Hallenbad Hütteldorf",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 14,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-schweizergarten",
+      "name": "Familienbad Schweizergarten",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.187642,
+      "lon": 16.388129,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Schweizergarten",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 3,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-hallenbad-floridsdorf",
+      "name": "Hallenbad Floridsdorf",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.254333,
+      "lon": 16.402281,
+      "quelle": "wien_baeder",
+      "quelle_id": "Hallenbad Floridsdorf",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 21,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-hoepflerbad",
+      "name": "Höpflerbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.147531,
+      "lon": 16.285886,
+      "quelle": "wien_baeder",
+      "quelle_id": "Höpflerbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 23,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-ottakringerbad",
+      "name": "Ottakringerbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.212155,
+      "lon": 16.291675,
+      "quelle": "wien_baeder",
+      "quelle_id": "Ottakringerbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 16,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-krapfenwaldl-bad",
+      "name": "Krapfenwaldl Bad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.266897,
+      "lon": 16.331024,
+      "quelle": "wien_baeder",
+      "quelle_id": "Krapfenwaldl Bad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 19,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-theresienbad",
+      "name": "Theresienbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.181842,
+      "lon": 16.328055,
+      "quelle": "wien_baeder",
+      "quelle_id": "Theresienbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 12,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-sommerbad-hadersdorf-weidlingau",
+      "name": "Sommerbad Hadersdorf-Weidlingau",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.209026,
+      "lon": 16.223274,
+      "quelle": "wien_baeder",
+      "quelle_id": "Sommerbad Hadersdorf-Weidlingau",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 14,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-kombibad-grossfeldsiedlung",
+      "name": "Kombibad Großfeldsiedlung",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.274067,
+      "lon": 16.448543,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kombibad Großfeldsiedlung",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 21,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-amalienbad",
+      "name": "Amalienbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.174281,
+      "lon": 16.378968,
+      "quelle": "wien_baeder",
+      "quelle_id": "Amalienbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 10,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-kombibad-donaustadt",
+      "name": "Kombibad Donaustadt",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.242791,
+      "lon": 16.443015,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kombibad Donaustadt",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 22,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-familienbad-reinlgasse",
+      "name": "Familienbad Reinlgasse",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.196336,
+      "lon": 16.311481,
+      "quelle": "wien_baeder",
+      "quelle_id": "Familienbad Reinlgasse",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 14,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-strandbad-angelibad",
+      "name": "Strandbad Angelibad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.24877,
+      "lon": 16.403348,
+      "quelle": "wien_baeder",
+      "quelle_id": "Strandbad Angelibad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 21,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "wien-kongressbad",
+      "name": "Kongreßbad",
+      "ort": "Wien",
+      "land": "AT",
+      "lat": 48.221603,
+      "lon": 16.312347,
+      "quelle": "wien_baeder",
+      "quelle_id": "Kongreßbad",
+      "metrik": "ampelstufe",
+      "einheit": "Auslastungsstufe",
+      "kapazitaet": 5,
+      "hinweis": "Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) bis 5 (derzeit voll). 0 heisst geschlossen.",
+      "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
+      "bezirk": 16,
+      "gruppe": "wien-baeder"
+    },
+    {
+      "id": "kiel-wendtorf-marina",
+      "name": "Wendtorf Marina",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.419066,
+      "lon": 10.28788,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "27448",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-anleger-reventlou",
+      "name": "Anleger Reventlou",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.333803,
+      "lon": 10.152089,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24371",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 50,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-anleger-bellevue",
+      "name": "Anleger Bellevue",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.344312,
+      "lon": 10.154735,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "30924",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-moenkeberg-anleger",
+      "name": "Mönkeberg Anleger",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.351445,
+      "lon": 10.178445,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24387",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 25,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-parkplatz-suedstrand",
+      "name": "Parkplatz Südstrand",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.450815,
+      "lon": 9.855381,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24434",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 40,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-holsten-hafenstrasse",
+      "name": "Holsten-/Hafenstrasse",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.321,
+      "lon": 10.135389,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24374",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-falkensteiner-strand-apr-okt",
+      "name": "Falkensteiner Strand (Apr-Okt)",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.401024,
+      "lon": 10.190463,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "31353",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-kalifornien",
+      "name": "Kalifornien",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.425281,
+      "lon": 10.374933,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "26725",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 25,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-wendtorf-bottsand",
+      "name": "Wendtorf Bottsand",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.426622,
+      "lon": 10.295774,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "31567",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-foerde-sparkasse-lorentzendamm",
+      "name": "Förde Sparkasse Lorentzendamm",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.325963,
+      "lon": 10.134318,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24436",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-bahnhof-eckernfoerde",
+      "name": "Bahnhof Eckernförde",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.46828,
+      "lon": 9.83553,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24427",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 40,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-hafen-laboe",
+      "name": "Hafen Laboe",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.40336,
+      "lon": 10.219689,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24403",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-schilksee-olympiazentrum",
+      "name": "Schilksee Olympiazentrum",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.425453,
+      "lon": 10.168224,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "27183",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-westring-eckernfoerder-str",
+      "name": "Westring/Eckernförder Str.",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.328543,
+      "lon": 10.117925,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24381",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-strandbad-lanker-see-april-oktober",
+      "name": "Strandbad Lanker See (April - Oktober)",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.218721,
+      "lon": 10.281562,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "29147",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-hafen-eckernfoerde",
+      "name": "Hafen Eckernförde",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.47477,
+      "lon": 9.83861,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24431",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-stein-dorfring",
+      "name": "Stein Dorfring",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.416552,
+      "lon": 10.26938,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "27445",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 15,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-foerde-sparkasse-fockbek",
+      "name": "Förde Sparkasse Fockbek",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.307756,
+      "lon": 9.605646,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24439",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-hafenplatz-opt-station",
+      "name": "Hafenplatz (Opt. Station)",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.403879,
+      "lon": 10.218238,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "31586",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 4,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-foerde-sparkasse-preetz",
+      "name": "Förde Sparkasse Preetz",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.2359,
+      "lon": 10.280925,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24438",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-foerde-sparkasse-teplitzer-allee",
+      "name": "Förde Sparkasse Teplitzer Allee",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.292041,
+      "lon": 10.187263,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24440",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-bahnhof-schoenberg",
+      "name": "Bahnhof Schönberg",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.387004,
+      "lon": 10.374004,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "26724",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-schoenberg-eichkamp-max-anz-5-bis-ende-",
+      "name": "Schönberg Eichkamp (max. Anz. 5, bis Ende Bau",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.387144,
+      "lon": 10.380611,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "27451",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 5,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-schoenberger-strand",
+      "name": "Schönberger Strand",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.412817,
+      "lon": 10.414665,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "26730",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-gemeindeverwaltung-laboe-opt-station",
+      "name": "Gemeindeverwaltung Laboe (Opt. Station)",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.405476,
+      "lon": 10.220063,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "31584",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 5,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-foerde-sparkasse-sehestedter-strasse",
+      "name": "Förde Sparkasse Sehestedter Strasse",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.460136,
+      "lon": 9.837995,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24462",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-feuerwehrhaus-schoenberg",
+      "name": "Feuerwehrhaus Schönberg",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.394495,
+      "lon": 10.372166,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "26653",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 15,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-toez-eckernfoerde",
+      "name": "TÖZ Eckernförde",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.445586,
+      "lon": 9.832705,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "30121",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-rathaus-heikendorf",
+      "name": "Rathaus Heikendorf",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.370727,
+      "lon": 10.205576,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24442",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-wendtorf-edeka",
+      "name": "Wendtorf Edeka",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.411912,
+      "lon": 10.285885,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "27447",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
-  "erzeugt": "2026-08-01T19:42:29+00:00",
-  "anzahl": 102,
+  "erzeugt": "2026-08-01T21:59:28+00:00",
+  "anzahl": 101,
   "sensoren": [
     {
       "id": "lu-kapellbruecke",
@@ -241,22 +241,6 @@
       "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
       "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
       "gruppe": "zuerich-baeder"
-    },
-    {
-      "id": "st-p-passo-gardena",
-      "name": "Passo Gardena",
-      "ort": "valgardena",
-      "land": "IT",
-      "lat": 46.54985,
-      "lon": 11.808991,
-      "quelle": "st_parken",
-      "quelle_id": "GARDENA:passo_gardena",
-      "metrik": "frei_plaetze",
-      "einheit": "freie Plätze",
-      "kapazitaet": 500,
-      "hinweis": "Auslastung = (Kapazität − frei) / Kapazität",
-      "quelle_url": "https://mobility.api.opendatahub.com",
-      "gruppe": "groeden"
     },
     {
       "id": "st-p-passo-sella",
@@ -1207,38 +1191,6 @@
       "gruppe": "kiel-foerde"
     },
     {
-      "id": "kiel-anleger-reventlou",
-      "name": "Anleger Reventlou",
-      "ort": "Kieler Förde",
-      "land": "DE",
-      "lat": 54.333803,
-      "lon": 10.152089,
-      "quelle": "kiel_gbfs",
-      "quelle_id": "24371",
-      "metrik": "dock_belegung",
-      "einheit": "% belegte Docks",
-      "kapazitaet": 50,
-      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
-      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
-      "gruppe": "kiel-foerde"
-    },
-    {
-      "id": "kiel-anleger-bellevue",
-      "name": "Anleger Bellevue",
-      "ort": "Kieler Förde",
-      "land": "DE",
-      "lat": 54.344312,
-      "lon": 10.154735,
-      "quelle": "kiel_gbfs",
-      "quelle_id": "30924",
-      "metrik": "dock_belegung",
-      "einheit": "% belegte Docks",
-      "kapazitaet": 20,
-      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
-      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
-      "gruppe": "kiel-foerde"
-    },
-    {
       "id": "kiel-moenkeberg-anleger",
       "name": "Mönkeberg Anleger",
       "ort": "Kieler Förde",
@@ -1287,6 +1239,22 @@
       "gruppe": "kiel-foerde"
     },
     {
+      "id": "kiel-anleger-bellevue",
+      "name": "Anleger Bellevue",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.344312,
+      "lon": 10.154735,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "30924",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 20,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
       "id": "kiel-falkensteiner-strand-apr-okt",
       "name": "Falkensteiner Strand (Apr-Okt)",
       "ort": "Kieler Förde",
@@ -1314,6 +1282,22 @@
       "metrik": "dock_belegung",
       "einheit": "% belegte Docks",
       "kapazitaet": 25,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-bahnhof-eckernfoerde",
+      "name": "Bahnhof Eckernförde",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.46828,
+      "lon": 9.83553,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24427",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 40,
       "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
       "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
       "gruppe": "kiel-foerde"
@@ -1351,22 +1335,6 @@
       "gruppe": "kiel-foerde"
     },
     {
-      "id": "kiel-bahnhof-eckernfoerde",
-      "name": "Bahnhof Eckernförde",
-      "ort": "Kieler Förde",
-      "land": "DE",
-      "lat": 54.46828,
-      "lon": 9.83553,
-      "quelle": "kiel_gbfs",
-      "quelle_id": "24427",
-      "metrik": "dock_belegung",
-      "einheit": "% belegte Docks",
-      "kapazitaet": 40,
-      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
-      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
-      "gruppe": "kiel-foerde"
-    },
-    {
       "id": "kiel-hafen-laboe",
       "name": "Hafen Laboe",
       "ort": "Kieler Förde",
@@ -1378,6 +1346,22 @@
       "metrik": "dock_belegung",
       "einheit": "% belegte Docks",
       "kapazitaet": 30,
+      "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
+      "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
+      "gruppe": "kiel-foerde"
+    },
+    {
+      "id": "kiel-anleger-reventlou",
+      "name": "Anleger Reventlou",
+      "ort": "Kieler Förde",
+      "land": "DE",
+      "lat": 54.333803,
+      "lon": 10.152089,
+      "quelle": "kiel_gbfs",
+      "quelle_id": "24371",
+      "metrik": "dock_belegung",
+      "einheit": "% belegte Docks",
+      "kapazitaet": 50,
       "hinweis": "Anteil belegter Rückgabeplätze an dieser Station. Voll heisst: hier lässt sich kein Rad abgeben — nicht, dass hier viele Menschen sind.",
       "quelle_url": "https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile/gbfs.json",
       "gruppe": "kiel-foerde"

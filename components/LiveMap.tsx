@@ -42,10 +42,13 @@ export default function LiveMap({
         sources: {
           carto: {
             type: "raster",
+            // Positron statt Voyager: eine fast farblose Grundkarte. Voyager bringt
+            // eigene kraeftige Gruen- und Gelbtoene mit, gegen die sich die
+            // Statuspunkte nicht durchsetzen — genau die sollen hier aber tragen.
             tiles: [
-              "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-              "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-              "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+              "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png",
+              "https://b.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png",
+              "https://c.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png",
             ],
             tileSize: 256,
             attribution:
@@ -68,16 +71,31 @@ export default function LiveMap({
         data: { type: "FeatureCollection", features: [] },
       });
 
-      // Halo fuer den ausgewaehlten Punkt
+      // Weicher Hof in der Statusfarbe — laesst die Punkte auf der hellen
+      // Grundkarte plastisch wirken, ohne dass ein Schlagschatten noetig waere.
+      m.addLayer({
+        id: "sensoren-hof",
+        type: "circle",
+        source: "sensoren",
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 15, 12, 22],
+          "circle-color": ["get", "farbe"],
+          "circle-opacity": 0.16,
+        },
+      });
+
+      // Ring um den ausgewaehlten Punkt
       m.addLayer({
         id: "sensoren-halo",
         type: "circle",
         source: "sensoren",
         filter: ["==", ["get", "id"], "___keiner___"],
         paint: {
-          "circle-radius": 18,
-          "circle-color": "#0f172a",
-          "circle-opacity": 0.14,
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 17, 12, 24],
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-stroke-width": 2.5,
+          "circle-stroke-color": "#0c1a17",
+          "circle-stroke-opacity": 0.75,
         },
       });
 
@@ -86,11 +104,16 @@ export default function LiveMap({
         type: "circle",
         source: "sensoren",
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 6, 8, 10, 12, 14],
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 6, 8, 9, 12, 12],
           "circle-color": ["get", "farbe"],
-          "circle-stroke-width": 2,
+          "circle-stroke-width": 2.5,
           "circle-stroke-color": "#ffffff",
-          "circle-opacity": ["case", ["==", ["get", "ampel"], "veraltet"], 0.55, 0.95],
+          "circle-opacity": [
+            "case",
+            ["in", ["get", "ampel"], ["literal", ["veraltet", "aufbau"]]],
+            0.6,
+            1,
+          ],
         },
       });
 

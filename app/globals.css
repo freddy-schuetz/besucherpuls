@@ -1,9 +1,124 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------- Design-Token
+   Bewusst wenige, dafuer konsequent: eine Tinte, zwei Flaechen, vier Statusfarben
+   und je Region ein Akzent. Alles andere entsteht aus Abstand und Schriftgroesse. */
 @theme {
-  --color-brand: #14532d;
-  --color-brand-accent: #15803d;
-  --color-ok: #16a34a;
-  --color-warn: #d97706;
-  --color-bad: #dc2626;
+  --font-display: var(--schrift-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--schrift-text), ui-sans-serif, system-ui, sans-serif;
+
+  /* Tinte und Flaechen — leicht ins Blaugruene gezogen, nicht neutralgrau */
+  --color-tinte: #0c1a17;
+  --color-tinte-weich: #43574f;
+  --color-tinte-zart: #7d8f87;
+  --color-flaeche: #f7f6f2;
+  --color-karte: #ffffff;
+  --color-linie: #e6e4dc;
+
+  /* Status — als Gastaussage lesbar, nicht als Ampel eines Verkehrsrechners */
+  --color-frei: #0f9d63;
+  --color-frei-weich: #e7f6ee;
+  --color-mittel: #cf7a1d;
+  --color-mittel-weich: #fdf1e2;
+  --color-voll: #d43f4d;
+  --color-voll-weich: #fdecec;
+  --color-still: #8d9b94;
+  --color-still-weich: #eeede8;
+
+  --radius-karte: 1.5rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-flaeche);
+    color: var(--color-tinte);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: #0c1a17;
+    color: #f7f6f2;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-tinte);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* Grosse Zahlen und Zeitangaben immer gleich breit — sonst zappelt die
+     Kachel bei jedem Minuten-Refresh. */
+  .zahl {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  .karte {
+    background: var(--color-karte);
+    border-radius: var(--radius-karte);
+    box-shadow:
+      0 1px 2px rgb(12 26 23 / 0.04),
+      0 8px 24px -12px rgb(12 26 23 / 0.14);
+  }
+
+  /* Weiches Farbfeld hinter dem Kopfbereich. Zwei versetzte Radialverlaeufe
+     ergeben mehr Tiefe als ein linearer und bleiben trotzdem ruhig. */
+  .himmel {
+    background-image:
+      radial-gradient(88rem 44rem at 6% -20%, var(--ton-a) 0%, transparent 62%),
+      radial-gradient(66rem 40rem at 98% 4%, var(--ton-b) 0%, transparent 58%);
+  }
+
+  /* Kaum sichtbares Korn — nimmt den Farbverlaeufen das Digitale. */
+  .korn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+  }
+
+  /* Sanftes Auftauchen der Kacheln, gestaffelt ueber --verzug. */
+  .auftauchen {
+    animation: auftauchen 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--verzug, 0ms);
+  }
+}
+
+@keyframes auftauchen {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

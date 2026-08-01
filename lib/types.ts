@@ -47,6 +47,8 @@ export interface SensorProps {
   einheit: string;
   metrik: string;
   kapazitaet: number | null;
+  /** Nur Wien: Bezirksnummer — die einzige Ortsangabe, die einem Gast dort hilft */
+  bezirk?: string | number | null;
 
   /** Rohwert der Quelle — Personen, freie Plätze, Räder, Ampelstufe … */
   wert: number;
@@ -105,14 +107,16 @@ export interface StatusAntwort {
   }[];
 }
 
+/** Kartenfarben — identisch zu den Statusfarben aus globals.css, hier als
+ *  Literale, weil MapLibre keine CSS-Variablen aufloest. */
 export const AMPEL_FARBE: Record<Ampel, string> = {
-  gruen: "#16a34a",
-  gelb: "#ca8a04",
-  rot: "#dc2626",
-  geschlossen: "#64748b",
-  aufbau: "#0284c7",
-  veraltet: "#94a3b8",
-  unbekannt: "#94a3b8",
+  gruen: "#0f9d63",
+  gelb: "#cf7a1d",
+  rot: "#d43f4d",
+  geschlossen: "#8d9b94",
+  aufbau: "#b9c4be",
+  veraltet: "#c3ccc7",
+  unbekannt: "#c3ccc7",
 };
 
 export const AMPEL_TEXT: Record<Ampel, string> = {
@@ -134,57 +138,6 @@ export const QUELLE_LABEL: Record<Quelle, string> = {
   wien_baeder: "Stadt Wien",
   kiel_gbfs: "SprottenFlotte KielRegion (GBFS)",
 };
-
-/** Die drei Schaufenster: gleiche Daten, drei Arten des Ausweichens. */
-export interface Schaufenster {
-  slug: string;
-  titel: string;
-  frage: string;
-  gruppen: Gruppe[];
-  /** Auf welche Karte wird gezoomt */
-  mitte: [number, number];
-  zoom: number;
-  erklaerung: string;
-}
-
-export const SCHAUFENSTER: Schaufenster[] = [
-  {
-    slug: "raum",
-    titel: "Ausweichen im Raum",
-    frage: "Der eine Wanderparkplatz ist voll — welcher nicht?",
-    gruppen: ["groeden"],
-    mitte: [11.77, 46.55],
-    zoom: 11.2,
-    erklaerung:
-      "Sieben Parkplätze an den Dolomitenpässen von Gröden. Für einen Gast, " +
-      "der wandern will, sind sie echte Alternativen zueinander: gleicher Zweck, " +
-      "anderer Ort, wenige Fahrminuten dazwischen.",
-  },
-  {
-    slug: "zeit",
-    titel: "Ausweichen in der Zeit",
-    frage: "Muss es jetzt sein — oder ist es in zwei Stunden angenehmer?",
-    gruppen: ["zuerich-baeder"],
-    mitte: [8.539, 47.369],
-    zoom: 12.2,
-    erklaerung:
-      "Zehn Zürcher Bäder mit Zählsensoren an den Zugängen. Hier hilft kein " +
-      "Ortswechsel, sondern ein Zeitwechsel — deshalb zeigt dieses Schaufenster " +
-      "den typischen Tagesverlauf und wo im Tag man gerade steht.",
-  },
-  {
-    slug: "ziel",
-    titel: "Ausweichen im Ziel",
-    frage: "Dein Bad ist voll — welches im Nachbarbezirk hat Platz?",
-    gruppen: ["wien-baeder"],
-    mitte: [16.372, 48.21],
-    zoom: 10.6,
-    erklaerung:
-      "Die Stadt Wien veröffentlicht je Bad eine Auslastungsampel — aber keine " +
-      "Alternative. Genau diese Lücke füllt dieses Schaufenster: 33 austauschbare " +
-      "Ziele in einer Stadt, jedes mit eigenem Live-Wert.",
-  },
-];
 
 /** „vor 14 Minuten", „vor 2 Tagen" */
 export function alterText(min: number): string {

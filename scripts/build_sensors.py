@@ -60,8 +60,13 @@ ZH_UIDS = ["flb6939", "flb6940", "flb6941", "flb6942", "SSD-10",
 
 # Suedtirol Parken: Seilbahn-Talstationen, Dolomitenpaesse und Kurorte.
 # Die Bozner Stadtparkhaeuser (FAMAS, Municipality Bolzano) bleiben draussen.
+# "Passo Gardena" ist raus: Der Sensor meldet unveraendert 0 von 500 freien
+# Plaetzen — ueber 14 Tage in ALLEN 168 Wochentag-Stunden-Zellen exakt 100 %
+# Auslastung. Das ist kein voller Parkplatz, das ist ein steckengebliebener
+# Geber. Auf der Karte erzeugte er den Widerspruch "0 von 500 frei / viel Platz",
+# weil der Vergleich mit der eigenen Vergangenheit ihn als voellig normal las.
 ST_PARKEN = [
-    "Passo Gardena", "Passo Sella", "Plan de Gralba", "Garage Dantercëpies",
+    "Passo Sella", "Plan de Gralba", "Garage Dantercëpies",
     "Parcheggio + Garage Seceda", "Parcheggio Vallunga", "Parcheggio P1 - Monte Pana",
     "Park Terme", "Park Plaza", "Parcheggio Falzeben - Merano 2000", "Parcheggio P4 Senales",
 ]

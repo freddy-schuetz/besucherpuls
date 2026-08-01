@@ -34,11 +34,26 @@ function Kernsatz({ p }: { p: SensorProps }) {
     );
   }
   if (p.ampel === "aufbau") {
+    const seit =
+      p.basis_tage >= 2 ? `seit ${p.basis_tage} Tagen` : p.basis_tage === 1 ? "seit gestern" : "seit heute";
+    // Zwei sehr verschiedene Faelle, die vorher beide "wird aufgebaut" hiessen:
+    // gar keine Historie — oder Historie, aber nichts fuer DIESE Stunde (nachts
+    // an einem Bad zum Beispiel). Das zweite ist kein Mangel, sondern Normalfall.
+    const nurDieseStunde = p.basis_tage >= 5;
     return (
       <p className="text-sm text-slate-600">
-        Aktuell <strong>{ist}</strong>. Für eine Einordnung fehlt noch die Vergleichsbasis — sie wird
-        seit {p.basis_tage > 0 ? `${p.basis_tage} Tagen` : "heute"} aufgebaut. Belastbar wird sie
-        ab etwa fünf Tagen.
+        Aktuell <strong>{ist}</strong>.{" "}
+        {nurDieseStunde ? (
+          <>
+            Für <em>diese Tageszeit</em> liegen noch keine Vergleichswerte vor — an diesem Ort
+            wurde zu dieser Stunde bisher nichts gemessen.
+          </>
+        ) : (
+          <>
+            Für eine Einordnung fehlt noch die Vergleichsbasis — sie wird {seit} aufgebaut und ist
+            ab etwa fünf Tagen belastbar.
+          </>
+        )}
       </p>
     );
   }

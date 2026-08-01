@@ -198,15 +198,16 @@ export function alterText(min: number): string {
 /** Der Kernsatz: was der Perzentilrang für einen Gast bedeutet. */
 export function einordnungText(p: SensorProps): string | null {
   if (p.quote == null || p.ampel === "aufbau" || p.ampel === "veraltet") return null;
-  if (p.ampel === "geschlossen") return "Zu dieser Zeit war hier noch nie etwas los — vermutlich geschlossen.";
+  if (p.ampel === "geschlossen")
+    return "Zu dieser Zeit war hier noch nie etwas los — vermutlich geschlossen.";
   const bezug =
     p.vergleich_art === "wochentag_stunde"
-      ? "vergleichbaren Tagen um diese Zeit"
+      ? "vergleichbaren Tage um diese Zeit"
       : p.vergleich_art === "werktag_stunde"
-        ? "Werktagen um diese Zeit"
+        ? "Werktage um diese Zeit"
         : p.vergleich_art === "wochenende_stunde"
-          ? "Wochenendtagen um diese Zeit"
-          : "Tagen um diese Zeit";
+          ? "Wochenendtage um diese Zeit"
+          : "Tage um diese Zeit";
   if (p.quote >= 85) return `Voller als an ${p.quote} % der ${bezug}.`;
   if (p.quote <= 40) return `Leerer als an ${100 - p.quote} % der ${bezug}.`;
   return `Etwa so voll wie üblich — voller als an ${p.quote} % der ${bezug}.`;

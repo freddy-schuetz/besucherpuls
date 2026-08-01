@@ -39,8 +39,8 @@ export default function Startseite() {
             Wo ist gerade Platz?
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-tinte-weich sm:text-xl">
-            Besucherpuls zeigt für vier Regionen, wie voll die beliebten Ziele gerade sind — und
-            nennt die nächste Alternative, wenn es eng wird. Nicht als Warnung hinterher,
+            Besucherpuls zeigt für sieben Regionen, wie voll die beliebten Ziele gerade sind —
+            und nennt die nächste Alternative, wenn es eng wird. Nicht als Warnung hinterher,
             sondern als Vorschlag vorher.
           </p>
 
@@ -65,7 +65,7 @@ export default function Startseite() {
       <section className="mx-auto max-w-6xl px-6 py-11 sm:py-12">
         <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-tinte sm:text-3xl">Vier Regionen, vier Fragen</h2>
+            <h2 className="text-2xl font-semibold text-tinte sm:text-3xl">Sieben Regionen, sieben Fragen</h2>
             <p className="mt-2 max-w-xl text-tinte-weich">
               Jede Region misst etwas anderes — Parkplätze, Badegäste, Rückgabeplätze. Die
               Aussage bleibt dieselbe.

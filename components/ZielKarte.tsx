@@ -23,25 +23,6 @@ function Vergleichsskala({ quote, farbe }: { quote: number; farbe: string }) {
   );
 }
 
-/** Die ruhigste sinnvolle Stunde aus dem typischen Tagesverlauf. */
-function ruhigereStunde(p: SensorProps): { stunde: number; anteil: number } | null {
-  if (!p.tagesgang) return null;
-  const jetzt = new Date().getHours();
-  const max = Math.max(...p.tagesgang.filter((v): v is number => v != null), 0);
-  const jetztWert = p.tagesgang[jetzt];
-  if (jetztWert == null || max <= 0 || jetztWert < max * 0.25) return null;
-  let beste: { stunde: number; anteil: number } | null = null;
-  for (let i = 1; i <= 6; i++) {
-    const h = (jetzt + i) % 24;
-    const v = p.tagesgang[h];
-    if (v == null || h < 7 || h > 20) continue;
-    if (v < jetztWert * 0.7 && (!beste || v < p.tagesgang[beste.stunde]!)) {
-      beste = { stunde: h, anteil: Math.round((1 - v / jetztWert) * 100) };
-    }
-  }
-  return beste;
-}
-
 export default function ZielKarte({
   p,
   region,
@@ -56,7 +37,6 @@ export default function ZielKarte({
   aktiv: boolean;
 }) {
   const s = gastStatus(p);
-  const spaeter = ruhigereStunde(p);
   // Die Skala vergleicht mit der Vergangenheit — sie darf nur erscheinen, wenn
   // die Aussage auch von dort kommt, nicht bei reiner Kapazitaetsangabe.
   const zeigtSkala = s.art === "vergleich" && p.quote != null;

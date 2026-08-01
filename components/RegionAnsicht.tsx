@@ -64,7 +64,7 @@ function antwort(ziele: SensorProps[], region: Region) {
     return {
       art: "entwarnung" as const,
       kopf: "Gerade entspannt",
-      text: `${frei.length} von ${ziele.length} ${region.zielPlural} haben gerade gut Platz.`,
+      text: `${frei.length} von ${ziele.length} haben gerade gut Platz.`,
       ziel: frei[0].id,
     };
   }

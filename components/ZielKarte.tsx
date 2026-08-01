@@ -83,13 +83,16 @@ export default function ZielKarte({
         </p>
       )}
 
+      {/* Dieselben drei Aussagen wie in der Ansage, nur kurz. Vorher stand auf
+          der Karte "Mehr Platz bei X" und daneben im Detailfeld "Heute besser
+          dorthin" — zwei Formulierungen fuer dieselbe Sache. */}
       {p.alternative && (
         <p
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
         >
-          Mehr Platz bei <strong className="font-semibold">{p.alternative.name}</strong> ·{" "}
-          {p.alternative.km} km
+          <strong className="font-semibold">Heute besser dorthin:</strong>{" "}
+          {p.alternative.name} · {p.alternative.km} km
         </p>
       )}
 
@@ -98,8 +101,9 @@ export default function ZielKarte({
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
         >
-          Ab <strong className="font-semibold zahl">{p.spaeter.stunde}:00 Uhr</strong>{" "}
-          typischerweise rund {p.spaeter.anteil} % ruhiger
+          <strong className="font-semibold">Lieber später:</strong>{" "}
+          <span className="zahl">ab {p.spaeter.stunde}:00 Uhr</span> typischerweise rund{" "}
+          {p.spaeter.anteil} % ruhiger
         </p>
       )}
     </button>

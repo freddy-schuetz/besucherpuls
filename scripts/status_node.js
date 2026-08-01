@@ -20,9 +20,12 @@ const AMPEL_GRUEN = 60;    // Perzentilrang darunter
 const AMPEL_ROT = 85;      // darueber
 const MIN_TAGE_ZELLE = 3;  // Wochentag+Stunde erst ab so vielen Tagen
 const MIN_TAGE_POOL = 5;   // gepoolte Stufen erst ab so vielen Tagen
-// Ab dieser Belegung darf ein Ziel ueberhaupt "voll" heissen. Darunter ist mehr
-// als ein Drittel frei — und dann ist ein Ortswechsel kein Rat, sondern Spott.
-const VOLL_AB_PROZENT = 67;
+// Absolute Schwellen. Wo die Kapazitaet bekannt ist, sind sie das Primaere:
+// "0 von 140 frei" ist voll, egal wie normal das fuer die Uhrzeit sein mag,
+// und "57 von 175 frei" ist es nicht, egal wie ungewoehnlich.
+const VOLL_AB = 92;        // ab hier: voll
+const ENG_AB = 75;         // ab hier: wird eng
+const FREI_BIS = 70;       // nur so leere Ziele taugen als Empfehlung
 const MAX_SPARK = 12;      // Punkte je Sensor (Fenster ist 30 min, siehe deploy_status.py)
 
 // Frischeschwelle je Quelle — eine pauschale Grenze waere falsch: die Suedtiroler
@@ -216,17 +219,33 @@ for (const s of SENSOREN) {
       quote = istWert > 0 ? 100 : null;
     } else {
       quote = perzentilrang(vgl.werte, istWert);
-      ampel = quote < AMPEL_GRUEN ? 'gruen' : quote > AMPEL_ROT ? 'rot' : 'gelb';
 
-      // Der Perzentilrang allein taugt nicht als Lenkungsgrund. Nachts ist jeder
-      // Parkplatz leer, also ist dort JEDER Wert ueber null "der vollste je
-      // gemessene" — Alpsee P2 stand mit 5,7 % Belegung auf Rang 100. Wer darauf
-      // eine Empfehlung baut, schickt Gaeste von einem zu 94 % freien Parkplatz
-      // weg. Solange mehr als ein Drittel frei ist, gilt hoechstens "gelb".
+      // WIE VOLL ES IST, schlaegt WIE UNGEWOEHNLICH VOLL ES IST.
+      //
+      // Vorher entschied allein der Perzentilrang. Das erzeugte zwei
+      // Widersprueche, die beide auf der Seite standen:
+      //   - Alpsee P1 mit 0 von 140 freien Plaetzen galt als normal (gruen),
+      //     weil er um diese Zeit immer voll ist.
+      //   - Freibad P4 mit 57 von 175 freien Plaetzen galt als voll (rot),
+      //     weil das fuer diese Stunde ungewoehnlich viel war.
+      // Ergebnis: Die Seite schickte Gaeste von P4 mit 57 freien Plaetzen zu
+      // P1 mit null freien Plaetzen. Wo die Kapazitaet bekannt ist, entscheidet
+      // deshalb zuerst sie; der Vergleich verfeinert nur noch dazwischen.
       const auslastung = a.auslastung != null ? Number(a.auslastung) : null;
-      if (ampel === 'rot' && auslastung != null && auslastung < VOLL_AB_PROZENT) {
-        ampel = 'gelb';
-        gedaempft++;
+      if (auslastung != null) {
+        if (auslastung >= VOLL_AB) {
+          ampel = 'rot';                       // wirklich voll
+        } else if (auslastung >= ENG_AB) {
+          ampel = 'gelb';                      // wird eng
+        } else if (quote > AMPEL_ROT) {
+          ampel = 'gelb';                      // ungewoehnlich viel los, aber Platz
+          gedaempft++;
+        } else {
+          ampel = quote < AMPEL_GRUEN ? 'gruen' : 'gelb';
+        }
+      } else {
+        // Ohne Kapazitaet bleibt nur der Vergleich — Luzern, Radzaehler.
+        ampel = quote < AMPEL_GRUEN ? 'gruen' : quote > AMPEL_ROT ? 'rot' : 'gelb';
       }
       mitAmpel++;
     }
@@ -319,6 +338,9 @@ for (const f of features) {
   // Nur bei echter Fuelle lenken. Alles darunter ist Information, kein Rat.
   if (p.ampel !== 'rot') continue;
 
+  // Eine Alternative muss TATSAECHLICH Platz haben. Vorher genuegte ein
+  // niedrigerer Perzentilrang — dadurch wurde Alpsee P1 mit null freien
+  // Plaetzen als Ziel vorgeschlagen, weil er "normal voll" war.
   const geschwister = (nachGruppe[p.gruppe] || [])
     .filter((x) => x.properties.id !== p.id)
     .map((x) => ({
@@ -326,8 +348,12 @@ for (const f of features) {
       p: x.properties,
       km: entfernungKm(f.geometry.coordinates, x.geometry.coordinates),
     }))
-    .filter((x) => x.p.quote != null && x.p.ampel !== 'veraltet' && x.p.ampel !== 'geschlossen'
-      && x.p.quote < p.quote - MIN_ABSTAND);
+    .filter((x) => {
+      if (x.p.ampel === 'veraltet' || x.p.ampel === 'geschlossen') return false;
+      const frei = x.p.auslastung != null ? Number(x.p.auslastung) : null;
+      if (frei != null) return frei <= FREI_BIS;            // absolut noch Platz
+      return x.p.quote != null && x.p.quote < 50;           // ohne Kapazitaet: deutlich leerer
+    });
 
   const meineArt = (p.ziel && p.ziel.art) || 'sonstiges';
   const meinEinstieg = p.ziel && p.ziel.einstieg;
@@ -379,7 +405,10 @@ for (const f of features) {
   if (!treffer.length) continue;
 
   // Naehe schlaegt Leere: zehn Prozentpunkte leerer wiegen einen Kilometer auf.
-  treffer.sort((x, y) => (x.p.quote + x.km * 10) - (y.p.quote + y.km * 10));
+  // Sortiert wird nach der ABSOLUTEN Belegung, wo sie bekannt ist — der Gast
+  // will freie Plaetze, keinen guenstigen Rang.
+  const guete = (x) => (x.p.auslastung != null ? Number(x.p.auslastung) : (x.p.quote ?? 50));
+  treffer.sort((x, y) => (guete(x) + x.km * 10) - (guete(y) + y.km * 10));
   const b = treffer[0];
   p.alternative = {
     id: b.p.id,

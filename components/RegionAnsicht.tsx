@@ -6,6 +6,7 @@ import Link from "next/link";
 import ZielKarte from "@/components/ZielKarte";
 import Tagesverlauf from "@/components/Tagesverlauf";
 import Ansage from "@/components/Ansage";
+import Vorhaben, { ZEITEN, wertFuerZeit, type VorhabenWahl, type ZeitWahl } from "@/components/Vorhaben";
 import {
   GAST_REIHENFOLGE,
   REGIONEN,
@@ -82,6 +83,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const [fehler, setFehler] = useState<string | null>(null);
   const [gewaehlt, setGewaehlt] = useState<string | null>(null);
   const [alleZeigen, setAlleZeigen] = useState(false);
+  const [vorhaben, setVorhaben] = useState<VorhabenWahl>(null);
+  const [zeit, setZeit] = useState<ZeitWahl>("jetzt");
   const laeuft = useRef(false);
   const kartenBereich = useRef<HTMLDivElement | null>(null);
 
@@ -137,10 +140,25 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const a = useMemo(() => (ziele.length ? antwort(ziele, region) : null), [ziele, region]);
   const detail = useMemo(() => ziele.find((p) => p.id === gewaehlt) ?? null, [ziele, gewaehlt]);
 
+  // Auswahl anwenden: Vorhaben filtert, die Zeit sortiert um. Fuer "nachmittags"
+  // zaehlt nicht der Jetzt-Wert, sondern der typische Wert um 15 Uhr.
+  const auswahl = useMemo(() => {
+    let liste = ziele;
+    if (vorhaben) liste = liste.filter((p) => p.ziel?.art === vorhaben);
+    const stunde = ZEITEN.find((z) => z.wert === zeit)?.stunde ?? null;
+    if (stunde != null) {
+      liste = liste
+        .filter((p) => wertFuerZeit(p, stunde) != null)
+        .slice()
+        .sort((a, b) => (wertFuerZeit(a, stunde) ?? 999) - (wertFuerZeit(b, stunde) ?? 999));
+    }
+    return liste;
+  }, [ziele, vorhaben, zeit]);
+
   // Bei 31 Baedern ist die volle Liste eine Zumutung — erst das Wesentliche.
   const sichtbar = useMemo(
-    () => (alleZeigen ? ziele : ziele.slice(0, ERST_ZEIGEN)),
-    [ziele, alleZeigen],
+    () => (alleZeigen ? auswahl : auswahl.slice(0, ERST_ZEIGEN)),
+    [auswahl, alleZeigen],
   );
   const nurKapazitaet = useMemo(
     () => ziele.length > 0 && ziele.every((p) => gastStatus(p).art !== "vergleich"),
@@ -253,12 +271,28 @@ export default function RegionAnsicht({ region }: { region: Region }) {
           </section>
         )}
 
+        {/* --------------------------------------------------------- Vorhaben */}
+        {ziele.length > 4 && (
+          <div className="mt-10">
+            <Vorhaben
+              ziele={ziele}
+              region={region}
+              vorhaben={vorhaben}
+              zeit={zeit}
+              onVorhaben={setVorhaben}
+              onZeit={setZeit}
+            />
+          </div>
+        )}
+
         {/* --------------------------------------------------------- Ziele */}
         <section className="py-12 sm:py-14">
           <h2 className="text-xl font-semibold text-tinte">
-            Alle {region.zielPlural}
+            {vorhaben || zeit !== "jetzt" ? "Passend dazu" : `Alle ${region.zielPlural}`}
             <span className="ml-2 text-sm font-normal text-tinte-zart">
-              — die mit dem meisten Platz zuerst
+              {zeit === "jetzt"
+                ? "— die mit dem meisten Platz zuerst"
+                : `— nach dem typischen Wert um ${ZEITEN.find((z) => z.wert === zeit)?.stunde}:00 Uhr`}
             </span>
           </h2>
           {nurKapazitaet && (
@@ -281,19 +315,25 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                 onWaehlen={() => waehlen(p.id)}
               />
             ))}
+            {!auswahl.length && ziele.length > 0 && (
+              <p className="col-span-full text-sm text-tinte-weich">
+                Für diese Auswahl liegt gerade nichts vor — bei „{ZEITEN.find((z) => z.wert === zeit)?.text}"
+                zählen nur Ziele mit genug eigenem Verlauf.
+              </p>
+            )}
             {!ziele.length &&
               [0, 1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="karte h-40 animate-pulse bg-still-weich/40" />
               ))}
           </div>
-          {ziele.length > ERST_ZEIGEN && (
+          {auswahl.length > ERST_ZEIGEN && (
             <button
               onClick={() => setAlleZeigen((v) => !v)}
               className="mt-6 rounded-full border border-linie bg-karte px-5 py-2.5 text-sm font-semibold text-tinte transition hover:border-tinte-zart"
             >
               {alleZeigen
                 ? "Weniger anzeigen"
-                : `Alle ${ziele.length} ${region.zielPlural} anzeigen`}
+                : `Alle ${auswahl.length} ${region.zielPlural} anzeigen`}
             </button>
           )}
         </section>

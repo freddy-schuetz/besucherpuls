@@ -43,7 +43,7 @@ export const REGIONEN: Region[] = [
     land: "Bayern",
     dach: "bayern",
     aktivitaet: "Wandern, Wasserfälle, Bergbahnen",
-    frage: "Wo ist heute noch Parkplatz?",
+    frage: "Wo ist heute noch ein Parkplatz frei?",
     versprechen:
       "Wanderparkplätze zwischen Pfronten, Oberstdorf und dem Hörnerdorf-Gebiet. Jeder meldet Kapazität und Belegung — und hat drei Jahre eigene Historie, an der sich ablesen lässt, wann es dort typischerweise voll wird.",
     ziel: "Parkplatz",
@@ -83,7 +83,7 @@ export const REGIONEN: Region[] = [
     land: "Bayern",
     dach: "bayern",
     aktivitaet: "Königssee, Kehlstein, Ramsau",
-    frage: "Wo kommst du heute noch unter?",
+    frage: "Wo bekommst du heute noch einen Parkplatz?",
     versprechen:
       "Kehlstein, Wimbachbrücke, Hirschbichl und der Thumsee — die Zugänge zum meistbesuchten Alpenraum Deutschlands. Neun weitere Parkplätze der Region sind zwar erfasst, aber nicht mit Zählern ausgerüstet; die stehen deshalb nicht auf der Karte.",
     ziel: "Parkplatz",
@@ -102,7 +102,7 @@ export const REGIONEN: Region[] = [
     name: "Gröden",
     land: "Südtirol",
     aktivitaet: "Wandern & Bergbahnen",
-    frage: "Wo ist heute noch Parkplatz?",
+    frage: "Wo ist heute noch ein Parkplatz frei?",
     versprechen:
       "Die Wanderparkplätze an den Dolomitenpässen, live. Wenn einer voll ist, steht hier, welcher in wenigen Minuten Fahrt noch Platz hat.",
     ziel: "Parkplatz",
@@ -159,7 +159,7 @@ export const REGIONEN: Region[] = [
     name: "Kieler Förde",
     land: "Ostsee",
     aktivitaet: "Leihräder an der Küste",
-    frage: "Wo kannst du dein Rad abgeben?",
+    frage: "Wo bekommst du gerade ein Rad — und wo kannst du eines abgeben?",
     versprechen:
       "Die Stationen der SprottenFlotte zwischen Laboe, Schönberg und Eckernförde. Volle Station heisst: hier passt kein Rad mehr rein — die nächste freie steht daneben.",
     ziel: "Station",
@@ -198,7 +198,7 @@ export const VERBUND_BAYERN: Verbund = {
   name: "Bayern",
   land: "Allgäu · Bayerischer Wald · Berchtesgaden",
   aktivitaet: "Wanderparkplätze in drei Gebieten",
-  frage: "Wo ist heute noch Parkplatz?",
+  frage: "Wo ist heute noch ein Parkplatz frei?",
   akzent: "#15803d",
   tonA: "#bfe6c4",
   tonB: "#e2ecb4",

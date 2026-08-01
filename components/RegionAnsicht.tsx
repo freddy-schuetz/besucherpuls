@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import ZielKarte from "@/components/ZielKarte";
 import Tagesverlauf from "@/components/Tagesverlauf";
+import Ansage from "@/components/Ansage";
 import {
   GAST_REIHENFOLGE,
   REGIONEN,
@@ -326,6 +327,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                     <h3 className="mt-3 text-lg font-semibold text-tinte">{detail.name}</h3>
                     <p className="zahl mt-1 text-sm text-tinte-weich">{messwertText(detail)}</p>
                   </div>
+
+                  <Ansage p={detail} region={region} />
 
                   {detail.tagesgang && (
                     <Tagesverlauf kurve={detail.tagesgang} akzent={region.akzent} />

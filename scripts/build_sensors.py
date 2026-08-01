@@ -13,6 +13,7 @@ import csv
 import io
 import json
 import os
+import re
 import time
 import unicodedata
 import urllib.request
@@ -109,6 +110,46 @@ GRUPPEN_ORT = {
     "valgardena": "groeden",
     "Meran - Merano": "meran",
 }
+
+# ---------------------------------------------------------------- BayernCloud
+# Die mit Abstand beste Quelle im Bestand: 248 Parkplaetze, CC0, Kapazitaet UND
+# Belegung, und je Objekt eine Zeitreihe zurueck bis Mai 2023. Der Token wird
+# nicht im Repo gehalten — er kommt aus der Umgebung bzw. .env.local.
+BCT = "https://data.bayerncloud.digital/api/v4"
+BCT_TOKEN = os.environ.get("BAYERNCLOUD_TOKEN", "")
+
+# Drei Gebiete, geschnitten ueber die Gemeinde-Klassifikation der BCT.
+# Bewusst benannte Gemeinden statt der groben Regionsklasse: "Allgaeu" umfasst
+# sonst auch Stadtparkhaeuser in Kempten, die mit Ausflugslenkung nichts zu tun
+# haben.
+BCT_GEBIETE = {
+    "allgaeu": {
+        "name": "Allgäu",
+        "gemeinden": {
+            "Pfronten", "Blaichach", "Oberstaufen", "Obermaiselstein",
+            "Immenstadt i.Allgäu", "Burgberg i.Allgäu", "Balderschwang",
+            "Oberstdorf", "Sonthofen", "Buchenberg", "Bad Hindelang",
+            "Bolsterlang", "Fischen i.Allgäu", "Ofterschwang", "Rettenberg",
+            "Gunzesried", "Missen-Wilhams",
+        },
+    },
+    "bayerischer-wald": {
+        "name": "Bayerischer Wald",
+        "gemeinden": {
+            "Bodenmais", "Lindberg", "Neuschönau", "Philippsreut", "Spiegelau",
+            "Frauenau", "Zwiesel", "Bayerisch Eisenstein", "Sankt Oswald-Riedlhütte",
+        },
+    },
+    "berchtesgaden": {
+        "name": "Berchtesgadener Land",
+        "gemeinden": {
+            "Berchtesgaden", "Ramsau b.Berchtesgaden", "Bad Reichenhall",
+            "Schönau a.Königssee", "Marktschellenberg", "Bischofswiesen",
+        },
+    },
+}
+# Das SKOS-Schema, unter dem die Gemeinde steht (aus der Klassifikation gelesen).
+BCT_SCHEMA_GEMEINDE = "c7140360"
 
 
 def norm(s):
@@ -327,6 +368,100 @@ for st in stationen:
     n_k += 1
 print(f"Kieler Förde: {n_k} Stationen (von {len(stationen)} im System)")
 
+# ---------------------------------------------------------------- BayernCloud
+if not BCT_TOKEN:
+    print("  ! BAYERNCLOUD_TOKEN fehlt — bayerische Gebiete werden uebersprungen")
+else:
+    def bct(pfad, timeout=120):
+        r = urllib.request.Request(pfad if pfad.startswith("http") else BCT + pfad,
+                                   headers={**UA, "Authorization": f"Bearer {BCT_TOKEN}"})
+        return json.loads(urllib.request.urlopen(r, timeout=timeout).read())
+
+    roh = []
+    seite = f"{BCT}/endpoints/list_occupancy"
+    while seite:
+        d = bct(seite)
+        roh += d.get("@graph", [])
+        seite = (d.get("links") or {}).get("next")
+    print(f"BayernCloud: {len(roh)} Auslastungsobjekte geladen")
+
+    begriff = {}
+
+    def label(cid):
+        """SKOS-Konzept aufloesen. Nicht ueber /things/ — das antwortet dort 404."""
+        if cid not in begriff:
+            try:
+                g = bct(f"/universal/{cid}")
+                e = g.get("@graph", [g])[0]
+                begriff[cid] = (str(e.get("skos:prefLabel") or ""),
+                                str((e.get("skos:inScheme") or {}).get("@id"))[:8])
+            except Exception:  # noqa: BLE001
+                begriff[cid] = ("", "")
+        return begriff[cid]
+
+    def gemeinde_von(obj):
+        for c in obj.get("dc:classification", []) or []:
+            n, schema = label(c["@id"])
+            if schema == BCT_SCHEMA_GEMEINDE:
+                return n
+        return None
+
+    ort_cache = {}
+
+    def koordinate(obj):
+        """Der Auslastungsdatensatz selbst hat keine Geometrie — sie haengt am
+        verknuepften Ort (about). Der Text von dort ist ausserdem die Grundlage
+        fuer die spaetere Zielbestimmung."""
+        ab = (obj.get("about") or [{}])[0].get("@id")
+        if not ab:
+            return None, None, None
+        if ab not in ort_cache:
+            try:
+                g = bct(f"/things/{ab}")
+                e = g.get("@graph", [g])[0]
+                geo = e.get("geo") or {}
+                ort_cache[ab] = (geo.get("latitude"), geo.get("longitude"),
+                                 re.sub(r"<[^>]+>", " ", str(e.get("description") or "")).strip())
+            except Exception:  # noqa: BLE001
+                ort_cache[ab] = (None, None, None)
+        return ort_cache[ab]
+
+    n_bct = 0
+    je_gebiet = {}
+    for obj in roh:
+        gem = gemeinde_von(obj)
+        gebiet = next((k for k, v in BCT_GEBIETE.items() if gem in v["gemeinden"]), None)
+        if not gebiet:
+            continue
+        # Ohne Zeitreihe kein Messpunkt: Neun Berchtesgadener Eintraege sind zwar
+        # angelegt, aber gar nicht ausgeruestet — die gehoeren nicht auf die Karte.
+        if not obj.get("dcls:latestTimeseriesTimestamp"):
+            continue
+        kap = obj.get("dcls:currentCapacity")
+        if not kap or float(kap) <= 0:
+            continue
+        lat, lon, text = koordinate(obj)
+        if lat is None or lon is None:
+            continue
+        name = str(obj.get("name") or "").strip()
+        sensoren.append({
+            "id": f"by-{slug(name)}"[:44], "name": name,
+            "ort": gem or BCT_GEBIETE[gebiet]["name"], "land": "DE",
+            "lat": round(float(lat), 6), "lon": round(float(lon), 6),
+            "quelle": "bayern", "quelle_id": obj["@id"],
+            "metrik": "frei_plaetze", "einheit": "freie Plätze", "kapazitaet": int(float(kap)),
+            "hinweis": ("Auslastung wird vom Betreiber gemeldet und über die BayernCloud "
+                        "Tourismus unter CC0 veröffentlicht."),
+            "quelle_url": "https://bayerncloud.digital/daten-nutzen/api/",
+            "gebiet": gebiet,
+            # Roher Beschreibungstext des Ziels — Grundlage fuer scripts/ziele_anreichern.py
+            "beschreibung": (text or "")[:600],
+        })
+        je_gebiet[gebiet] = je_gebiet.get(gebiet, 0) + 1
+        n_bct += 1
+    print(f"Bayern: {n_bct} Parkplätze  " +
+          ", ".join(f"{BCT_GEBIETE[k]['name']}={v}" for k, v in sorted(je_gebiet.items())))
+
 # ---------------------------------------------------------------- Gruppen setzen
 for s in sensoren:
     if s["quelle"] == "wien_baeder":
@@ -335,6 +470,8 @@ for s in sensoren:
         s["gruppe"] = "kiel-foerde"
     elif s["quelle"] == "st_rad":
         s["gruppe"] = "suedtirol-rad"
+    elif s["quelle"] == "bayern":
+        s["gruppe"] = s["gebiet"]   # allgaeu | bayerischer-wald | berchtesgaden
     elif s["quelle"] == "gbfs":
         s["gruppe"] = None          # Regionalaggregate sind keine Alternativen zueinander
     else:
@@ -350,7 +487,7 @@ os.makedirs(os.path.dirname(ZIEL), exist_ok=True)
 with open(ZIEL, "w", encoding="utf-8") as f:
     json.dump(ausgabe, f, ensure_ascii=False, indent=2)
 print(f"\n{len(sensoren)} Sensoren geschrieben nach lib/sensors.json")
-for q in ("luzern", "zh_baeder", "st_parken", "st_rad", "gbfs", "wien_baeder", "kiel_gbfs"):
+for q in ("luzern", "zh_baeder", "st_parken", "st_rad", "gbfs", "wien_baeder", "kiel_gbfs", "bayern"):
     print(f"  {q:<12} {sum(1 for s in sensoren if s['quelle'] == q)}")
 print("\nGruppen (Mengen austauschbarer Ziele):")
 gr = {}

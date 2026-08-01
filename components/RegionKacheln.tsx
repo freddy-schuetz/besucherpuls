@@ -2,7 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { GAST_REIHENFOLGE, REGIONEN, gastStatus, type Region } from "@/lib/regionen";
+import {
+  EINZELREGIONEN,
+  GAST_REIHENFOLGE,
+  VERBUND_BAYERN,
+  gastStatus,
+  type Region,
+} from "@/lib/regionen";
 import type { SensorProps, StatusAntwort } from "@/lib/types";
 
 /** Was auf der Kachel steht: wie viele Ziele es gibt, wie viele Platz haben,
@@ -154,6 +160,98 @@ function Kachel({ region, daten, verzug }: { region: Region; daten: StatusAntwor
   );
 }
 
+/** Bayern als eine breite Kachel mit den drei Gebieten darin. Sieben
+ *  gleichrangige Kacheln waeren Brei — und die Staffelung zeigt nebenbei, wo
+ *  die Demo am meisten kann. */
+function BayernKachel({ daten }: { daten: StatusAntwort | null }) {
+  const v = VERBUND_BAYERN;
+  const alle = useMemo(
+    () =>
+      (daten?.features ?? [])
+        .map((f) => f.properties)
+        .filter((p) => v.gebiete.some((g) => g.gruppe === p.gruppe)),
+    [daten, v.gebiete],
+  );
+
+  return (
+    <div
+      className="karte auftauchen overflow-hidden sm:col-span-2"
+      style={{ ["--verzug" as string]: "0ms" }}
+    >
+      <div
+        className="himmel korn relative px-6 pb-6 pt-7"
+        style={{ ["--ton-a" as string]: v.tonA, ["--ton-b" as string]: v.tonB }}
+      >
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+              style={{ color: v.akzent }}
+            >
+              {v.aktivitaet}
+            </p>
+            <h2 className="mt-2 text-[1.9rem] font-semibold leading-[1.12] text-tinte">
+              {v.frage}
+            </h2>
+            <p className="mt-1.5 text-sm font-medium text-tinte-weich">{v.land}</p>
+          </div>
+          {daten && (
+            <p className="text-sm text-tinte-weich">
+              <span className="zahl text-3xl font-semibold text-tinte">{alle.length}</span>{" "}
+              Parkplätze mit eigener Historie
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-px bg-linie sm:grid-cols-3">
+        {v.gebiete.map((g) => {
+          const f = alle.filter((p) => p.gruppe === g.gruppe);
+          const s = auswerten(f);
+          return (
+            <Link
+              key={g.slug}
+              href={`/region/${g.slug}`}
+              className="group flex flex-col gap-3 bg-karte px-5 py-5 transition hover:bg-flaeche"
+            >
+              <p className="text-[15px] font-semibold text-tinte">{g.name}</p>
+              {daten ? (
+                <>
+                  <p className="zahl text-sm text-tinte-weich">
+                    {s.ziele} Parkplätze
+                    {s.frei > 0 && (
+                      <span className="ml-2 font-medium" style={{ color: "var(--color-frei)" }}>
+                        {s.frei} frei
+                      </span>
+                    )}
+                    {s.voll > 0 && (
+                      <span className="ml-2 font-medium" style={{ color: "var(--color-voll)" }}>
+                        {s.voll} voll
+                      </span>
+                    )}
+                  </p>
+                  <Punktreihe features={f} />
+                </>
+              ) : (
+                <div className="h-2 w-full animate-pulse rounded bg-still-weich" />
+              )}
+              <span
+                className="mt-auto inline-flex items-center gap-1.5 pt-1 text-sm font-semibold transition-[gap] group-hover:gap-2.5"
+                style={{ color: g.akzent }}
+              >
+                Ansehen
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M3 8h9m0 0L8.5 4.5M12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function RegionKacheln() {
   const [daten, setDaten] = useState<StatusAntwort | null>(null);
 
@@ -181,8 +279,9 @@ export default function RegionKacheln() {
 
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      {REGIONEN.map((r, i) => (
-        <Kachel key={r.slug} region={r} daten={daten} verzug={i * 70} />
+      <BayernKachel daten={daten} />
+      {EINZELREGIONEN.map((r, i) => (
+        <Kachel key={r.slug} region={r} daten={daten} verzug={(i + 1) * 70} />
       ))}
     </div>
   );

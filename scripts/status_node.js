@@ -20,13 +20,20 @@ const AMPEL_GRUEN = 60;    // Perzentilrang darunter
 const AMPEL_ROT = 85;      // darueber
 const MIN_TAGE_ZELLE = 3;  // Wochentag+Stunde erst ab so vielen Tagen
 const MIN_TAGE_POOL = 5;   // gepoolte Stufen erst ab so vielen Tagen
+// Ab dieser Belegung darf ein Ziel ueberhaupt "voll" heissen. Darunter ist mehr
+// als ein Drittel frei — und dann ist ein Ortswechsel kein Rat, sondern Spott.
+const VOLL_AB_PROZENT = 67;
 const MAX_SPARK = 12;      // Punkte je Sensor (Fenster ist 30 min, siehe deploy_status.py)
 
 // Frischeschwelle je Quelle — eine pauschale Grenze waere falsch: die Suedtiroler
 // Radzaehler liefern regulaer mit rund einem Tag Verzug, GBFS im Minutentakt.
+// Zuerich stand auf 240 Minuten — dadurch galt der eingefrorene Schlusswert
+// nach Betriebsende noch stundenlang als aktuell (Seebad Utoquai zeigte um
+// 0:10 noch 156 Gaeste, Zeitstempel 23:40). Der Feed aktualisiert im Betrieb
+// etwa alle zehn Minuten; 45 Minuten trennen Betrieb und Stillstand sauber.
 const VERALTET_MIN = {
-  luzern: 180, zh_baeder: 240, st_parken: 60, st_rad: 2880,
-  gbfs: 30, wien_baeder: 2880, kiel_gbfs: 30,
+  luzern: 180, zh_baeder: 45, st_parken: 60, st_rad: 2880,
+  gbfs: 30, wien_baeder: 2880, kiel_gbfs: 30, bayern: 180,
 };
 
 // ---------------------------------------------------------------- Tabellen lesen
@@ -169,7 +176,7 @@ function tagesgang(dh) {
 
 // ---------------------------------------------------------------- Features bauen
 const features = [];
-let mitAmpel = 0, veraltet = 0, ohneBasis = 0, geschlossen = 0;
+let mitAmpel = 0, veraltet = 0, ohneBasis = 0, geschlossen = 0, gedaempft = 0;
 
 for (const s of SENSOREN) {
   const a = aktuell[s.id];
@@ -210,6 +217,17 @@ for (const s of SENSOREN) {
     } else {
       quote = perzentilrang(vgl.werte, istWert);
       ampel = quote < AMPEL_GRUEN ? 'gruen' : quote > AMPEL_ROT ? 'rot' : 'gelb';
+
+      // Der Perzentilrang allein taugt nicht als Lenkungsgrund. Nachts ist jeder
+      // Parkplatz leer, also ist dort JEDER Wert ueber null "der vollste je
+      // gemessene" — Alpsee P2 stand mit 5,7 % Belegung auf Rang 100. Wer darauf
+      // eine Empfehlung baut, schickt Gaeste von einem zu 94 % freien Parkplatz
+      // weg. Solange mehr als ein Drittel frei ist, gilt hoechstens "gelb".
+      const auslastung = a.auslastung != null ? Number(a.auslastung) : null;
+      if (ampel === 'rot' && auslastung != null && auslastung < VOLL_AB_PROZENT) {
+        ampel = 'gelb';
+        gedaempft++;
+      }
       mitAmpel++;
     }
   }
@@ -229,6 +247,9 @@ for (const s of SENSOREN) {
     geometry: { type: 'Point', coordinates: [s.lon, s.lat] },
     properties: {
       id: s.id, name: s.name, ort: s.ort, land: s.land, gruppe: s.gruppe || null,
+      // Ohne dieses Feld fiel die Stufenleiter still auf 'sonstiges' zurueck —
+      // die Empfehlungen sahen richtig aus, kamen aber nur aus der Notregel.
+      ziel: s.ziel || null,
       quelle: s.quelle, quelle_url: s.quelle_url, hinweis: s.hinweis,
       einheit: s.einheit, metrik: s.metrik, kapazitaet: s.kapazitaet,
       wert: Number(a.wert),
@@ -267,34 +288,106 @@ function entfernungKm(a, b) {
   return Math.round(2 * R * Math.asin(Math.sqrt(s)) * 10) / 10;
 }
 
-let mitEmpfehlung = 0;
+// Welche Zielarten duerfen einander ersetzen. Ein Wandereinstieg ersetzt einen
+// anderen Wandereinstieg oder eine Talstation — aber niemals einen Bahnhof.
+const TAUSCHBAR = {
+  bergbahn: ['bergbahn', 'wandern'],
+  wandern: ['wandern', 'bergbahn', 'nationalpark'],
+  nationalpark: ['nationalpark', 'wandern'],
+  wasser: ['wasser'],
+  anreise: ['anreise'],
+  ort: ['ort'],
+  sonstiges: [],
+};
+// Wie weit ein Umweg je Zielart zumutbar ist. Fuer ein Ausflugsziel faehrt man
+// eine Viertelstunde weiter; zu einem ERSATZ-BAHNHOF nicht. Ohne diese
+// Unterscheidung schlug die Seite 14,4 km zum naechsten Bahnhof vor.
+const MAX_KM = {
+  bergbahn: 15, wandern: 15, nationalpark: 15, wasser: 12,
+  anreise: 4, ort: 4, sonstiges: 3,
+};
+const MAX_KM_NAH = 3;      // ohne bekannte Zielart nur der direkte Nachbarort
+const MIN_ABSTAND = 20;    // so viel leerer muss die Alternative wenigstens sein
+
+let mitEmpfehlung = 0, zeitTipps = 0;
+
 for (const f of features) {
   const p = f.properties;
   p.alternative = null;
-  if (p.ampel !== 'rot' && p.ampel !== 'gelb') continue;
-  const geschwister = (nachGruppe[p.gruppe] || []).filter(
-    (x) => x.properties.id !== p.id &&
-      x.properties.quote != null &&
-      (x.properties.ampel === 'gruen' || x.properties.ampel === 'gelb') &&
-      x.properties.quote < p.quote - 15,
-  );
-  if (!geschwister.length) continue;
-  // Naehe schlaegt Leere: 20 km weiter fahren ist keine Empfehlung, sondern Spott.
-  const bewertet = geschwister
+  p.spaeter = null;
+
+  // Nur bei echter Fuelle lenken. Alles darunter ist Information, kein Rat.
+  if (p.ampel !== 'rot') continue;
+
+  const geschwister = (nachGruppe[p.gruppe] || [])
+    .filter((x) => x.properties.id !== p.id)
     .map((x) => ({
       f: x,
+      p: x.properties,
       km: entfernungKm(f.geometry.coordinates, x.geometry.coordinates),
     }))
-    .filter((x) => x.km <= (p.gruppe && p.gruppe.startsWith('wien') ? 12 : 25))
-    .sort((x, y) => (x.f.properties.quote + x.km * 2) - (y.f.properties.quote + y.km * 2));
-  if (!bewertet.length) continue;
-  const b = bewertet[0];
+    .filter((x) => x.p.quote != null && x.p.ampel !== 'veraltet' && x.p.ampel !== 'geschlossen'
+      && x.p.quote < p.quote - MIN_ABSTAND);
+
+  const meineArt = (p.ziel && p.ziel.art) || 'sonstiges';
+  const meinEinstieg = p.ziel && p.ziel.einstieg;
+
+  // STUFE 1 — gleiches Ziel, anderer Zugang. Selten (nur 11 Einstiege haben
+  // ueberhaupt mehrere Zugaenge), dafuer nie falsch: Es ist derselbe Ort.
+  let treffer = meinEinstieg
+    ? geschwister.filter((x) => x.p.ziel && x.p.ziel.einstieg === meinEinstieg)
+    : [];
+  let stufe = treffer.length ? 'zugang' : null;
+
+  // STUFE 2 — anderer Zeitpunkt. Aus dem typischen Tagesverlauf: die naechste
+  // besuchbare Stunde, in der es spuerbar ruhiger ist. Kein Ortswechsel noetig.
+  if (!treffer.length && Array.isArray(p.tagesgang)) {
+    const jetztWert = p.tagesgang[stunde];
+    const hoechst = Math.max(...p.tagesgang.filter((v) => v != null), 0);
+    if (jetztWert != null && hoechst > 0 && jetztWert >= hoechst * 0.25) {
+      let beste = null;
+      for (let i = 1; i <= 6; i++) {
+        const h = (stunde + i) % 24;
+        const v = p.tagesgang[h];
+        if (v == null || h < 7 || h > 20) continue;
+        if (v < jetztWert * 0.7 && (beste === null || v < p.tagesgang[beste])) beste = h;
+      }
+      if (beste !== null) {
+        p.spaeter = {
+          stunde: beste,
+          anteil: Math.round((1 - p.tagesgang[beste] / jetztWert) * 100),
+        };
+        zeitTipps++;
+      }
+    }
+  }
+
+  // STUFE 3 — vergleichbares Ziel. Gleiche oder verwandte Zielart im Umkreis.
+  // Wo die Zielart unbekannt ist, gilt nur der enge Umkreis — sonst waere es
+  // wieder "irgendwas in der Naehe", und genau das schickte Gaeste vom Bahnhof
+  // Oberstaufen 12,6 km zum Alpsee.
+  if (!treffer.length) {
+    const erlaubt = TAUSCHBAR[meineArt] || [];
+    treffer = geschwister.filter((x) => {
+      const art = (x.p.ziel && x.p.ziel.art) || 'sonstiges';
+      if (meineArt === 'sonstiges' || art === 'sonstiges') return x.km <= MAX_KM_NAH;
+      return erlaubt.includes(art) && x.km <= (MAX_KM[meineArt] || MAX_KM_NAH);
+    });
+    if (treffer.length) stufe = 'ziel';
+  }
+
+  if (!treffer.length) continue;
+
+  // Naehe schlaegt Leere: zehn Prozentpunkte leerer wiegen einen Kilometer auf.
+  treffer.sort((x, y) => (x.p.quote + x.km * 10) - (y.p.quote + y.km * 10));
+  const b = treffer[0];
   p.alternative = {
-    id: b.f.properties.id,
-    name: b.f.properties.name,
-    quote: b.f.properties.quote,
-    ampel: b.f.properties.ampel,
+    id: b.p.id,
+    name: b.p.name,
+    quote: b.p.quote,
+    ampel: b.p.ampel,
     km: b.km,
+    stufe,
   };
   mitEmpfehlung++;
 }
@@ -310,7 +403,9 @@ return [{
       veraltet,
       im_aufbau: ohneBasis,
       geschlossen,
+      gedaempft,
       mit_empfehlung: mitEmpfehlung,
+      zeit_tipps: zeitTipps,
     },
     features,
   },

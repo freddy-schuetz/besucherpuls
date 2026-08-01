@@ -36,7 +36,7 @@ TROCKEN = "--dry" in sys.argv
 # Felder, die der Code je Sensor braucht. Bewusst schmal gehalten: der Code-Node
 # wird sonst unnoetig gross und n8n zaeh im Editor.
 FELDER = ("id", "name", "ort", "land", "lat", "lon", "einheit", "metrik",
-          "kapazitaet", "hinweis", "quelle", "quelle_url", "gruppe", "bezirk")
+          "kapazitaet", "hinweis", "quelle", "quelle_url", "gruppe", "bezirk", "ziel")
 
 
 def n8n():

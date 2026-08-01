@@ -12,6 +12,8 @@ const ODH = 'https://mobility.api.opendatahub.com/v2';
 const WIEN_WFS = 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0'
   + '&typeName=ogdwien:SCHWIMMBADOGD&srsName=EPSG:4326&outputFormat=json';
 const KIEL_GBFS = 'https://stables.donkey.bike/api/public/gbfs/3.0/donkey_kielsmile';
+const BCT = 'https://data.bayerncloud.digital/api/v4';
+const BCT_TOKEN = '/*__BCT_TOKEN__*/';
 
 const jetzt = Date.now();
 const holen = (url) => this.helpers.httpRequest({
@@ -21,7 +23,7 @@ const holen = (url) => this.helpers.httpRequest({
 const alsJson = (t) => (typeof t === 'string' ? JSON.parse(t) : t);
 const alterMin = (ms) => Math.round((jetzt - ms) / 60000);
 
-const roh = { luzern: {}, zh_baeder: {}, st_parken: {}, st_rad: {}, gbfs: {}, wien_baeder: {}, kiel_gbfs: {} };
+const roh = { luzern: {}, zh_baeder: {}, st_parken: {}, st_rad: {}, gbfs: {}, wien_baeder: {}, kiel_gbfs: {}, bayern: {} };
 const fehler = [];
 
 // ---------------------------------------------------------------- Luzern
@@ -40,11 +42,26 @@ try {
   const zeilen = txt.trim().split(/\r?\n/);
   const kopf = zeilen[0].split(',');
   const iU = kopf.indexOf('uid'), iF = kopf.indexOf('currentfill'), iT = kopf.indexOf('retrievaltime');
+  const iI = kopf.indexOf('occupancy_icons');
   for (const z of zeilen.slice(1)) {
     const f = z.split(',');
     if (f.length <= Math.max(iU, iF, iT)) continue;
     const ms = Date.parse(f[iT].replace(' ', 'T'));
-    roh.zh_baeder[f[iU]] = { wert: Number(f[iF]), ts: Number.isFinite(ms) ? ms : jetzt };
+    // Zuerich veroeffentlicht neben der Gaestezahl eine eigene Vierstufen-Anzeige
+    // (●○○○ bis ●●●●). Eine Kapazitaet gibt die Stadt NICHT heraus — diese Stufe
+    // ist der einzige Bezug, den sie liefert. Sie wurde bisher weggeworfen,
+    // weshalb Zuerich ohne Vergleichstage voellig aussagelos dastand.
+    let stufe = null;
+    if (iI >= 0 && f[iI]) {
+      const voll = (f[iI].match(/●/g) || []).length;
+      const gesamt = (f[iI].match(/[●○]/g) || []).length;
+      if (gesamt > 0) stufe = Math.round(((voll - 0.5) / gesamt) * 1000) / 10;
+    }
+    roh.zh_baeder[f[iU]] = {
+      wert: Number(f[iF]),
+      stufe,
+      ts: Number.isFinite(ms) ? ms : jetzt,
+    };
   }
 } catch (e) { fehler.push('zh_baeder: ' + String(e.message || e).slice(0, 120)); }
 
@@ -138,6 +155,34 @@ try {
   }
 } catch (e) { fehler.push('kiel_gbfs: ' + String(e.message || e).slice(0, 120)); }
 
+// ---------------------------------------------------------------- Bayern (BCT)
+try {
+  let seite = BCT + '/endpoints/list_occupancy';
+  for (let i = 0; i < 12 && seite; i++) {
+    const a = await this.helpers.httpRequest({
+      url: seite, method: 'GET', json: true, timeout: 25000,
+      headers: {
+        'User-Agent': 'besucherpuls/0.1 (+https://friedemann-schuetz.de)',
+        Authorization: 'Bearer ' + BCT_TOKEN,
+      },
+    });
+    for (const o of (a && a['@graph']) || []) {
+      const kap = Number(o['dcls:currentCapacity']);
+      const belegt = Number(o['dcls:currentOccupancy']);
+      if (!Number.isFinite(kap) || kap <= 0 || !Number.isFinite(belegt)) continue;
+      // Der Sensorliste liegt "freie Plaetze" zugrunde, wie bei Suedtirol —
+      // die BCT liefert die Belegung, also hier umdrehen. Nach unten begrenzen:
+      // Parkplatz Alpsee P1 meldet 389 Belegte bei 140 Kapazitaet.
+      const ms = Date.parse(String(o['dcls:latestTimeseriesTimestamp'] || ''));
+      roh.bayern[o['@id']] = {
+        wert: Math.max(0, Math.round(kap - belegt)),
+        ts: Number.isFinite(ms) ? ms : jetzt,
+      };
+    }
+    seite = (a && a.links && a.links.next) || null;
+  }
+} catch (e) { fehler.push('bayern: ' + String(e.message || e).slice(0, 120)); }
+
 // ---------------------------------------------------------------- normalisieren
 const jetztIso = new Date(jetzt).toISOString();
 const out = [];
@@ -159,6 +204,11 @@ for (const s of SENSOREN) {
   } else if (s.m === 'ampelstufe') {
     // Stufe 1 (noch Platz) bis 5 (voll) auf 0-100 spreizen.
     auslastung = Math.round(((treffer.wert - 1) / 4) * 1000) / 10;
+  } else if (s.m === 'personen' && treffer.stufe != null) {
+    // Zuerichs eigene Vierstufen-Anzeige als Auslastung. Keine echte Kapazitaet,
+    // aber die Einschaetzung des Betreibers — und damit belastbarer als alles,
+    // was wir aus der Gaestezahl allein ableiten koennten.
+    auslastung = treffer.stufe;
   }
 
   out.push({

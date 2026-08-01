@@ -23,6 +23,9 @@ export interface Region {
   ziel: string;
   zielPlural: string;
   gruppe: Gruppe;
+  /** Uebergeordneter Verbund. Die drei bayerischen Gebiete teilen sich EINE
+   *  Kachel auf der Startseite — sieben gleichrangige Kacheln waeren Brei. */
+  dach?: "bayern";
   mitte: [number, number];
   zoom: number;
   /** Akzentfarbe und die beiden Toene des Kopf-Farbfelds */
@@ -34,6 +37,66 @@ export interface Region {
 }
 
 export const REGIONEN: Region[] = [
+  {
+    slug: "allgaeu",
+    name: "Allgäu",
+    land: "Bayern",
+    dach: "bayern",
+    aktivitaet: "Wandern, Wasserfälle, Bergbahnen",
+    frage: "Wo ist heute noch Parkplatz?",
+    versprechen:
+      "Wanderparkplätze zwischen Pfronten, Oberstdorf und dem Hörnerdorf-Gebiet. Jeder meldet Kapazität und Belegung — und hat drei Jahre eigene Historie, an der sich ablesen lässt, wann es dort typischerweise voll wird.",
+    ziel: "Parkplatz",
+    zielPlural: "Parkplätze",
+    gruppe: "allgaeu",
+    mitte: [10.35, 47.5],
+    zoom: 9.6,
+    akzent: "#15803d",
+    tonA: "#bfe6c4",
+    tonB: "#e2ecb4",
+    quelle: "BayernCloud Tourismus (CC0)",
+    quelleUrl: "https://bayerncloud.digital/daten-nutzen/api/",
+  },
+  {
+    slug: "bayerischer-wald",
+    name: "Bayerischer Wald",
+    land: "Bayern",
+    dach: "bayern",
+    aktivitaet: "Nationalpark & Arber",
+    frage: "Wo startest du heute in den Nationalpark?",
+    versprechen:
+      "Die Zufahrten zum Nationalpark und zum Arber. Besucherlenkung im Schutzgebiet heisst: Wenn ein Einstieg überläuft, soll der Andrang nicht ins Gelände ausweichen, sondern auf einen anderen Einstieg.",
+    ziel: "Parkplatz",
+    zielPlural: "Parkplätze",
+    gruppe: "bayerischer-wald",
+    mitte: [13.25, 49.0],
+    zoom: 9.6,
+    akzent: "#166534",
+    tonA: "#c3e5c7",
+    tonB: "#d8e8c0",
+    quelle: "BayernCloud Tourismus (CC0)",
+    quelleUrl: "https://bayerncloud.digital/daten-nutzen/api/",
+  },
+  {
+    slug: "berchtesgaden",
+    name: "Berchtesgadener Land",
+    land: "Bayern",
+    dach: "bayern",
+    aktivitaet: "Königssee, Kehlstein, Ramsau",
+    frage: "Wo kommst du heute noch unter?",
+    versprechen:
+      "Kehlstein, Wimbachbrücke, Hirschbichl und der Thumsee — die Zugänge zum meistbesuchten Alpenraum Deutschlands. Neun weitere Parkplätze der Region sind zwar erfasst, aber nicht mit Zählern ausgerüstet; die stehen deshalb nicht auf der Karte.",
+    ziel: "Parkplatz",
+    zielPlural: "Parkplätze",
+    gruppe: "berchtesgaden",
+    mitte: [12.93, 47.65],
+    zoom: 10.4,
+    akzent: "#0f766e",
+    tonA: "#b3e0dd",
+    tonB: "#cfe4c6",
+    quelle: "BayernCloud Tourismus (CC0)",
+    quelleUrl: "https://bayerncloud.digital/daten-nutzen/api/",
+  },
   {
     slug: "groeden",
     name: "Gröden",
@@ -116,6 +179,35 @@ export function regionFinden(slug: string): Region | undefined {
   return REGIONEN.find((r) => r.slug === slug);
 }
 
+/** Was auf der Startseite als Kachel erscheint: die bayerischen Gebiete
+ *  gebuendelt, alles andere einzeln. */
+export interface Verbund {
+  slug: string;
+  name: string;
+  land: string;
+  aktivitaet: string;
+  frage: string;
+  akzent: string;
+  tonA: string;
+  tonB: string;
+  gebiete: Region[];
+}
+
+export const VERBUND_BAYERN: Verbund = {
+  slug: "bayern",
+  name: "Bayern",
+  land: "Allgäu · Bayerischer Wald · Berchtesgaden",
+  aktivitaet: "Wanderparkplätze in drei Gebieten",
+  frage: "Wo ist heute noch Parkplatz?",
+  akzent: "#15803d",
+  tonA: "#bfe6c4",
+  tonB: "#e2ecb4",
+  gebiete: REGIONEN.filter((r) => r.dach === "bayern"),
+};
+
+/** Reihenfolge der Startseite: Bayern zuerst, dann die Einzelregionen. */
+export const EINZELREGIONEN = REGIONEN.filter((r) => r.dach !== "bayern");
+
 /**
  * Der Status, den ein Gast sieht — zweistufig.
  *
@@ -140,6 +232,10 @@ function ausAmpel(a: Ampel, kurz: string, art: GastStatus["art"]): GastStatus {
   return { ampel: a, kurz, farbe: STATUS_GAST[a].farbe, feld: STATUS_GAST[a].feld, art };
 }
 
+/** Ab dieser Belegung darf ein Ziel überhaupt „voll" heissen. Darunter ist mehr
+ *  als ein Drittel frei — und dann ist ein Ortswechsel kein Rat, sondern Spott. */
+const VOLL_AB_PROZENT = 67;
+
 /** Was die gemeldete Auslastung für sich genommen sagt — ohne jeden Vergleich. */
 function ausKapazitaet(p: SensorProps): GastStatus | null {
   if (p.metrik === "ampelstufe") {
@@ -154,6 +250,14 @@ function ausKapazitaet(p: SensorProps): GastStatus | null {
     if (p.auslastung < 90) return ausAmpel("gelb", "Wird knapp", "kapazitaet");
     return ausAmpel("rot", "Fast voll", "kapazitaet");
   }
+  // Zürich: keine Kapazität, aber die Vierstufen-Anzeige der Stadt, umgerechnet
+  // auf 12,5 / 37,5 / 62,5 / 87,5 %. Eigene Schwellen, weil eine von vier Stufen
+  // etwas anderes bedeutet als ein Prozentwert aus Kapazität und Belegung.
+  if (p.metrik === "personen" && p.auslastung != null) {
+    if (p.auslastung < 25) return ausAmpel("gruen", "Viel Platz", "kapazitaet");
+    if (p.auslastung < 75) return ausAmpel("gelb", "Gut besucht", "kapazitaet");
+    return ausAmpel("rot", "Sehr voll", "kapazitaet");
+  }
   return null;
 }
 
@@ -166,13 +270,19 @@ export function gastStatus(p: SensorProps): GastStatus {
 
   // Historischer Vergleich — die eigentliche Leistung, aber nicht um jeden Preis.
   if (p.quote != null && (p.ampel === "gruen" || p.ampel === "gelb" || p.ampel === "rot")) {
-    // Eine relative Aussage darf einer absoluten nicht widersprechen. „Viel Platz"
-    // bei 0 von 500 freien Plätzen ist für einen Gast falsch, auch wenn der Wert
-    // historisch normal ist — genau so verhält sich ein steckengebliebener Sensor,
-    // der immer dasselbe meldet. Wo beide sich widersprechen, gilt das Absolute.
-    if (kap && kap.ampel === "rot" && p.ampel !== "rot") return kap;
-    if (kap && kap.ampel === "gruen" && p.ampel === "rot" && (p.auslastung ?? 100) < 40) {
-      return ausAmpel("gelb", "Voller als sonst, aber Platz", "vergleich");
+    // Zwei Leitplanken. Beide entstanden aus Faellen, die auf der Seite standen:
+    //
+    // (a) "Viel Platz" bei 0 von 500 freien Plaetzen — historisch voellig normal,
+    //     weil der Sensor seit Wochen dasselbe meldet. Fuer einen Gast trotzdem
+    //     falsch. Ist es absolut voll, gilt das, egal was der Vergleich sagt.
+    //
+    // (b) "Voller als sonst" bei 210 von 340 freien Plaetzen. Stimmt statistisch,
+    //     taugt aber nicht als Rat: Niemand muss woandershin fahren, wo zwei
+    //     Drittel frei sind. Solange mehr als ein Drittel frei ist, heisst es
+    //     hoechstens "gut besucht" — nie "voll".
+    if (kap && kap.ampel === "rot") return kap;
+    if (p.ampel === "rot" && (p.auslastung ?? 100) < VOLL_AB_PROZENT) {
+      return ausAmpel("gelb", "Gut besucht, aber Platz", "vergleich");
     }
     return ausAmpel(p.ampel, STATUS_GAST[p.ampel].kurz, "vergleich");
   }
@@ -213,10 +323,14 @@ export function messwertText(p: SensorProps): string {
     case "ampelstufe":
       return ["", "noch Platz", "wird knapp", "wird knapp", "fast voll", "derzeit voll"][p.wert] ??
         "gemeldet";
-    case "dock_belegung":
-      return p.kapazitaet != null
-        ? `${Math.max(0, p.kapazitaet - Math.round(p.wert))} von ${p.kapazitaet} Rückgabeplätzen frei`
-        : `${Math.round(p.wert)} Räder da`;
+    case "dock_belegung": {
+      // Beide Zahlen. Fuer einen Gast ist zuerst interessant, ob er hier ein Rad
+      // BEKOMMT — die Rueckgabeplaetze zaehlen erst auf dem Rueckweg.
+      const raeder = Math.max(0, Math.round(p.wert));
+      const frei = p.kapazitaet != null ? Math.max(0, p.kapazitaet - raeder) : null;
+      const teil = raeder === 1 ? "1 Rad zum Mitnehmen" : `${raeder} Räder zum Mitnehmen`;
+      return frei != null ? `${teil} · ${frei} Rückgabeplätze frei` : teil;
+    }
     case "personen":
       return `${Math.round(p.wert)} Gäste gerade da`;
     default:

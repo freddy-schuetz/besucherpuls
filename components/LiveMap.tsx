@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import maplibregl, { Map as MlMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { AMPEL_FARBE, type StatusAntwort } from "@/lib/types";
+import { gastStatus } from "@/lib/regionen";
 
 /**
  * Karte fuer die Live-Punkte.
@@ -152,13 +153,21 @@ export default function LiveMap({
       if (!src) return;
       src.setData({
         type: "FeatureCollection",
-        features: daten.features.map((f) => ({
-          ...f,
-          properties: {
-            ...f.properties,
-            farbe: AMPEL_FARBE[f.properties.ampel] ?? AMPEL_FARBE.unbekannt,
-          },
-        })),
+        features: daten.features.map((f) => {
+          // Denselben abgeleiteten Status nehmen wie die Karten daneben. Vorher
+          // faerbte die Landkarte nach dem ROHEN ampel-Feld — Wien und Kiel
+          // standen dort komplett grau, obwohl jede Kachel gruen war, und ein
+          // Parkplatz mit 210 freien Plaetzen leuchtete rot.
+          const s = gastStatus(f.properties);
+          return {
+            ...f,
+            properties: {
+              ...f.properties,
+              ampel: s.ampel,
+              farbe: AMPEL_FARBE[s.ampel] ?? AMPEL_FARBE.unbekannt,
+            },
+          };
+        }),
       } as GeoJSON.FeatureCollection);
 
       // Beim Schaufenster bleibt der vorgegebene Ausschnitt stehen — sonst

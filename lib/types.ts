@@ -14,11 +14,15 @@ export type Quelle =
   | "st_rad"
   | "gbfs"
   | "wien_baeder"
-  | "kiel_gbfs";
+  | "kiel_gbfs"
+  | "bayern";
 
 /** Menge austauschbarer Ziele. Nur innerhalb einer Gruppe wird eine Alternative
  *  empfohlen — ein Parkhaus ersetzt kein Bad. */
 export type Gruppe =
+  | "allgaeu"
+  | "bayerischer-wald"
+  | "berchtesgaden"
   | "groeden"
   | "zuerich-baeder"
   | "wien-baeder"
@@ -33,6 +37,16 @@ export interface Alternative {
   quote: number;
   ampel: Ampel;
   km: number;
+  /** Welche Stufe der Leiter gegriffen hat — bestimmt die Begründung im Text */
+  stufe: "zugang" | "ziel";
+}
+
+/** Wofür ein Parkplatz da ist. Einmalig bestimmt in scripts/ziele_anreichern.py
+ *  und in sensors.json eingefroren — zur Laufzeit wird nichts abgeleitet. */
+export interface Ziel {
+  art: "bergbahn" | "nationalpark" | "wasser" | "wandern" | "anreise" | "ort" | "sonstiges";
+  /** Interner Schlüssel für Punkte, die dasselbe Ziel erschliessen */
+  einstieg: string | null;
 }
 
 export interface SensorProps {
@@ -86,6 +100,9 @@ export interface SensorProps {
   sparkline: [string, number][];
   /** Leerere Alternative derselben Gruppe, sofern es eine gibt */
   alternative: Alternative | null;
+  /** Ruhigere Stunde aus dem typischen Tagesverlauf — Stufe 2 der Leiter */
+  spaeter: { stunde: number; anteil: number } | null;
+  ziel?: Ziel | null;
 }
 
 export interface StatusAntwort {
@@ -98,7 +115,9 @@ export interface StatusAntwort {
     veraltet: number;
     im_aufbau: number;
     geschlossen: number;
+    gedaempft: number;
     mit_empfehlung: number;
+    zeit_tipps: number;
   };
   features: {
     type: "Feature";
@@ -137,6 +156,7 @@ export const QUELLE_LABEL: Record<Quelle, string> = {
   gbfs: "nextbike (GBFS)",
   wien_baeder: "Stadt Wien",
   kiel_gbfs: "SprottenFlotte KielRegion (GBFS)",
+  bayern: "BayernCloud Tourismus (CC0)",
 };
 
 /** „vor 14 Minuten", „vor 2 Tagen" */

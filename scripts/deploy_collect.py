@@ -45,16 +45,17 @@ def n8n():
     return base, {"X-N8N-API-KEY": env["N8N_API_KEY"], "Content-Type": "application/json"}
 
 
-def luzern_key():
-    k = os.environ.get("LUZERN_API_KEY")
+def geheim(name):
+    """Zugangsschluessel aus Umgebung oder .env.local — nie aus dem Repo."""
+    k = os.environ.get(name)
     if k:
         return k.strip()
     if os.path.exists(ENVDATEI):
         for z in io.open(ENVDATEI, encoding="utf-8"):
-            m = re.match(r"\s*LUZERN_API_KEY\s*=\s*(.+)", z)
+            m = re.match(rf"\s*{name}\s*=\s*(.+)", z)
             if m:
                 return m.group(1).strip().strip('"').strip("'")
-    sys.exit("LUZERN_API_KEY weder in der Umgebung noch in .env.local gefunden")
+    sys.exit(f"{name} weder in der Umgebung noch in .env.local gefunden")
 
 
 BASE, H = n8n()
@@ -66,12 +67,13 @@ schmal = [{"i": s["id"], "q": s["quelle"], "r": s.get("quelle_id") or s["name"],
            "m": s["metrik"], "k": s.get("kapazitaet")} for s in sensoren]
 
 code = io.open(CODE, encoding="utf-8").read()
-for platzhalter in ("/*__SENSOREN__*/[]", "/*__LUZERN_KEY__*/"):
+for platzhalter in ("/*__SENSOREN__*/[]", "/*__LUZERN_KEY__*/", "/*__BCT_TOKEN__*/"):
     if platzhalter not in code:
         sys.exit(f"Platzhalter {platzhalter} fehlt in collect_node.js")
 code = code.replace("/*__SENSOREN__*/[]",
                     json.dumps(schmal, ensure_ascii=False, separators=(",", ":")))
-code = code.replace("/*__LUZERN_KEY__*/", luzern_key())
+code = code.replace("/*__LUZERN_KEY__*/", geheim("LUZERN_API_KEY"))
+code = code.replace("/*__BCT_TOKEN__*/", geheim("BAYERNCLOUD_TOKEN"))
 print(f"{len(sensoren)} Sensoren injiziert, Code {len(code)/1024:.1f} KB")
 
 quellen = {}

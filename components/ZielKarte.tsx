@@ -113,13 +113,13 @@ export default function ZielKarte({
         </p>
       )}
 
-      {!p.alternative && spaeter && (
+      {!p.alternative && p.spaeter && (
         <p
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
         >
-          Ab <strong className="font-semibold zahl">{spaeter.stunde}:00 Uhr</strong> typischerweise
-          rund {spaeter.anteil} % ruhiger
+          Ab <strong className="font-semibold zahl">{p.spaeter.stunde}:00 Uhr</strong>{" "}
+          typischerweise rund {p.spaeter.anteil} % ruhiger
         </p>
       )}
     </button>

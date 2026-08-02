@@ -24,6 +24,11 @@ import { resolve } from "node:path";
 const { chromium } = createRequire(resolve("../dmo-demo/package.json"))("playwright");
 
 const BASIS = process.argv[2] ?? "http://localhost:3311";
+const gebietSlug2 = {
+  allgaeu: "allgaeu", "bayerischer-wald": "bayerischer-wald",
+  berchtesgaden: "berchtesgaden", groeden: "groeden", "zuerich-baeder": "zuerich",
+  "wien-baeder": "wien", "kiel-foerde": "kieler-foerde",
+};
 const AUS = "scripts/.ui";
 mkdirSync(AUS, { recursive: true });
 
@@ -46,7 +51,8 @@ async function seite(breite, hoehe) {
 
   // --- 6: keine Empfehlung ohne Eingabe
   const koerper = await p.textContent("main");
-  const verbotene = ["Heute besser dorthin", "Jetzt losfahren", "Lieber später", "Gleiches Ziel, anderer Zugang"];
+  const verbotene = ["besser dorthin", "ruhiger ist es bei", "Jetzt losfahren",
+                     "Lieber später", "Gleiches Ziel, anderer Zugang"];
   const gefunden = verbotene.filter((v) => koerper.includes(v));
   console.log(`6 KEIN VORSCHLAG OHNE FRAGE`);
   if (gefunden.length) {
@@ -94,7 +100,7 @@ async function seite(breite, hoehe) {
   await p.waitForTimeout(800);
   const nachher = await p.textContent("main");
   const hatAnsage = verbotene.some((v) => nachher.includes(v)) || nachher.includes("Gerade voll")
-    || nachher.includes("Noch ohne Vergleich");
+    || nachher.includes("Noch ohne Vergleich") || nachher.includes("Was dich hier erwartet");
   console.log(`  ${hatAnsage ? "OK " : "FEHL"} Antwortkarte erscheint nach Auswahl`);
   if (!hatAnsage) befunde.push("Nach Auswahl eines Ziels erscheint keine Ansage");
   await p.screenshot({ path: `${AUS}/3-antwort.png` });
@@ -126,7 +132,10 @@ async function seite(breite, hoehe) {
     await p.waitForTimeout(700);
     await p.screenshot({ path: `${AUS}/4-empfehlung.png` });
 
-    const knopf = await p.$('button:has-text("Heute besser dorthin")');
+    // Die Ueberschrift traegt jetzt den Zustand des AUSGANGSZIELS ("Hier ist
+    // voll — besser dorthin" bzw. "Wird eng — ruhiger ist es bei"), damit ein
+    // gruener Kasten nicht ueber einem vollen Parkplatz steht.
+    const knopf = await p.$(`button:has-text("${kandidat.alternative.name}")`);
     if (!knopf) {
       console.log(`  FEHL ${kandidat.name}: Empfehlungskasten ist kein Knopf`);
       befunde.push(`Empfehlung bei "${kandidat.name}" ist nicht klickbar`);
@@ -141,6 +150,39 @@ async function seite(breite, hoehe) {
       if (!ok) befunde.push(`Klick auf die Empfehlung fuehrt nicht zum empfohlenen Ziel`);
       await p.screenshot({ path: `${AUS}/5-nach-klick.png` });
     }
+    await ctx.close();
+  }
+}
+
+// --------------------------------------------- Farbe des Empfehlungskastens
+// Der Kasten war durchgehend gruen — auch ueber "0 von 10 Plaetzen frei, Voll".
+// Ein grosses gruenes Feld liest sich dann als "hier ist alles in Ordnung".
+{
+  const daten = await (await fetch(`${BASIS}/api/status`)).json();
+  const voll = (daten.ziele ?? []).find(
+    (z) => z.alternative && z.ampel === "rot" && gebietSlug2[z.gebiet]);
+  console.log(`
+FARBE DES EMPFEHLUNGSKASTENS`);
+  if (!voll) {
+    console.log("  gerade kein volles Ziel mit Empfehlung — nicht pruefbar");
+  } else {
+    const { ctx, p } = await seite(1440, 1000);
+    await p.goto(`${BASIS}/region/${gebietSlug2[voll.gebiet]}`, { waitUntil: "networkidle" });
+    await p.waitForSelector("text=Wohin willst du?", { timeout: 30_000 });
+    await p.fill("input", voll.name.slice(0, 12));
+    await p.waitForTimeout(500);
+    await p.click(`ul li button:has-text("${voll.name.slice(0, 12)}")`);
+    await p.waitForTimeout(900);
+    const bg = await p.evaluate(() => {
+      const b = [...document.querySelectorAll("button")]
+        .find((x) => /besser dorthin|ruhiger ist es bei/.test(x.textContent || ""));
+      return b ? getComputedStyle(b).backgroundColor : null;
+    });
+    // var(--color-voll-weich) = #fdecec -> rgb(253, 236, 236)
+    const istRot = bg && /^rgb\(25[0-5], 2[0-4]\d, 2[0-4]\d\)$/.test(bg);
+    console.log(`  ${istRot ? "OK " : "FEHL"} ${voll.name}: Kasten ${bg}`);
+    if (!istRot) befunde.push(`Empfehlungskasten bei vollem Ziel ist ${bg}, nicht rot`);
+    await p.screenshot({ path: `${AUS}/6-kasten-farbe.png` });
     await ctx.close();
   }
 }

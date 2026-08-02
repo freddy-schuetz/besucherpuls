@@ -599,6 +599,14 @@ function lenken(leihen) {
     const meine = fuellungFuer(z, leihen);
     if (meineAmpel !== 'rot' && !(meineAmpel === 'gelb' && (meine ?? 0) >= LENKEN_AB)) continue;
 
+    // STUFE 2 — anderer Zeitpunkt. Kein Ortswechsel noetig, also vor dem
+    // Umleiten. Nur im normalen Durchgang: Ein Leihrad-Bestand folgt keinem
+    // Tagesverlauf, den man vorhersagen koennte.
+    if (!leihen) {
+      z.spaeter = spaeterAls(z.tagesgang);
+      if (z.spaeter) zeitTipps++;
+    }
+
     const kandidaten = ziele
       .filter((o) => {
         if (o.id === z.id || o.gebiet !== z.gebiet) return false;
@@ -615,7 +623,18 @@ function lenken(leihen) {
       });
     if (!kandidaten.length) continue;
 
-    const guete = (x) => (fuellungFuer(x.z, leihen) ?? 50) + x.km * 10;
+    // NAEHE SCHLAEGT LEERE — deutlich.
+    //
+    // Die Formel hiess "Fuellung + km x 10": zehn Prozentpunkte leerer wogen
+    // einen Kilometer auf. Damit gewann bei der Passhoehe Mittelalpe die
+    // Scheuen Alpe (2,8 km, voellig leer) gegen Obermaiselstein-Grasgehren
+    // (0,7 km, knapp die Haelfte frei) — rechnerisch richtig, als Rat falsch.
+    // Wer 335 freie Plaetze in 700 Metern haben kann, faehrt nicht 2,8 km.
+    //
+    // Jetzt entspricht ein Kilometer Umweg 50 Prozentpunkten. Damit entscheidet
+    // die Entfernung, solange der Kandidat ueberhaupt genug Platz hat — und das
+    // stellt `hatPlatz` schon sicher (hoechstens 70 % belegt).
+    const guete = (x) => x.km + (fuellungFuer(x.z, leihen) ?? 50) / 50;
     kandidaten.sort((x, y) => guete(x) - guete(y));
     const b = kandidaten[0];
     const eintrag = {
@@ -633,57 +652,17 @@ function lenken(leihen) {
   }
 }
 
-// Die Leih-Absicht laeuft ueber dieselbe Funktion — kein zweiter Regelsatz.
+// BEIDE Absichten ueber DIESELBE Funktion.
+//
+// Hier stand bis eben eine zweite Schleife mit derselben Logik und einer
+// eigenen Gueteformel — `lenken(false)` wurde nie aufgerufen. Genau der
+// Fehler, der die Demo schon einmal gekostet hat: zwei Wahrheiten
+// nebeneinander, von denen nur eine gepflegt wird. Folge war, dass die
+// verbesserte Gewichtung "Naehe vor Leere" wirkungslos blieb und die
+// Passhoehe Mittelalpe weiter 2,8 km weit geschickt hat, obwohl 700 m
+// entfernt 335 Plaetze frei waren.
 lenken(true);
-
-for (const z of ziele) {
-  // Rot lenkt immer. Gelb nur, wenn auch absolut wenig frei ist — sonst
-  // entstehen Umleitungen von Plaetzen, an denen zwei Drittel leer stehen.
-  // Wo es gar keine Kapazitaet gibt (Zuerich, Luzern, Radzaehler), ist der
-  // Vergleich das einzige Signal; dort zaehlt rot allein.
-  if (z.ampel !== 'rot' && !(z.ampel === 'gelb' && (fuellung(z) ?? 0) >= LENKEN_AB)) continue;
-
-  // STUFE 2 — anderer Zeitpunkt. Kein Ortswechsel noetig, also vor dem Umleiten.
-  z.spaeter = spaeterAls(z.tagesgang);
-  if (z.spaeter) zeitTipps++;
-
-  // STUFE 3 — vergleichbares Ziel. Zwei Ziele sind tauschbar, wenn sich ihre
-  // Kategorien ueberschneiden: Ein Nationalpark-Einstieg zaehlt AUCH als Wandern,
-  // ein Bahnhof niemals als Badesee. Das steckt in `arten`, nicht in einer
-  // deutschen Stichwortliste — deshalb funktioniert es auch in Groeden.
-  const meine = fuellung(z);
-  const kandidaten = ziele
-    .filter((o) => o.id !== z.id
-      && o.gebiet === z.gebiet
-      && (o.arten || []).some((a) => (z.arten || []).includes(a))
-      && hatPlatz(o))
-    .map((o) => ({ z: o, km: entfernungKm([z.lon, z.lat], [o.lon, o.lat]) }))
-    .filter((x) => x.km <= (MAX_KM[z.art] || 3))
-    // Der Umweg muss sich lohnen. Ohne diese Bedingung schickte die Seite
-    // Gaeste von einem zu 12 % belegten Bahnhofsparkplatz zu einem zu 16,7 %
-    // belegten — messbar schlechter, und als Rat schlicht laecherlich.
-    .filter((x) => {
-      const seine = fuellung(x.z);
-      return meine == null || seine == null || meine - seine >= MIN_ABSTAND;
-    });
-
-  if (!kandidaten.length) continue;
-
-  // Naehe schlaegt Leere: zehn Prozentpunkte leerer wiegen einen Kilometer auf.
-  const guete = (x) => (fuellung(x.z) ?? 50) + x.km * 10;
-  kandidaten.sort((x, y) => guete(x) - guete(y));
-  const b = kandidaten[0];
-  z.alternative = {
-    id: b.z.id, name: b.z.name, art: b.z.art,
-    ampel: b.z.ampel, status: b.z.status,
-    auslastung: b.z.auslastung, quote: b.z.quote,
-    frei_plaetze: b.z.frei_plaetze, kapazitaet: b.z.kapazitaet,
-    lat: b.z.lat, lon: b.z.lon,
-    km: b.km,
-    stufe: 'ziel',
-  };
-  mitEmpfehlung++;
-}
+lenken(false);
 
 return [{
   json: {

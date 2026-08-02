@@ -63,8 +63,12 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const [zeit, setZeit] = useState("jetzt");
   // Bei Leihrädern: „Rad ausleihen" ist der häufigere Fall und deshalb Vorgabe.
   const [leihen, setLeihen] = useState(true);
+  // Welcher einzelne Zugang auf der Karte hervorgehoben wird — gesetzt, wenn
+  // der Gast in der Zugangsliste auf einen Parkplatz tippt.
+  const [fokusZugang, setFokusZugang] = useState<{ id: string; lat: number; lon: number } | null>(null);
   const laeuft = useRef(false);
   const antwortBereich = useRef<HTMLDivElement | null>(null);
+  const kartenBereich = useRef<HTMLDivElement | null>(null);
 
   const holen = useCallback(async () => {
     if (laeuft.current) return;
@@ -162,6 +166,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
 
   const waehlen = useCallback((id: string) => {
     setGewaehlt(id);
+    setFokusZugang(null);        // ein neues Ziel hebt die Zugangsauswahl auf
     // Erst im nächsten Frame scrollen — sonst steht die Antwortkarte noch nicht.
     requestAnimationFrame(() =>
       antwortBereich.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
@@ -331,19 +336,41 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
                         Zugänge
                       </p>
-                      <ul className="mt-3 space-y-2.5">
+                      {/* Jeder Zugang ist antippbar und führt auf der Karte
+                          direkt zu diesem Parkplatz — sonst ist die Liste eine
+                          Sackgasse: Man liest „Achtal P1", weiss aber nicht, wo
+                          das gegenüber P2 und P3 liegt. */}
+                      <ul className="mt-3 space-y-1">
                         {detail.zugaenge.map((zg) => (
-                          <li key={zg.id} className="flex items-center gap-3 text-sm">
-                            <span
-                              className="h-2.5 w-2.5 shrink-0 rounded-full"
-                              style={{ background: STATUS_FARBE[zg.ampel].farbe }}
-                            />
-                            <span className="min-w-0 flex-1 truncate text-tinte">{zg.name}</span>
-                            <span className="zahl shrink-0 text-tinte-weich">
-                              {zg.auslastung != null && zg.kapazitaet
-                                ? `${Math.max(0, Math.round(zg.kapazitaet - (zg.auslastung / 100) * zg.kapazitaet))} frei`
-                                : zg.status.kurz}
-                            </span>
+                          <li key={zg.id}>
+                            <button
+                              onClick={() => {
+                                setFokusZugang({ id: zg.id, lat: zg.lat, lon: zg.lon });
+                                kartenBereich.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "center",
+                                });
+                              }}
+                              aria-pressed={fokusZugang?.id === zg.id}
+                              className={`flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left text-sm transition hover:bg-flaeche ${
+                                fokusZugang?.id === zg.id ? "bg-flaeche" : ""
+                              }`}
+                            >
+                              <span
+                                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                                style={{ background: STATUS_FARBE[zg.ampel].farbe }}
+                              />
+                              <span className="min-w-0 flex-1 truncate text-tinte">{zg.name}</span>
+                              <span className="zahl shrink-0 text-tinte-weich">
+                                {zg.auslastung != null && zg.kapazitaet
+                                  ? `${Math.max(0, Math.round(zg.kapazitaet - (zg.auslastung / 100) * zg.kapazitaet))} frei`
+                                  : zg.status.kurz}
+                              </span>
+                              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden className="shrink-0 text-tinte-zart">
+                                <path d="M8 1.6c-2.4 0-4.3 1.9-4.3 4.3 0 3.2 4.3 8.5 4.3 8.5s4.3-5.3 4.3-8.5c0-2.4-1.9-4.3-4.3-4.3Z" stroke="currentColor" strokeWidth="1.4" />
+                                <circle cx="8" cy="5.9" r="1.5" stroke="currentColor" strokeWidth="1.4" />
+                              </svg>
+                            </button>
                           </li>
                         ))}
                       </ul>
@@ -474,7 +501,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
         </section>
 
         {/* ---------------------------------------------------------- Karte */}
-        <section className="pb-14 sm:pb-16">
+        <section ref={kartenBereich} className="scroll-mt-4 pb-14 sm:pb-16">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <h2 className="text-xl font-semibold text-tinte">Auf der Karte</h2>
             <p className="text-sm text-tinte-zart">
@@ -491,6 +518,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
               start={kartenStart}
               stunde={stunde}
               leihen={leihen}
+              fokusZugang={fokusZugang}
               ausschnittSchluessel={`${kategorie ?? "alle"}|${zeit}|${leihen}`}
             />
           </div>

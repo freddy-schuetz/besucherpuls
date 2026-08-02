@@ -176,12 +176,28 @@ export default function Ansage({
         : a.frei_plaetze != null && a.kapazitaet != null
           ? `${a.frei_plaetze} von ${a.kapazitaet} Plätzen frei`
           : kleinAnfang(a.status.kurz);
+    // DIE FARBE GEHOERT DEM AUSGANGSZIEL, nicht der Alternative.
+    //
+    // Der Kasten war durchgehend gruen — auch unter "Passhoehe Mittelalpe,
+    // 0 von 10 Plaetzen frei, Voll". Das grosse gruene Feld las sich dann wie
+    // "hier ist alles in Ordnung", obwohl es das Gegenteil sagen sollte. Jetzt
+    // traegt der Kasten den Zustand des Ortes, an dem der Gast gerade steht;
+    // die Alternative bekommt ihre eigene gruene Marke im Inneren.
+    const rot = eigene.ampel === "rot";
+    const feld = rot ? "var(--color-voll-weich)" : "var(--color-mittel-weich)";
+    const ton = rot ? "#a02b39" : "#95580f";
+    const tonKraeftig = rot ? "#8a1f2c" : "#7c4708";
+
     const inhalt = (
       <>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "#0b6b46" }}>
-          {leihen && z.leihen ? "Hier gibt es Räder" : "Heute besser dorthin"}
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: ton }}>
+          {leihen && z.leihen
+            ? "Kein Rad hier — welche gibt es bei"
+            : rot
+              ? "Hier ist voll — besser dorthin"
+              : "Wird eng — ruhiger ist es bei"}
         </p>
-        <p className="mt-2 flex items-center gap-2 text-lg font-semibold leading-snug" style={{ color: "#0b5138" }}>
+        <p className="mt-2 flex items-center gap-2 text-lg font-semibold leading-snug" style={{ color: tonKraeftig }}>
           {a.name}
           {onZiel && (
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden className="shrink-0 opacity-70">
@@ -189,8 +205,15 @@ export default function Ansage({
             </svg>
           )}
         </p>
-        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "#0b6b46" }}>
-          {ART_TEXT[a.art]} · {a.km} km entfernt · dort {platz}
+        <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm leading-relaxed" style={{ color: ton }}>
+          <span>{ART_TEXT[a.art]} · {a.km} km entfernt ·</span>
+          {/* Die gruene Marke gehoert der Alternative — dort ist Platz, hier nicht. */}
+          <span
+            className="rounded-full px-2 py-0.5 text-[13px] font-semibold"
+            style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
+          >
+            dort {platz}
+          </span>
         </p>
         {/* Warum das passt — aus den geprüften Fakten des Ziels formuliert.
             Fehlt der Satz, trägt die Zeile darüber die Aussage allein; es
@@ -198,7 +221,7 @@ export default function Ansage({
         {a.begruendung && (
           <p
             className="mt-2 border-t pt-2 text-sm leading-relaxed"
-            style={{ color: "#0b6b46", borderColor: "rgba(11,107,70,0.18)" }}
+            style={{ color: ton, borderColor: "rgba(0,0,0,0.12)" }}
           >
             {a.begruendung}
           </p>
@@ -209,12 +232,12 @@ export default function Ansage({
       <button
         onClick={() => onZiel(a.id)}
         className="w-full rounded-2xl p-5 text-left transition hover:brightness-[0.97]"
-        style={{ background: "var(--color-frei-weich)" }}
+        style={{ background: feld }}
       >
         {inhalt}
       </button>
     ) : (
-      <div className="rounded-2xl p-5" style={{ background: "var(--color-frei-weich)" }}>
+      <div className="rounded-2xl p-5" style={{ background: feld }}>
         {inhalt}
       </div>
     );

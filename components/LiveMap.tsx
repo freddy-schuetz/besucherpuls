@@ -6,6 +6,18 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { AMPEL_FARBE, type ZielProps } from "@/lib/types";
 import { statusFuerZeit } from "@/lib/regionen";
 
+/** „Parkplatz Alpsee P3" neben dem Ziel „Alpsee" → „P3".
+ *  Den vollen Namen an jeden Ring zu schreiben, macht die Karte unlesbar. */
+function kurzName(zugang: string, ziel: string): string {
+  let n = zugang.replace(/^(Wander)?[Pp]arkplatz\s+/i, "").trim();
+  const stamm = ziel.replace(/\s+/g, " ").trim();
+  if (stamm && n.toLowerCase().startsWith(stamm.toLowerCase())) {
+    n = n.slice(stamm.length).trim();
+  }
+  n = n.replace(/^(des|der|am|an|im|in)\s+/i, "").trim();
+  return n || zugang;
+}
+
 /**
  * Karte fuer die Ziele.
  *
@@ -31,6 +43,7 @@ export default function LiveMap({
   start,
   stunde,
   leihen,
+  fokusZugang,
   ausschnittSchluessel,
 }: {
   ziele: ZielProps[];
@@ -42,6 +55,9 @@ export default function LiveMap({
   stunde?: number | null;
   /** Nur bei Leihrädern: Absicht des Gastes, bestimmt ebenfalls die Farbe. */
   leihen?: boolean;
+  /** Ein einzelner Zugang, auf den die Karte fliegen soll — gesetzt, wenn der
+   *  Gast in der Zugangsliste auf einen Parkplatz tippt. */
+  fokusZugang?: { id: string; lat: number; lon: number } | null;
   /**
    * Ändert sich genau dann, wenn sich die Auswahl semantisch ändert
    * (Kategorie oder Zeit). Nur DARAUF wird neu zentriert — nicht auf `ziele`,
@@ -186,6 +202,45 @@ export default function LiveMap({
         },
       });
 
+      // Beschriftung der Zugaenge. Ohne sie sieht man beim Herankommen zwar
+      // vier Ringe am Alpsee, weiss aber nicht, welcher P1 und welcher P4 ist —
+      // und genau das ist die Information, die einen Gast dorthin bringt.
+      m.addLayer({
+        id: "zugaenge-schrift",
+        type: "symbol",
+        source: "zugaenge",
+        minzoom: 11.5,
+        layout: {
+          "text-field": ["get", "kurz"],
+          "text-size": 11,
+          "text-offset": [0, 1.1],
+          "text-anchor": "top",
+          "text-max-width": 8,
+          "text-allow-overlap": false,
+          "text-optional": true,
+        },
+        paint: {
+          "text-color": "#43574f",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.5,
+        },
+      });
+
+      // Ring um den fokussierten Zugang — das Gegenstueck zum Halo am Ziel.
+      m.addLayer({
+        id: "zugaenge-halo",
+        type: "circle",
+        source: "zugaenge",
+        filter: ["==", ["get", "id"], "___keiner___"],
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 9, 13, 13],
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-stroke-width": 2.5,
+          "circle-stroke-color": "#0c1a17",
+          "circle-stroke-opacity": 0.8,
+        },
+      });
+
       // Name am Punkt, sobald man nah genug ist. Ohne Beschriftung muss man
       // jeden Punkt antippen, um zu wissen, was er ist — bei einer Karte, die
       // Ziele zeigt statt Messstellen, ist der Name die halbe Information.
@@ -288,6 +343,9 @@ export default function LiveMap({
               properties: {
                 id: g.id,
                 zielId: z.id,
+                // Der Zielname steht schon am Punkt daneben — auf dem Ring
+                // interessiert nur, WELCHER Zugang das ist ("P3", "Oybele").
+                kurz: kurzName(g.name, z.name),
                 farbe: AMPEL_FARBE[g.ampel] ?? AMPEL_FARBE.unbekannt,
               },
             })),
@@ -370,6 +428,19 @@ export default function LiveMap({
     zuletztGeflogen.current = ausgewaehlt;
     m.easeTo({ center: [z.lon, z.lat], zoom: Math.max(m.getZoom(), 11), duration: 700 });
   }, [ausgewaehlt]);
+
+  // --- Einen einzelnen Zugang anfliegen und hervorheben
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !bereit.current || !m.getLayer("zugaenge-halo")) return;
+    m.setFilter("zugaenge-halo", ["==", ["get", "id"], fokusZugang?.id ?? "___keiner___"]);
+    if (!fokusZugang) return;
+    m.easeTo({
+      center: [fokusZugang.lon, fokusZugang.lat],
+      zoom: Math.max(m.getZoom(), 13),
+      duration: 700,
+    });
+  }, [fokusZugang]);
 
   // data-ziele traegt die Zahl der eingespielten Punkte nach aussen. Die Karte
   // zeichnet auf Canvas — ohne diesen Wert laesst sich von aussen nicht pruefen,

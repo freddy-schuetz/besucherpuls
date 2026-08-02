@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
+import HinterDemTool from "@/components/HinterDemTool";
 import Wortmarke from "@/components/Wortmarke";
 import "./globals.css";
 
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
         {children}
+        <HinterDemTool />
         <footer className="border-t border-linie bg-karte">
           <div className="mx-auto max-w-6xl px-6 py-10">
             <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-7">

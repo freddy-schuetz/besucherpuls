@@ -2778,8 +2778,9 @@
       "id": "wien-familienbad-hofferplatz",
       "name": "Familienbad Hofferplatz",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2797,8 +2798,9 @@
       "id": "wien-familienbad-hugo-wolf-park",
       "name": "Familienbad-Hugo-Wolf-Park",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2816,8 +2818,9 @@
       "id": "wien-familienbad-gudrunstrasse",
       "name": "Familienbad Gudrunstraße",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2835,8 +2838,9 @@
       "id": "wien-familienbad-herderplatz",
       "name": "Familienbad Herderplatz",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2870,8 +2874,9 @@
       "id": "wien-familienbad-waehringer-park",
       "name": "Familienbad Währinger Park",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2889,8 +2894,9 @@
       "id": "wien-familienbad-augarten",
       "name": "Familienbad Augarten",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2908,8 +2914,9 @@
       "id": "wien-familienbad-stammersdorf",
       "name": "Familienbad Stammersdorf",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2927,8 +2934,9 @@
       "id": "wien-familienbad-strebersdorf",
       "name": "Familienbad Strebersdorf",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -2946,8 +2954,9 @@
       "id": "wien-strandbad-alte-donau",
       "name": "Strandbad Alte Donau",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -2959,8 +2968,8 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Beachvolleyballplatz",
-          "<br />Rasenplatz"
+          "Beachvolleyballplatz",
+          "Rasenplatz"
         ],
         "drinnen": false
       }
@@ -2969,8 +2978,9 @@
       "id": "wien-kombibad-brigittenau",
       "name": "Kombibad Brigittenau",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "hallenbad",
       "arten": [
+        "hallenbad",
         "see"
       ],
       "ort": "Wien",
@@ -2982,7 +2992,7 @@
       "info": {
         "badtyp": "Hallenbad",
         "ausstattung": [
-          "<br />Tischtennis"
+          "Tischtennis"
         ],
         "drinnen": true
       }
@@ -2991,8 +3001,9 @@
       "id": "wien-laaerbergbad",
       "name": "Laaerbergbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3004,10 +3015,10 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />2 Tischtennis",
-          "<br />Beachvolleyballplatz",
-          "<br />3 Rasen",
-          "<br />Basketball"
+          "2 Tischtennis",
+          "Beachvolleyballplatz",
+          "3 Rasen",
+          "Basketball"
         ],
         "drinnen": false
       }
@@ -3016,8 +3027,9 @@
       "id": "wien-strandbad-gaensehaeufel",
       "name": "Strandbad Gänsehäufel",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3029,10 +3041,10 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Hochseilkletterpark",
-          "<br />Beachvolleyballplatz",
-          "<br />Rasenplatz",
-          "<br />Tischtennis"
+          "Hochseilkletterpark",
+          "Beachvolleyballplatz",
+          "Rasenplatz",
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3041,8 +3053,9 @@
       "id": "wien-liesinger-bad",
       "name": "Liesinger Bad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3054,7 +3067,7 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Tischtennis"
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3063,8 +3076,9 @@
       "id": "wien-schafbergbad",
       "name": "Schafbergbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3076,10 +3090,10 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Rasen",
-          "<br />Volleyballplatz",
-          "<br />1 Beachvolleyballplatz",
-          "<br />Tischtennis"
+          "Rasen",
+          "Volleyballplatz",
+          "1 Beachvolleyballplatz",
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3088,8 +3102,9 @@
       "id": "wien-hietzinger-bad",
       "name": "Hietzinger Bad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3101,9 +3116,8 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />Hallenbad",
-          "<br />Beachvolleyballfeld",
-          "<br />Rasen"
+          "Beachvolleyballfeld",
+          "Rasen"
         ],
         "drinnen": false
       }
@@ -3112,8 +3126,9 @@
       "id": "wien-kombibad-joergerbad",
       "name": "Kombibad Jörgerbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "hallenbad",
       "arten": [
+        "hallenbad",
         "see"
       ],
       "ort": "Wien",
@@ -3131,8 +3146,9 @@
       "id": "wien-kombibad-simmering",
       "name": "Kombibad Simmering",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3144,8 +3160,8 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />Beachvolleyballfeld",
-          "<br />Kunstrasenplatz"
+          "Beachvolleyballfeld",
+          "Kunstrasenplatz"
         ],
         "drinnen": false
       }
@@ -3154,8 +3170,9 @@
       "id": "wien-amalienbad",
       "name": "Amalienbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "hallenbad",
       "arten": [
+        "hallenbad",
         "see"
       ],
       "ort": "Wien",
@@ -3173,8 +3190,9 @@
       "id": "wien-kombibad-donaustadt",
       "name": "Kombibad Donaustadt",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3186,7 +3204,7 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />Tischtennis"
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3195,8 +3213,9 @@
       "id": "wien-familienbad-reinlgasse",
       "name": "Familienbad Reinlgasse",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -3214,8 +3233,9 @@
       "id": "wien-strandbad-angelibad",
       "name": "Strandbad Angelibad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3227,10 +3247,10 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Beachvolleyballfeld",
-          "<br />Rasen",
-          "<br />Hartplatz",
-          "<br />Tischtennis"
+          "Beachvolleyballfeld",
+          "Rasen",
+          "Hartplatz",
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3239,8 +3259,9 @@
       "id": "wien-kongressbad",
       "name": "Kongreßbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3252,8 +3273,8 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />1 Beachsoccerplatz",
-          "<br />1 Rasenplatz"
+          "1 Beachsoccerplatz",
+          "1 Rasenplatz"
         ],
         "drinnen": false
       }
@@ -3262,8 +3283,9 @@
       "id": "wien-hallenbad-huetteldorf",
       "name": "Hallenbad Hütteldorf",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "hallenbad",
       "arten": [
+        "hallenbad",
         "see"
       ],
       "ort": "Wien",
@@ -3281,8 +3303,9 @@
       "id": "wien-familienbad-schweizergarten",
       "name": "Familienbad Schweizergarten",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "familienbad",
       "arten": [
+        "familienbad",
         "see"
       ],
       "ort": "Wien",
@@ -3300,8 +3323,9 @@
       "id": "wien-hallenbad-floridsdorf",
       "name": "Hallenbad Floridsdorf",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "hallenbad",
       "arten": [
+        "hallenbad",
         "see"
       ],
       "ort": "Wien",
@@ -3319,8 +3343,9 @@
       "id": "wien-hoepflerbad",
       "name": "Höpflerbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3332,10 +3357,10 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Beachvolleyballplatz",
-          "<br />2 Tischtennis",
-          "<br />Fitnessparkur",
-          "<br />Rasenplatz"
+          "Beachvolleyballplatz",
+          "2 Tischtennis",
+          "Fitnessparkur",
+          "Rasenplatz"
         ],
         "drinnen": false
       }
@@ -3344,8 +3369,9 @@
       "id": "wien-ottakringerbad",
       "name": "Ottakringerbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3357,8 +3383,8 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />1 Rasenplatz",
-          "<br />1 Beachvolleyballplatz"
+          "1 Rasenplatz",
+          "1 Beachvolleyballplatz"
         ],
         "drinnen": false
       }
@@ -3367,8 +3393,9 @@
       "id": "wien-krapfenwaldl-bad",
       "name": "Krapfenwaldl Bad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3380,10 +3407,10 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Hartplatz",
-          "<br />Wiese",
-          "<br />Beachvolleyballplatz",
-          "<br />Tischtennis"
+          "Hartplatz",
+          "Wiese",
+          "Beachvolleyballplatz",
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3392,8 +3419,9 @@
       "id": "wien-theresienbad",
       "name": "Theresienbad",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3405,9 +3433,9 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />Hallen- und Sommerbad",
-          "<br />Tischtennis",
-          "<br />Fitnessgeräte"
+          "Hallen- und Sommerbad",
+          "Tischtennis",
+          "Fitnessgeräte"
         ],
         "drinnen": false
       }
@@ -3416,8 +3444,9 @@
       "id": "wien-sommerbad-hadersdorf-weidlingau",
       "name": "Sommerbad Hadersdorf-Weidlingau",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "sommerbad",
       "arten": [
+        "sommerbad",
         "see"
       ],
       "ort": "Wien",
@@ -3429,8 +3458,8 @@
       "info": {
         "badtyp": "Sommerbad",
         "ausstattung": [
-          "<br />Fitness",
-          "<br />Tischtennis"
+          "Fitness",
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3439,8 +3468,9 @@
       "id": "wien-kombibad-grossfeldsiedlung",
       "name": "Kombibad Großfeldsiedlung",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3452,9 +3482,9 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />Rasen",
-          "<br />Beachvolleyballplatz",
-          "<br />Tischtennis"
+          "Rasen",
+          "Beachvolleyballplatz",
+          "Tischtennis"
         ],
         "drinnen": false
       }
@@ -3463,8 +3493,9 @@
       "id": "wien-kombibad-doebling",
       "name": "Kombibad Döbling",
       "gebiet": "wien-baeder",
-      "art": "see",
+      "art": "kombibad",
       "arten": [
+        "kombibad",
         "see"
       ],
       "ort": "Wien",
@@ -3476,7 +3507,7 @@
       "info": {
         "badtyp": "Kombibad",
         "ausstattung": [
-          "<br />Beachvolleyballplatz"
+          "Beachvolleyballplatz"
         ],
         "drinnen": false
       }
@@ -3485,8 +3516,9 @@
       "id": "zh-flb6939",
       "name": "Flussbad Oberer Letten",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "flussbad",
       "arten": [
+        "flussbad",
         "see"
       ],
       "ort": "Zürich",
@@ -3513,8 +3545,9 @@
       "id": "zh-flb6940",
       "name": "Flussbad Unterer Letten",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "flussbad",
       "arten": [
+        "flussbad",
         "see"
       ],
       "ort": "Zürich",
@@ -3541,8 +3574,9 @@
       "id": "zh-flb6941",
       "name": "Frauenbad Stadthausquai",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "flussbad",
       "arten": [
+        "flussbad",
         "see"
       ],
       "ort": "Zürich",
@@ -3569,8 +3603,9 @@
       "id": "zh-flb6942",
       "name": "Männerbad Schanzengraben",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "flussbad",
       "arten": [
+        "flussbad",
         "see"
       ],
       "ort": "Zürich",
@@ -3597,8 +3632,9 @@
       "id": "zh-letzi-1",
       "name": "Freibad Letzigraben",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "freibad",
       "arten": [
+        "freibad",
         "see"
       ],
       "ort": "Zürich",
@@ -3625,8 +3661,9 @@
       "id": "zh-seb6946",
       "name": "Strandbad Mythenquai",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "seebad",
       "arten": [
+        "seebad",
         "see"
       ],
       "ort": "Zürich",
@@ -3653,8 +3690,9 @@
       "id": "zh-seb6947",
       "name": "Strandbad Tiefenbrunnen",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "seebad",
       "arten": [
+        "seebad",
         "see"
       ],
       "ort": "Zürich",
@@ -3681,8 +3719,9 @@
       "id": "zh-seb6948",
       "name": "Strandbad Wollishofen",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "seebad",
       "arten": [
+        "seebad",
         "see"
       ],
       "ort": "Zürich",
@@ -3709,8 +3748,9 @@
       "id": "zh-ssd-10",
       "name": "Seebad Utoquai",
       "gebiet": "zuerich-baeder",
-      "art": "see",
+      "art": "seebad",
       "arten": [
+        "seebad",
         "see"
       ],
       "ort": "Zürich",

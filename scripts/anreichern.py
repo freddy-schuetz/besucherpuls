@@ -686,6 +686,51 @@ ZH_LAYER = {"poi_flussbad_view": "Flussbad", "poi_freibad_view": "Freibad",
 # Aus dem Freitext SPORTSTAETTEN_ART den Badtyp ziehen, Rest ist Ausstattung.
 WIEN_TYPEN = ["Kombibad", "Hallenbad", "Sommerbad", "Familienbad", "Freibad", "Strandbad"]
 
+# Badtyp -> Kategorie fuer die Filterleiste. Die Oberkategorie "see" bleibt
+# IMMER daneben stehen: Sonst faende ein volles Hallenbad nie ein Freibad als
+# Alternative, weil die Empfehlung ueber die Schnittmenge von `arten` geht.
+BADTYP_ART = {
+    "Hallenbad": "hallenbad",
+    "Kombibad": "kombibad",
+    "Familienbad": "familienbad",
+    "Sommerbad": "sommerbad",
+    "Freibad": "freibad",
+    "Strandbad": "strandbad",
+    "Flussbad": "flussbad",
+    "Seebad": "seebad",
+}
+
+
+def badtyp_setzen(z, typ):
+    """Badtyp eintragen UND als Kategorie fuehren, damit oben ein Filter steht."""
+    z["info"]["badtyp"] = typ
+    art = BADTYP_ART.get(typ)
+    if not art:
+        return
+    z["art"] = art
+    ober = [a for a in (z.get("arten") or []) if a not in BADTYP_ART.values()]
+    z["arten"] = [art] + [a for a in ober if a != art]
+
+
+def ausstattung_sauber(art):
+    """Aus dem Freitext die Ausstattung ziehen.
+
+    Der Wiener Datensatz mischt HTML hinein: "Familienbad<br />Tischtennis<br />
+    Beachvolleyballplatz". Ungefiltert stand auf der Karte "<br />Tischtennis".
+    """
+    roh = re.sub(r"<[^>]+>", ",", art or "")
+    teile = [t.strip(" .;") for t in re.split(r"[,;]", roh)]
+    raus, gesehen = [], set()
+    for t in teile:
+        if len(t) < 3 or t in WIEN_TYPEN:
+            continue
+        k = t.casefold()
+        if k in gesehen:
+            continue
+        gesehen.add(k)
+        raus.append(t)
+    return raus[:4]
+
 
 def lauf_baeder():
     print("\n=== Wien: Badtyp und Ausstattung ===")
@@ -712,11 +757,11 @@ def lauf_baeder():
         _, p = min(nah, key=lambda x: x[0])
         art = p["SPORTSTAETTEN_ART"]
         typ = next((t for t in WIEN_TYPEN if t.lower() in art.lower()), None)
-        extra = [t.strip() for t in art.split(",")[1:] if t.strip()]
+        extra = ausstattung_sauber(art)
         if typ:
-            z["info"]["badtyp"] = typ
+            badtyp_setzen(z, typ)
         if extra:
-            z["info"]["ausstattung"] = extra[:4]
+            z["info"]["ausstattung"] = extra
         if p.get("KATEGORIE_TXT"):
             z["info"]["drinnen"] = "indoor" in p["KATEGORIE_TXT"].lower()
         n += 1
@@ -748,7 +793,7 @@ def lauf_baeder():
         if not nah:
             continue
         _, typ, p = min(nah, key=lambda x: x[0])
-        z["info"]["badtyp"] = typ
+        badtyp_setzen(z, typ)
         tage = [p.get(f"oeffnungszeiten_gebaeude_{t}")
                 for t in ("mo", "di", "mi", "do", "fr", "sa", "so")]
         if any(tage):

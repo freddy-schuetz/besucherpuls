@@ -400,6 +400,11 @@ function entfernungKm(a, b) {
 const MAX_KM = {
   bergbahn: 15, wandern: 15, nationalpark: 15, klamm: 15,
   see: 12, rad: 5, ort: 4, stadt: 3, anreise: 4, sonstiges: 3,
+  // Die Badtypen MUESSEN hier stehen. Seit sie eigene Kategorien sind, greift
+  // sonst der Rueckfall auf 3 km — und Wien haette schlagartig fast keine
+  // Empfehlungen mehr, weil die Baeder ueber die Stadt verteilt sind.
+  hallenbad: 12, freibad: 12, sommerbad: 12, kombibad: 12,
+  familienbad: 12, strandbad: 12, flussbad: 12, seebad: 12,
 };
 
 /** Wie voll es hier ist, 0-100 — je kleiner, desto mehr Platz. Wo die Kapazitaet

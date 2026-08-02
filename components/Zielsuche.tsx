@@ -73,9 +73,17 @@ export default function Zielsuche({
         zaehl.set(a, (zaehl.get(a) ?? 0) + 1);
       }
     }
-    const gefunden = [...zaehl.entries()].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]);
-    // Eine einzige Kategorie ist keine Auswahl. In Wien sind alle 31 Ziele
-    // Bäder — ein Knopf „Baden 31", der nichts wegfiltert, ist nur Lärm.
+    const gefunden = [...zaehl.entries()]
+      .filter(([, n]) => n >= 2)
+      // Was auf ALLE Ziele passt, ist kein Filter. Seit die Badtypen eigene
+      // Kategorien sind, trägt jedes Wiener Bad zusätzlich die Oberkategorie
+      // „see" — ein Knopf „Baden 33" neben 33 Zielen filtert nichts weg und
+      // steht nur im Weg. Die Oberkategorie bleibt in den Daten, weil die
+      // Empfehlung sie braucht (ein volles Hallenbad darf zum Freibad führen);
+      // sichtbar sein muss sie deshalb nicht.
+      .filter(([, n]) => n < ziele.length)
+      .sort((a, b) => b[1] - a[1]);
+    // Eine einzige Kategorie ist ebenfalls keine Auswahl.
     return gefunden.length > 1 ? gefunden : [];
   }, [ziele]);
 

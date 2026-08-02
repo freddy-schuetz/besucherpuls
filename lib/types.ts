@@ -42,7 +42,19 @@ export type Zielart =
   | "stadt"
   | "ort"
   | "anreise"
-  | "sonstiges";
+  | "sonstiges"
+  // Badtypen aus den städtischen Sportstätten-Datensätzen. Sie stehen NEBEN
+  // der Oberkategorie „see", nicht statt ihr: Sonst fände ein volles Hallenbad
+  // nie ein Freibad als Alternative, weil die Empfehlung über die Schnittmenge
+  // der Kategorien läuft.
+  | "hallenbad"
+  | "freibad"
+  | "sommerbad"
+  | "kombibad"
+  | "familienbad"
+  | "strandbad"
+  | "flussbad"
+  | "seebad";
 
 /**
  * Der Status — berechnet an GENAU EINER Stelle, in scripts/status_node.js.

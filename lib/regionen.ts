@@ -145,8 +145,13 @@ export const REGIONEN: Region[] = [
     land: "Österreich",
     aktivitaet: "Städtische Bäder",
     frage: "Welches Bad hat gerade Platz?",
+    // EHRLICH BLEIBEN. Wien liefert AUSLASTUNG_AMPEL_KATEGORIE_0 bis _3 — heute
+    // plus drei Folgetage — und 32 von 33 Bädern tragen für alle vier Tage
+    // denselben Wert. Das ist eine Einschätzung für den Tag, keine Zählung, auch
+    // wenn der Zeitstempel stündlich erneuert wird. Wer das erst im Detailfeld
+    // erfährt, hat die Seite vorher schon als Live-Anzeige gelesen.
     versprechen:
-      "Die städtischen Bäder melden ihre Auslastung selbst. Ist deines voll, nennt diese Seite die nächsten mit Platz — das tut die Stadt bisher nicht.",
+      "Die Stadt Wien schätzt je Bad eine Ampelstufe für den Tag — keine Live-Zählung, Besucherzahlen veröffentlicht sie nicht. Was diese Seite daraus macht: Hallenbad, Sommerbad, Kombibad und Familienbad werden unterscheidbar, und ist deines voll, steht hier das nächste mit Platz.",
     ziel: "Bad",
     zielPlural: "Bäder",
     gruppe: "wien-baeder",
@@ -331,6 +336,14 @@ export const ART_TEXT: Record<Zielart, string> = {
   ort: "Im Ort",
   anreise: "Bahn & Bus",
   sonstiges: "Sonstiges",
+  hallenbad: "Hallenbad",
+  freibad: "Freibad",
+  sommerbad: "Sommerbad",
+  kombibad: "Kombibad",
+  familienbad: "Familienbad",
+  strandbad: "Strandbad",
+  flussbad: "Flussbad",
+  seebad: "Seebad",
 };
 
 /**
@@ -361,6 +374,18 @@ export const ART_PFAD: Record<Zielart, string> = {
   anreise: "M4 2h8v8.2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM4 6.6h8M6.2 14.4l1.2-1.9M9.8 14.4l-1.2-1.9",
   // Punkt
   sonstiges: "M8 5.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8",
+
+  // Badtypen. Alle tragen dieselbe Wellenlinie unten — das macht auf einen
+  // Blick sichtbar, dass es Varianten desselben sind; darüber steht, was sie
+  // unterscheidet: Dach, Sonne, beides, Familie, Ufer.
+  hallenbad: "M2 7 8 3l6 4M3.5 6.5V12M12.5 6.5V12M1.5 13.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0",
+  freibad: "M8 2.5v1.6M3.9 4.2l1.1 1.1M12.1 4.2l-1.1 1.1M8 5.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M1.5 13.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0",
+  sommerbad: "M8 2.5v1.6M3.9 4.2l1.1 1.1M12.1 4.2l-1.1 1.1M8 5.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M1.5 13.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0",
+  kombibad: "M1.5 6.5 5 3.5l3.5 3M2.8 6v5M12 3.2v1.4M10.4 5.2l.9.9M13.6 5.2l-.9.9M12 6.4a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8M1.5 13.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0",
+  familienbad: "M5.2 3.4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3M11 5a1.2 1.2 0 1 1 0 2.4A1.2 1.2 0 0 1 11 5M3.4 10.5V7.9a1.8 1.8 0 0 1 3.6 0v2.6M9.5 10.5V8.6a1.5 1.5 0 0 1 3 0v1.9M1.5 13.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0",
+  strandbad: "M8 2.5c2.6 0 4.8 1.6 5.6 3.8H2.4C3.2 4.1 5.4 2.5 8 2.5M8 6.3v4.4M1.5 13.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0",
+  flussbad: "M4 1.8v12.4M12 1.8v12.4M6.5 4c1.6 1.4 1.6 2.8 0 4.2s-1.6 2.8 0 4.2M9.5 4c1.6 1.4 1.6 2.8 0 4.2s-1.6 2.8 0 4.2",
+  seebad: "M1.5 8.5h13M1.5 11.5c2-1.6 3.5-1.6 5.5 0s3.5 1.6 5.5 0M10.5 3v3M9 4.5h3",
 };
 
 /** Der Messwert eines ZIELS in einem Satz. Bei mehreren Zugängen wird summiert —

@@ -31,22 +31,118 @@ export type Gruppe =
   | "meran"
   | "suedtirol-rad";
 
+/** Wofür ein Gast hinfährt. Gästesprache, nicht Datenmodell. */
+export type Zielart =
+  | "bergbahn"
+  | "nationalpark"
+  | "wandern"
+  | "klamm"
+  | "see"
+  | "rad"
+  | "stadt"
+  | "ort"
+  | "anreise"
+  | "sonstiges";
+
+/**
+ * Der Status — berechnet an GENAU EINER Stelle, in scripts/status_node.js.
+ *
+ * Vorher gab es zwei Berechnungen: eine im Workflow, eine hier im Frontend
+ * (`gastStatus`). Die Karte sah Wien grün, die Empfehlungslogik sah dieselben
+ * Bäder als „ohne Basis" — deshalb konnten Wien und Gröden nie eine Empfehlung
+ * bekommen. Dieses Objekt kommt fertig aus dem Workflow und wird hier nur noch
+ * gelesen. Es gibt bewusst keine Funktion mehr, die daraus etwas ableitet.
+ */
+export interface Status {
+  ampel: Ampel;
+  kurz: string;
+  /** Woher die Aussage stammt — steuert die Wortwahl drumherum */
+  art: "vergleich" | "kapazitaet" | "keiner";
+}
+
 export interface Alternative {
   id: string;
   name: string;
-  quote: number;
+  art: Zielart;
   ampel: Ampel;
+  status: Status;
+  auslastung: number | null;
+  quote: number | null;
+  frei_plaetze: number | null;
+  kapazitaet: number | null;
+  lat: number;
+  lon: number;
   km: number;
-  /** Welche Stufe der Leiter gegriffen hat — bestimmt die Begründung im Text */
-  stufe: "zugang" | "ziel";
+  stufe: "ziel";
 }
 
-/** Wofür ein Parkplatz da ist. Einmalig bestimmt in scripts/ziele_anreichern.py
- *  und in sensors.json eingefroren — zur Laufzeit wird nichts abgeleitet. */
-export interface Ziel {
-  art: "bergbahn" | "nationalpark" | "wasser" | "wandern" | "anreise" | "ort" | "sonstiges";
-  /** Interner Schlüssel für Punkte, die dasselbe Ziel erschliessen */
-  einstieg: string | null;
+/** Ein Zugang zu einem Ziel — Parkplatz, Eingang, Station. */
+export interface Zugang {
+  id: string;
+  name: string;
+  ampel: Ampel;
+  status: Status;
+  auslastung: number | null;
+  kapazitaet: number | null;
+  lat: number;
+  lon: number;
+}
+
+/**
+ * Ein ZIEL — das Objekt, in dem ein Gast denkt: Nebelhorn, Thumsee, Sellajoch.
+ * Die Messpunkte sind seine Zugänge. Erzeugt in scripts/ziele_bauen.py,
+ * geprüft eingefroren in lib/ziele.json, zusammengeführt im Workflow.
+ */
+export interface ZielProps {
+  id: string;
+  name: string;
+  gebiet: Gruppe;
+  art: Zielart;
+  /** Alle Kategorien, unter denen dieses Ziel zählt — ein Nationalpark-Einstieg
+   *  ist AUCH Wandern. Zwei Ziele sind austauschbar, wenn sich diese Mengen
+   *  überschneiden. */
+  arten: Zielart[];
+  /** Gemeinde. Wo die Kategorie „sonstiges" bleibt, steht auf der Kachel sonst
+   *  ein Wort, das nichts sagt — der Ortsname ist echte Information. */
+  ort: string;
+  lat: number;
+  lon: number;
+
+  status: Status;
+  ampel: Ampel;
+  auslastung: number | null;
+  quote: number | null;
+  /** Rohwert des Hauptzugangs — nur für Quellen ohne Kapazität (Gäste, Stufe) */
+  wert: number;
+
+  /** Summen über alle brauchbaren Zugänge, wo Kapazität bekannt ist */
+  kapazitaet: number | null;
+  belegt: number | null;
+  frei_plaetze: number | null;
+
+  einheit: string;
+  metrik: string;
+  quelle: Quelle;
+  quelle_url: string;
+  hinweis: string;
+  alter_min: number;
+  quell_ts: string;
+  basis_tage: number;
+  vergleich_art: SensorProps["vergleich_art"];
+  vergleich_tage: number;
+  tagesgang: (number | null)[] | null;
+  sparkline: [string, number][];
+
+  /** Der Zugang, dessen Werte das Ziel repräsentieren (der mit dem meisten Platz) */
+  haupt_zugang: string;
+  zugaenge: Zugang[];
+
+  /** Stufe 1 — gleiches Ziel, anderer Zugang */
+  zugang_tipp: { von: string; nach: string; nach_id: string; km: number } | null;
+  /** Stufe 2 — gleiches Ziel, andere Zeit */
+  spaeter: { stunde: number; anteil: number } | null;
+  /** Stufe 3 — vergleichbares Ziel in der Nähe */
+  alternative: Alternative | null;
 }
 
 export interface SensorProps {
@@ -94,15 +190,16 @@ export interface SensorProps {
   basis_tage: number;
   basis_n: number;
 
-  /** Typischer Tagesverlauf, 24 Stundenwerte (null wo keine Beobachtung) */
+  /** Fertig berechnet im Workflow — hier wird nur gelesen */
+  status: Status;
+
+  /** Typischer Tagesverlauf, 24 Stundenwerte (null wo keine Beobachtung).
+   *  Null, wenn die Kurve flach ist — eine gerade Linie ist kein Tagesverlauf. */
   tagesgang: (number | null)[] | null;
   /** [ISO-Zeitstempel, Wert] — jüngste zuletzt */
   sparkline: [string, number][];
-  /** Leerere Alternative derselben Gruppe, sofern es eine gibt */
-  alternative: Alternative | null;
-  /** Ruhigere Stunde aus dem typischen Tagesverlauf — Stufe 2 der Leiter */
-  spaeter: { stunde: number; anteil: number } | null;
-  ziel?: Ziel | null;
+  /** Zu welchem Ziel dieser Zugang gehört */
+  ziel?: { id: string; name: string; art: Zielart; arten: Zielart[] } | null;
 }
 
 export interface StatusAntwort {
@@ -111,6 +208,7 @@ export interface StatusAntwort {
   vergleichszelle: { wochentag: number; stunde: number };
   zusammenfassung: {
     sensoren: number;
+    ziele: number;
     mit_ampel: number;
     veraltet: number;
     im_aufbau: number;
@@ -118,7 +216,11 @@ export interface StatusAntwort {
     gedaempft: number;
     mit_empfehlung: number;
     zeit_tipps: number;
+    zugang_tipps: number;
   };
+  /** Die Ebene, in der ein Gast denkt */
+  ziele: ZielProps[];
+  /** Die Messpunkte darunter — für Karte und Herkunftsnachweis */
   features: {
     type: "Feature";
     geometry: { type: "Point"; coordinates: [number, number] };
@@ -168,8 +270,11 @@ export function alterText(min: number): string {
   return `vor ${Math.round(min / 1440)} Tagen`;
 }
 
-/** Der Kernsatz: was der Perzentilrang für einen Gast bedeutet. */
-export function einordnungText(p: SensorProps): string | null {
+/** Der Kernsatz: was der Perzentilrang für einen Gast bedeutet. Gilt für
+ *  Ziele wie für einzelne Zugänge — beide tragen dieselben drei Felder. */
+export function einordnungText(
+  p: Pick<SensorProps, "quote" | "ampel" | "vergleich_art">,
+): string | null {
   if (p.quote == null || p.ampel === "aufbau" || p.ampel === "veraltet") return null;
   if (p.ampel === "geschlossen")
     return "Zu dieser Zeit war hier noch nie etwas los — vermutlich geschlossen.";

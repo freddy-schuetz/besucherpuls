@@ -1,7 +1,8 @@
 "use client";
 
-import { gastStatus, messwertText, type Region } from "@/lib/regionen";
-import { alterText, type SensorProps } from "@/lib/types";
+import { ART_TEXT, STATUS_FARBE, messwertZiel, type Region } from "@/lib/regionen";
+import { ArtZeichen } from "@/components/Zielsuche";
+import { alterText, type ZielProps } from "@/lib/types";
 
 /** Wie voll im Vergleich zu sonst — als Skala statt als nackte Prozentzahl.
  *  Der Perzentilrang ist inhaltlich richtig, aber niemand liest "Rang 83".
@@ -23,23 +24,49 @@ function Vergleichsskala({ quote, farbe }: { quote: number; farbe: string }) {
   );
 }
 
+/**
+ * Wiens Fünf-Stufen-Ampel, sichtbar.
+ *
+ * Die Stadt liefert eine Stufe von 1 bis 5 — mehr nicht, keine Kopfzahl, keine
+ * Kapazität. Bisher stand davon nur ein Wort auf der Karte („Wird knapp"), und
+ * die eigentliche Information, WIE weit oben in der Skala das liegt, ging
+ * verloren. Fünf Punkte zeigen sie ohne ein Wort Erklärung.
+ */
+export function AmpelStufen({ stufe, farbe }: { stufe: number; farbe: string }) {
+  const s = Math.min(5, Math.max(1, Math.round(stufe)));
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-1" role="img" aria-label={`Stufe ${s} von 5`}>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <span
+            key={i}
+            className="h-2.5 w-5 rounded-full transition-colors"
+            style={{ background: i <= s ? farbe : "var(--color-still-weich)" }}
+          />
+        ))}
+      </div>
+      <span className="zahl text-[12px] text-tinte-zart">Stufe {s} von 5</span>
+    </div>
+  );
+}
+
 export default function ZielKarte({
-  p,
+  z,
   region,
   verzug,
   onWaehlen,
   aktiv,
 }: {
-  p: SensorProps;
+  z: ZielProps;
   region: Region;
   verzug: number;
   onWaehlen: () => void;
   aktiv: boolean;
 }) {
-  const s = gastStatus(p);
+  const farben = STATUS_FARBE[z.ampel];
   // Die Skala vergleicht mit der Vergangenheit — sie darf nur erscheinen, wenn
   // die Aussage auch von dort kommt, nicht bei reiner Kapazitaetsangabe.
-  const zeigtSkala = s.art === "vergleich" && p.quote != null;
+  const zeigtSkala = z.status.art === "vergleich" && z.quote != null;
 
   return (
     <button
@@ -54,58 +81,70 @@ export default function ZielKarte({
       aria-pressed={aktiv}
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-[1.05rem] font-semibold leading-snug text-tinte">{p.name}</h3>
+        <div className="min-w-0">
+          <h3 className="text-[1.05rem] font-semibold leading-snug text-tinte">{z.name}</h3>
+          {/* Bei „sonstiges" stand hier ein Wort, das nichts aussagt. Dann
+              lieber die Gemeinde — die hilft beim Einordnen wirklich. */}
+          <p className="mt-1 flex items-center gap-1.5 text-[12px] text-tinte-zart">
+            <ArtZeichen art={z.art} groesse={13} />
+            {z.art === "sonstiges" ? z.ort || "Parkplatz" : ART_TEXT[z.art]}
+            {z.zugaenge.length > 1 && ` · ${z.zugaenge.length} Zugänge`}
+          </p>
+        </div>
         <span
           className="shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold"
-          style={{ background: s.feld, color: s.farbe }}
+          style={{ background: farben.feld, color: farben.farbe }}
         >
-          {s.kurz}
+          {z.status.kurz}
         </span>
       </div>
 
-      {/* Die Zeile entfaellt, wo sie nur das Statusfeld wiederholen wuerde —
-          bei einer gemeldeten Ampelstufe steht die Aussage schon oben rechts. */}
-      {p.ampel === "veraltet" ? (
+      {z.ampel === "veraltet" ? (
         <p className="zahl text-sm text-tinte-weich">
-          Zuletzt gemeldet {alterText(p.alter_min)}
+          Zuletzt gemeldet {alterText(z.alter_min)}
         </p>
-      ) : p.metrik !== "ampelstufe" ? (
-        <p className="zahl text-sm text-tinte-weich">{messwertText(p)}</p>
-      ) : p.bezirk ? (
-        <p className="text-sm text-tinte-weich">{p.bezirk}. Bezirk</p>
-      ) : null}
+      ) : z.metrik === "ampelstufe" ? (
+        <AmpelStufen stufe={z.wert} farbe={farben.farbe} />
+      ) : (
+        <p className="zahl text-sm text-tinte-weich">{messwertZiel(z)}</p>
+      )}
 
-      {zeigtSkala && <Vergleichsskala quote={p.quote!} farbe={s.farbe} />}
+      {zeigtSkala && <Vergleichsskala quote={z.quote!} farbe={farben.farbe} />}
 
-      {s.art === "keiner" && s.ampel === "aufbau" && (
+      {z.ampel === "aufbau" && (
         <p className="text-[13px] leading-relaxed text-tinte-zart">
           Für diese Tageszeit fehlen noch Vergleichswerte.
         </p>
       )}
 
-      {/* Dieselben drei Aussagen wie in der Ansage, nur kurz. Vorher stand auf
-          der Karte "Mehr Platz bei X" und daneben im Detailfeld "Heute besser
-          dorthin" — zwei Formulierungen fuer dieselbe Sache. */}
-      {p.alternative && (
+      {/* Dieselben Aussagen wie in der Ansage, nur kurz — und in derselben
+          Reihenfolge der Stufenleiter, damit die Karte nicht etwas anderes
+          empfiehlt als das Detailfeld daneben. */}
+      {z.zugang_tipp ? (
+        <p
+          className="rounded-xl px-3 py-2 text-[13px] leading-snug"
+          style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
+        >
+          <strong className="font-semibold">Anderer Zugang:</strong> {z.zugang_tipp.nach}
+        </p>
+      ) : z.spaeter ? (
+        <p
+          className="rounded-xl px-3 py-2 text-[13px] leading-snug"
+          style={{ background: "var(--color-mittel-weich)", color: "#95580f" }}
+        >
+          <strong className="font-semibold">Lieber später:</strong>{" "}
+          <span className="zahl">ab {z.spaeter.stunde}:00 Uhr</span> rund {z.spaeter.anteil} %
+          ruhiger
+        </p>
+      ) : z.alternative ? (
         <p
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
         >
           <strong className="font-semibold">Heute besser dorthin:</strong>{" "}
-          {p.alternative.name} · {p.alternative.km} km
+          {z.alternative.name} · {z.alternative.km} km
         </p>
-      )}
-
-      {!p.alternative && p.spaeter && (
-        <p
-          className="rounded-xl px-3 py-2 text-[13px] leading-snug"
-          style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
-        >
-          <strong className="font-semibold">Lieber später:</strong>{" "}
-          <span className="zahl">ab {p.spaeter.stunde}:00 Uhr</span> typischerweise rund{" "}
-          {p.spaeter.anteil} % ruhiger
-        </p>
-      )}
+      ) : null}
     </button>
   );
 }

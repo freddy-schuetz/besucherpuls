@@ -3,26 +3,36 @@
 import { useEffect, useRef } from "react";
 import maplibregl, { Map as MlMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { AMPEL_FARBE, type StatusAntwort } from "@/lib/types";
-import { gastStatus } from "@/lib/regionen";
+import { AMPEL_FARBE, type ZielProps } from "@/lib/types";
 
 /**
- * Karte fuer die Live-Punkte.
+ * Karte fuer die Ziele.
  *
- * Wichtig: Die Karteninstanz wird EINMAL erzeugt und danach nur ueber
- * source.setData() gefuettert. Wuerde man die Karte bei jeder Datenaenderung
- * neu aufbauen, sprAenge bei jedem Minuten-Refresh der Zoom des Nutzers zurueck.
+ * Zwei Dinge, die vorher falsch waren:
+ *
+ * 1. Die Karte faerbte nach dem ROHEN ampel-Feld, waehrend die Kacheln daneben
+ *    einen anders berechneten Status zeigten. Wien und Kiel standen deshalb
+ *    komplett grau, obwohl jede Kachel gruen war. Jetzt kommt der Status
+ *    fertig aus dem Workflow und wird hier nur noch eingefaerbt.
+ *
+ * 2. Ein Kategoriefilter wirkte nur auf die Liste. Wer "Bergbahn" waehlte, sah
+ *    unten neun Eintraege und auf der Karte weiterhin alle 52 Punkte. Die Karte
+ *    bekommt jetzt dieselbe gefilterte Menge wie die Liste.
+ *
+ * Die Karteninstanz wird EINMAL erzeugt und danach nur ueber source.setData()
+ * gefuettert — sonst spraenge bei jedem Minuten-Refresh der Zoom des Nutzers
+ * zurueck.
  */
 export default function LiveMap({
-  daten,
+  ziele,
   ausgewaehlt,
   onSelect,
   start,
 }: {
-  daten: StatusAntwort | null;
+  ziele: ZielProps[];
   ausgewaehlt: string | null;
   onSelect: (id: string) => void;
-  /** Fester Startausschnitt (Schaufenster). Ohne diesen wird auf alle Punkte gezoomt. */
+  /** Fester Startausschnitt. Ohne diesen wird auf alle Punkte gezoomt. */
   start?: { mitte: [number, number]; zoom: number };
 }) {
   const container = useRef<HTMLDivElement | null>(null);
@@ -67,7 +77,7 @@ export default function LiveMap({
     m.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 
     m.on("load", () => {
-      m.addSource("sensoren", {
+      m.addSource("ziele", {
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
       });
@@ -75,9 +85,9 @@ export default function LiveMap({
       // Weicher Hof in der Statusfarbe — laesst die Punkte auf der hellen
       // Grundkarte plastisch wirken, ohne dass ein Schlagschatten noetig waere.
       m.addLayer({
-        id: "sensoren-hof",
+        id: "ziele-hof",
         type: "circle",
-        source: "sensoren",
+        source: "ziele",
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 15, 12, 22],
           "circle-color": ["get", "farbe"],
@@ -85,11 +95,10 @@ export default function LiveMap({
         },
       });
 
-      // Ring um den ausgewaehlten Punkt
       m.addLayer({
-        id: "sensoren-halo",
+        id: "ziele-halo",
         type: "circle",
-        source: "sensoren",
+        source: "ziele",
         filter: ["==", ["get", "id"], "___keiner___"],
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 17, 12, 24],
@@ -101,9 +110,9 @@ export default function LiveMap({
       });
 
       m.addLayer({
-        id: "sensoren-punkt",
+        id: "ziele-punkt",
         type: "circle",
-        source: "sensoren",
+        source: "ziele",
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 6, 8, 9, 12, 12],
           "circle-color": ["get", "farbe"],
@@ -118,20 +127,43 @@ export default function LiveMap({
         },
       });
 
-      m.on("click", "sensoren-punkt", (e) => {
+      // Name am Punkt, sobald man nah genug ist. Ohne Beschriftung muss man
+      // jeden Punkt antippen, um zu wissen, was er ist — bei einer Karte, die
+      // Ziele zeigt statt Messstellen, ist der Name die halbe Information.
+      m.addLayer({
+        id: "ziele-schrift",
+        type: "symbol",
+        source: "ziele",
+        minzoom: 10.5,
+        layout: {
+          "text-field": ["get", "name"],
+          "text-size": 12,
+          "text-offset": [0, 1.5],
+          "text-anchor": "top",
+          "text-max-width": 9,
+          "text-allow-overlap": false,
+          "text-optional": true,
+        },
+        paint: {
+          "text-color": "#2b3a35",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.6,
+        },
+      });
+
+      m.on("click", "ziele-punkt", (e) => {
         const f = e.features?.[0];
         if (f?.properties?.id) onSelectRef.current(String(f.properties.id));
       });
-      m.on("mouseenter", "sensoren-punkt", () => {
+      m.on("mouseenter", "ziele-punkt", () => {
         m.getCanvas().style.cursor = "pointer";
       });
-      m.on("mouseleave", "sensoren-punkt", () => {
+      m.on("mouseleave", "ziele-punkt", () => {
         m.getCanvas().style.cursor = "";
       });
 
       bereit.current = true;
       map.current = m;
-      // Falls Daten schon vor dem load-Event da waren
       m.fire("bp:bereit");
     });
 
@@ -146,35 +178,28 @@ export default function LiveMap({
   // --- Daten einspielen, ohne die Karte neu zu bauen
   useEffect(() => {
     const m = map.current;
-    if (!m || !daten) return;
+    if (!m) return;
 
     const einspielen = () => {
-      const src = m.getSource("sensoren") as maplibregl.GeoJSONSource | undefined;
+      const src = m.getSource("ziele") as maplibregl.GeoJSONSource | undefined;
       if (!src) return;
       src.setData({
         type: "FeatureCollection",
-        features: daten.features.map((f) => {
-          // Denselben abgeleiteten Status nehmen wie die Karten daneben. Vorher
-          // faerbte die Landkarte nach dem ROHEN ampel-Feld — Wien und Kiel
-          // standen dort komplett grau, obwohl jede Kachel gruen war, und ein
-          // Parkplatz mit 210 freien Plaetzen leuchtete rot.
-          const s = gastStatus(f.properties);
-          return {
-            ...f,
-            properties: {
-              ...f.properties,
-              ampel: s.ampel,
-              farbe: AMPEL_FARBE[s.ampel] ?? AMPEL_FARBE.unbekannt,
-            },
-          };
-        }),
+        features: ziele.map((z) => ({
+          type: "Feature" as const,
+          geometry: { type: "Point" as const, coordinates: [z.lon, z.lat] },
+          properties: {
+            id: z.id,
+            name: z.name,
+            ampel: z.ampel,
+            farbe: AMPEL_FARBE[z.ampel] ?? AMPEL_FARBE.unbekannt,
+          },
+        })),
       } as GeoJSON.FeatureCollection);
 
-      // Beim Schaufenster bleibt der vorgegebene Ausschnitt stehen — sonst
-      // springt die Karte beim ersten Datensatz aus dem gemeinten Bildausschnitt.
-      if (ersteDaten.current && daten.features.length && !start) {
+      if (ersteDaten.current && ziele.length && !start) {
         const b = new maplibregl.LngLatBounds();
-        for (const f of daten.features) b.extend(f.geometry.coordinates);
+        for (const z of ziele) b.extend([z.lon, z.lat]);
         m.fitBounds(b, { padding: 60, maxZoom: 8, duration: 0 });
         ersteDaten.current = false;
       }
@@ -182,29 +207,24 @@ export default function LiveMap({
 
     if (bereit.current) einspielen();
     else m.once("bp:bereit", einspielen);
-  }, [daten, start]);
+  }, [ziele, start]);
 
   // --- Auswahl hervorheben und anfliegen
   useEffect(() => {
     const m = map.current;
-    if (!m || !bereit.current || !m.getLayer("sensoren-halo")) return;
-    m.setFilter("sensoren-halo", ["==", ["get", "id"], ausgewaehlt ?? "___keiner___"]);
+    if (!m || !bereit.current || !m.getLayer("ziele-halo")) return;
+    m.setFilter("ziele-halo", ["==", ["get", "id"], ausgewaehlt ?? "___keiner___"]);
 
-    // Ohne das Anfliegen passiert beim Klick auf einen Listeneintrag sichtbar
-    // nichts, sobald der Sensor ausserhalb des Ausschnitts liegt — und die
-    // Punkte liegen ueber vier Laender verteilt.
-    if (!ausgewaehlt || !daten) return;
-    const f = daten.features.find((x) => x.properties.id === ausgewaehlt);
-    if (!f) return;
-    const ziel = f.geometry.coordinates as [number, number];
-    m.easeTo({
-      center: ziel,
-      zoom: Math.max(m.getZoom(), 9),
-      duration: 700,
-      // Platz fuer das Detailpanel rechts lassen
-      padding: { top: 0, bottom: 0, left: 0, right: 0 },
-    });
-  }, [ausgewaehlt, daten]);
+    if (!ausgewaehlt) return;
+    const z = ziele.find((x) => x.id === ausgewaehlt);
+    if (!z) return;
+    m.easeTo({ center: [z.lon, z.lat], zoom: Math.max(m.getZoom(), 11), duration: 700 });
+  }, [ausgewaehlt, ziele]);
 
-  return <div ref={container} className="h-full w-full" />;
+  // data-ziele traegt die Zahl der eingespielten Punkte nach aussen. Die Karte
+  // zeichnet auf Canvas — ohne diesen Wert laesst sich von aussen nicht pruefen,
+  // ob der Kategoriefilter wirklich auf der Karte ankommt oder nur in der Liste
+  // (genau dieser Unterschied war der Fehler). Kostet nichts und macht die
+  // Zusicherung nachweisbar statt behauptet.
+  return <div ref={container} data-ziele={ziele.length} className="h-full w-full" />;
 }

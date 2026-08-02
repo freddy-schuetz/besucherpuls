@@ -21,6 +21,7 @@ import urllib.request
 
 HIER = os.path.dirname(os.path.abspath(__file__))
 SENSORS = os.path.join(HIER, "..", "lib", "sensors.json")
+ZIELE = os.path.join(HIER, "..", "lib", "ziele.json")
 CODE = os.path.join(HIER, "status_node.js")
 REPO_ROOT = os.path.join(HIER, "..", "..", "..")
 
@@ -58,6 +59,16 @@ if "/*__SENSOREN__*/[]" not in vorlage:
     sys.exit("Platzhalter /*__SENSOREN__*/[] fehlt in status_node.js")
 code = vorlage.replace("/*__SENSOREN__*/[]",
                        json.dumps(schmal, ensure_ascii=False, separators=(",", ":")))
+
+# Die Zielebene. Sie ist der Grund, warum die Empfehlung ueberhaupt Sinn ergibt:
+# Der Code lenkt zwischen ZIELEN, nicht zwischen Parkplaetzen.
+ziele = json.load(io.open(ZIELE, encoding="utf-8"))["ziele"]
+if "/*__ZIELE__*/[]" not in code:
+    sys.exit("Platzhalter /*__ZIELE__*/[] fehlt in status_node.js")
+code = code.replace("/*__ZIELE__*/[]",
+                    json.dumps(ziele, ensure_ascii=False, separators=(",", ":")))
+mehrfach = sum(1 for z in ziele if len(z["zugaenge"]) > 1)
+print(f"{len(ziele)} Ziele injiziert ({mehrfach} mit mehreren Zugaengen)")
 # Der Code liest die Tabellen selbst ueber die API — der Data-Table-Knoten liefert
 # beim Lesen wiederholte Seiten statt der ganzen Tabelle. Zugang wird hier
 # injiziert und steht damit im Workflow, nicht im Repo.

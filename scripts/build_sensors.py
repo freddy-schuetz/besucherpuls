@@ -48,10 +48,12 @@ LUZERN = {
     "luzern_kappelbruecke_01": ("Kapellbrücke", 47.05173, 8.30759,
                                 "Radarsensor auf der Brücke — zählt den Fussgängerstrom direkt"),
     "7076FF0069051527": ("Rathausquai", 47.05233, 8.30720, "WLAN-Geräte am Reussufer"),
-    "7076FF006905162D": ("Löwendenkmal", 47.05828, 8.31166, "WLAN-Geräte"),
-    "7076FF006905162E": ("Schwanenplatz", 47.05180, 8.30947, "WLAN-Geräte am Cars-Halteplatz"),
     "7076FF0069051631": ("Hertensteinstrasse", 47.05300, 8.30850, "WLAN-Geräte"),
     # "7076FF0069051634" (Kapellbrücke Wifi) bewusst weggelassen: Dublette zum Radar am selben Ort
+    # Löwendenkmal (…162D) und Schwanenplatz (…162E) raus: die Zaehler stehen im
+    # Feed, liefern aber seit Wochen nichts (zuletzt 56 bzw. 14 Tage her). Ein
+    # toter Geber ist schlimmer als kein Geber — er belegt einen Platz auf der
+    # Karte und meldet dauerhaft "keine aktuellen Daten".
 }
 
 # Zuerich: Freibaeder, See- und Flussbaeder. Hallenbaeder raus — das ist Alltagssport,
@@ -426,8 +428,42 @@ else:
                 ort_cache[ab] = (None, None, None)
         return ort_cache[ab]
 
+    def unplausibel(obj):
+        """Ein Geber, der mehr Belegte als Plaetze meldet, misst nicht.
+
+        Gemessen am 02.08.2026: 16 von 206 bayerischen Objekten sind so.
+        `Parkplatz Alpsee P1` meldet konstant 389 Belegte bei 140 Plaetzen,
+        `Vitalpark` 1818 bei 200. Beide standen in der Empfehlungsliste und
+        schickten Gaeste zu einem randvollen Parkplatz — weil ihre Historie
+        eine Konstante ist und der Vergleich sie deshalb "voellig normal"
+        fand. Solche Punkte gehoeren nicht auf die Karte.
+        """
+        kap = obj.get("dcls:currentCapacity")
+        bel = obj.get("dcls:currentOccupancy")
+        rate = obj.get("dcls:currentOccupancyRate")
+        try:
+            kap, bel = float(kap), float(bel)
+        except (TypeError, ValueError):
+            return "kein Zahlenwert"
+        if kap <= 0:
+            return "Kapazitaet 0"
+        # Ein Parkplatz mit weniger als fuenf Plaetzen ist kein Ausflugsziel.
+        # Die Hochgratbahn stand mit Kapazitaet 1 auf der Karte — "1 von 1
+        # Plaetzen frei" sieht aus wie eine Aussage und ist keine.
+        if kap < 5:
+            return f"nur {kap:.0f} Plaetze"
+        if bel > kap * 1.05:
+            return f"belegt {bel:.0f} > Kapazitaet {kap:.0f}"
+        try:
+            if rate is not None and float(rate) > 105:
+                return f"Rate {float(rate):.0f} %"
+        except (TypeError, ValueError):
+            pass
+        return None
+
     n_bct = 0
     je_gebiet = {}
+    raus = []
     for obj in roh:
         gem = gemeinde_von(obj)
         gebiet = next((k for k, v in BCT_GEBIETE.items() if gem in v["gemeinden"]), None)
@@ -437,9 +473,11 @@ else:
         # angelegt, aber gar nicht ausgeruestet — die gehoeren nicht auf die Karte.
         if not obj.get("dcls:latestTimeseriesTimestamp"):
             continue
-        kap = obj.get("dcls:currentCapacity")
-        if not kap or float(kap) <= 0:
+        grund = unplausibel(obj)
+        if grund:
+            raus.append((obj.get("name"), grund))
             continue
+        kap = obj.get("dcls:currentCapacity")
         lat, lon, text = koordinate(obj)
         if lat is None or lon is None:
             continue
@@ -461,6 +499,10 @@ else:
         n_bct += 1
     print(f"Bayern: {n_bct} Parkplätze  " +
           ", ".join(f"{BCT_GEBIETE[k]['name']}={v}" for k, v in sorted(je_gebiet.items())))
+    if raus:
+        print(f"  {len(raus)} Geber ausgeschlossen (melden Unplausibles):")
+        for n, g in raus:
+            print(f"     {str(n)[:44]:<44} {g}")
 
 # ---------------------------------------------------------------- Gruppen setzen
 for s in sensoren:
@@ -476,6 +518,27 @@ for s in sensoren:
         s["gruppe"] = None          # Regionalaggregate sind keine Alternativen zueinander
     else:
         s["gruppe"] = GRUPPEN_ORT.get(s["ort"])
+
+# ---------------------------------------------------------------- entdoppeln
+# Die BayernCloud lieferte beim Blaettern 16 Objekte ZWEIMAL — `Parkplatz
+# Kehlstein P2`, `Nationalparkzentrum Lusen P1` und andere standen doppelt in
+# der Liste. Auf der Karte waeren daraus zwei Punkte an derselben Koordinate
+# geworden, in der Zielebene zwei Ziele gleichen Namens, und jede Zaehlung
+# ("52 Ziele") waere falsch gewesen. Eine Quelle, die sich wiederholt, ist
+# nichts Aussergewoehnliches — deshalb wird hier grundsaetzlich entdoppelt
+# und nicht darauf vertraut, dass sie es nicht tut.
+gesehen, eindeutig, doppelt = set(), [], []
+for s in sensoren:
+    if s["id"] in gesehen:
+        doppelt.append(s["name"])
+        continue
+    gesehen.add(s["id"])
+    eindeutig.append(s)
+if doppelt:
+    print(f"\n{len(doppelt)} doppelte Eintraege entfernt:")
+    for n in sorted(set(doppelt)):
+        print(f"     {n}")
+sensoren = eindeutig
 
 # ---------------------------------------------------------------- schreiben
 ausgabe = {

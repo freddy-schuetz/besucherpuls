@@ -91,12 +91,28 @@ export default function Startseite() {
             ))}
           </ol>
 
-          <p className="mt-11 max-w-3xl border-t border-linie pt-7 text-sm leading-relaxed text-tinte-weich">
-            <strong className="font-semibold text-tinte">Ehrlich bleiben gehört dazu.</strong> Wo
-            die Vergleichswerte für eine Tageszeit noch fehlen, steht das da — statt einer Farbe,
-            die Sicherheit vortäuscht. Meldet ein Sensor seit Tagen nichts, wird auch das gesagt
-            und nicht der letzte bekannte Wert als aktuell ausgegeben.
-          </p>
+          <div className="mt-11 grid max-w-4xl gap-7 border-t border-linie pt-7 sm:grid-cols-2">
+            <p className="text-sm leading-relaxed text-tinte-weich">
+              <strong className="font-semibold text-tinte">Ehrlich bleiben gehört dazu.</strong>{" "}
+              Wo die Vergleichswerte für eine Tageszeit noch fehlen, steht das da — statt einer
+              Farbe, die Sicherheit vortäuscht. Meldet ein Zähler seit Tagen nichts, wird auch das
+              gesagt und nicht der letzte bekannte Wert als aktuell ausgegeben. Eine flache
+              Tageskurve wird gar nicht erst gezeichnet: Eine gerade Linie ist kein Tagesverlauf.
+            </p>
+            {/* Der Plan verlangt, die aussortierten Punkte zu NENNEN, nicht nur
+                auszusortieren. Ein Geber, der mehr Belegte als Plätze meldet,
+                misst nicht — und genau solche standen vorher in den Empfehlungen,
+                weil ihre konstante Historie jeden Wert „völlig normal" fand. */}
+            <p className="text-sm leading-relaxed text-tinte-weich">
+              <strong className="font-semibold text-tinte">Was aussortiert wurde.</strong> Ein
+              Geber, der mehr Belegte als Plätze meldet, misst nicht — beim letzten Abruf traf das
+              auf 8 der rund 110 bayerischen Parkplätze zu (Alpsee P1: 389 Belegte bei 140
+              Plätzen, Vitalpark: 1 819 bei 200). Die stehen nicht auf der Karte. Bei der Historie
+              dasselbe: Von 104 abrufbaren Zeitreihen liegen 49 über 105 % oder zeigen über drei
+              Jahre weniger als fünf verschiedene Werte — importiert sind 55. Ein Zähler, der
+              nicht misst, ist schlechter als kein Zähler.
+            </p>
+          </div>
         </div>
       </section>
     </main>

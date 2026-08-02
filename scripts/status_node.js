@@ -16,6 +16,17 @@
 
 const SENSOREN = /*__SENSOREN__*/[];
 
+// ZIELEBENE. Ein Gast denkt nicht in Parkplaetzen, sondern in Zielen: Nebelhorn,
+// Thumsee, Sellajoch. Die Messpunkte sind ZUGAENGE zu diesen Zielen, nicht das
+// Objekt selbst. Solange die Seite Parkplaetze zeigte und Parkplaetze vorschlug,
+// war jede Empfehlung eine Zufallsinfo. Die Zuordnung steht geprueft in
+// lib/ziele.json (erzeugt von scripts/ziele_bauen.py) — nicht zur Laufzeit geraten.
+const ZIELE = /*__ZIELE__*/[];
+const zielVonSensor = {};
+for (const z of ZIELE) {
+  for (const sid of z.zugaenge || []) zielVonSensor[sid] = z;
+}
+
 const AMPEL_GRUEN = 60;    // Perzentilrang darunter
 const AMPEL_ROT = 85;      // darueber
 const MIN_TAGE_ZELLE = 3;  // Wochentag+Stunde erst ab so vielen Tagen
@@ -174,7 +185,14 @@ function tagesgang(dh) {
     kurve.push(Math.round(m * 10) / 10);
     getroffen++;
   }
-  return getroffen >= 6 ? kurve : null;
+  if (getroffen < 6) return null;
+  // Eine flache Linie ist kein Tagesverlauf. 23 der 55 bayerischen Reihen sind
+  // Skiparkplaetze, die im Sommer durchgehend auf 0 stehen — ehrliche Nullen,
+  // aber als "So laeuft ein typischer Tag hier" wertlos. Erst ab spuerbarem
+  // Unterschied zwischen ruhigster und vollster Stunde wird die Kurve gezeigt.
+  const echt = kurve.filter((v) => v != null);
+  if (Math.max(...echt) - Math.min(...echt) < 5) return null;
+  return kurve;
 }
 
 // ---------------------------------------------------------------- Features bauen
@@ -195,61 +213,64 @@ for (const s of SENSOREN) {
   // Bei Parkplaetzen wird die Auslastung verglichen, sonst der Rohwert.
   const istWert = a.auslastung != null ? Number(a.auslastung) : Number(a.wert);
 
-  let quote = null, ampel = 'unbekannt', referenz = null, referenzArt = null, tage = 0;
+  let quote = null, referenz = null, referenzArt = null, tage = 0;
+  const auslastung = a.auslastung != null ? Number(a.auslastung) : null;
 
-  if (istVeraltet) {
-    ampel = 'veraltet';
-    veraltet++;
-  } else if (!vgl) {
-    ampel = 'aufbau';
-    ohneBasis++;
-  } else {
+  if (vgl) {
     referenzArt = vgl.art;
     tage = vgl.tage;
     const sortiert = [...vgl.werte].sort((x, y) => x - y);
     referenz = sortiert.length % 2
       ? sortiert[(sortiert.length - 1) / 2]
       : (sortiert[sortiert.length / 2 - 1] + sortiert[sortiert.length / 2]) / 2;
-
-    if (sortiert[sortiert.length - 1] === 0) {
-      // In dieser Stunde war an KEINEM Vergleichstag je etwas los. Das ist kein
-      // "leer", das ist geschlossen — und es zu unterscheiden ist der Punkt.
-      ampel = istWert > 0 ? 'gelb' : 'geschlossen';
-      if (ampel === 'geschlossen') geschlossen++; else mitAmpel++;
-      quote = istWert > 0 ? 100 : null;
-    } else {
-      quote = perzentilrang(vgl.werte, istWert);
-
-      // WIE VOLL ES IST, schlaegt WIE UNGEWOEHNLICH VOLL ES IST.
-      //
-      // Vorher entschied allein der Perzentilrang. Das erzeugte zwei
-      // Widersprueche, die beide auf der Seite standen:
-      //   - Alpsee P1 mit 0 von 140 freien Plaetzen galt als normal (gruen),
-      //     weil er um diese Zeit immer voll ist.
-      //   - Freibad P4 mit 57 von 175 freien Plaetzen galt als voll (rot),
-      //     weil das fuer diese Stunde ungewoehnlich viel war.
-      // Ergebnis: Die Seite schickte Gaeste von P4 mit 57 freien Plaetzen zu
-      // P1 mit null freien Plaetzen. Wo die Kapazitaet bekannt ist, entscheidet
-      // deshalb zuerst sie; der Vergleich verfeinert nur noch dazwischen.
-      const auslastung = a.auslastung != null ? Number(a.auslastung) : null;
-      if (auslastung != null) {
-        if (auslastung >= VOLL_AB) {
-          ampel = 'rot';                       // wirklich voll
-        } else if (auslastung >= ENG_AB) {
-          ampel = 'gelb';                      // wird eng
-        } else if (quote > AMPEL_ROT) {
-          ampel = 'gelb';                      // ungewoehnlich viel los, aber Platz
-          gedaempft++;
-        } else {
-          ampel = quote < AMPEL_GRUEN ? 'gruen' : 'gelb';
-        }
-      } else {
-        // Ohne Kapazitaet bleibt nur der Vergleich — Luzern, Radzaehler.
-        ampel = quote < AMPEL_GRUEN ? 'gruen' : quote > AMPEL_ROT ? 'rot' : 'gelb';
-      }
-      mitAmpel++;
-    }
+    // Wo in dieser Stunde an KEINEM Vergleichstag je etwas los war, ist der
+    // Perzentilrang bedeutungslos — das ist geschlossen, nicht leer.
+    if (sortiert[sortiert.length - 1] > 0) quote = perzentilrang(vgl.werte, istWert);
+    else if (istWert === 0) referenzArt = 'geschlossen';
   }
+
+  // DIE EINZIGE STATUSBERECHNUNG.
+  // Vorher gab es zwei: diese hier und eine zweite im Frontend. Die Karte sah
+  // Wien gruen, die Empfehlungslogik sah dieselben Baeder als "ohne Basis" —
+  // deshalb konnten Wien und Groeden NIE eine Empfehlung bekommen. Jetzt
+  // entscheidet nur noch diese Funktion, das Frontend liest ihr Ergebnis.
+  const st = (() => {
+    if (istVeraltet) return { ampel: 'veraltet', kurz: 'Keine aktuellen Daten', art: 'keiner' };
+    // "Geschlossen" nur, wo Schliessen ueberhaupt ein Begriff ist — Baeder,
+    // Bergbahnen. Ein Skiparkplatz, der im Sommer auf 0 steht, ist nicht
+    // geschlossen, sondern leer; dafuer ist unten die Kapazitaetsregel zustaendig.
+    if (referenzArt === 'geschlossen' && auslastung == null) {
+      return { ampel: 'geschlossen', kurz: 'Geschlossen', art: 'keiner' };
+    }
+
+    // 1. Absolute Auslastung, wo sie bekannt ist. "0 von 140 frei" ist voll,
+    //    egal wie normal das fuer die Uhrzeit sein mag.
+    if (auslastung != null) {
+      if (auslastung >= VOLL_AB) return { ampel: 'rot', kurz: 'Voll', art: 'kapazitaet' };
+      if (auslastung >= ENG_AB) return { ampel: 'gelb', kurz: 'Wird eng', art: 'kapazitaet' };
+      // 2. Genug Platz — jetzt darf der Vergleich verfeinern, aber nicht ueberstimmen.
+      if (quote != null) {
+        if (quote > AMPEL_ROT) return { ampel: 'gelb', kurz: 'Gut besucht', art: 'vergleich' };
+        if (quote < AMPEL_GRUEN) return { ampel: 'gruen', kurz: 'Viel Platz', art: 'vergleich' };
+        return { ampel: 'gruen', kurz: 'Platz da', art: 'vergleich' };
+      }
+      return { ampel: 'gruen', kurz: 'Viel Platz', art: 'kapazitaet' };
+    }
+
+    // 3. Ohne Kapazitaet bleibt nur der Vergleich — Luzern, Radzaehler.
+    if (quote != null) {
+      if (quote > AMPEL_ROT) return { ampel: 'rot', kurz: 'Voller als sonst', art: 'vergleich' };
+      if (quote < AMPEL_GRUEN) return { ampel: 'gruen', kurz: 'Leerer als sonst', art: 'vergleich' };
+      return { ampel: 'gelb', kurz: 'Wie üblich', art: 'vergleich' };
+    }
+    return { ampel: 'aufbau', kurz: 'Noch ohne Vergleich', art: 'keiner' };
+  })();
+
+  const ampel = st.ampel;
+  if (ampel === 'veraltet') veraltet++;
+  else if (ampel === 'geschlossen') geschlossen++;
+  else if (ampel === 'aufbau') ohneBasis++;
+  else mitAmpel++;
 
   // Verlauf: aelteste zuerst, bei Bedarf gleichmaessig ausduennen
   let v = (verlauf[s.id] || []).slice(0, MAX_SPARK * 3).reverse();
@@ -266,9 +287,13 @@ for (const s of SENSOREN) {
     geometry: { type: 'Point', coordinates: [s.lon, s.lat] },
     properties: {
       id: s.id, name: s.name, ort: s.ort, land: s.land, gruppe: s.gruppe || null,
-      // Ohne dieses Feld fiel die Stufenleiter still auf 'sonstiges' zurueck —
-      // die Empfehlungen sahen richtig aus, kamen aber nur aus der Notregel.
-      ziel: s.ziel || null,
+      // Zu welchem Ziel dieser Zugang gehoert. Frueher stand hier eine aus dem
+      // Namen geratene Art — auf Deutsch, weshalb Groeden zu 100 % "sonstiges"
+      // war und der Bayerische Wald keine Kategorie "Wandern" hatte.
+      ziel: (() => {
+        const z = zielVonSensor[s.id];
+        return z ? { id: z.id, name: z.name, art: z.art, arten: z.arten || [z.art] } : null;
+      })(),
       quelle: s.quelle, quelle_url: s.quelle_url, hinweis: s.hinweis,
       einheit: s.einheit, metrik: s.metrik, kapazitaet: s.kapazitaet,
       wert: Number(a.wert),
@@ -277,6 +302,7 @@ for (const s of SENSOREN) {
       vergleich_art: referenzArt,
       vergleich_tage: tage,
       quote, ampel,
+      status: st,
       alter_min: alterMin,
       frische_grenze_min: grenze,
       quell_ts: a.quell_ts,
@@ -289,16 +315,6 @@ for (const s of SENSOREN) {
 }
 
 // ---------------------------------------------------------------- Empfehlung
-// Der eigentliche Schritt von "ist voll" zu "geh dorthin": zu jedem stark
-// ausgelasteten Punkt die leerste Alternative DERSELBEN Gruppe suchen. Ohne
-// Gruppe keine Empfehlung — ein Parkhaus ersetzt kein Bad.
-const nachGruppe = {};
-for (const f of features) {
-  const g = f.properties.gruppe;
-  if (!g) continue;
-  (nachGruppe[g] = nachGruppe[g] || []).push(f);
-}
-
 function entfernungKm(a, b) {
   const R = 6371, rad = Math.PI / 180;
   const dLat = (b[1] - a[1]) * rad, dLon = (b[0] - a[0]) * rad;
@@ -307,116 +323,161 @@ function entfernungKm(a, b) {
   return Math.round(2 * R * Math.asin(Math.sqrt(s)) * 10) / 10;
 }
 
-// Welche Zielarten duerfen einander ersetzen. Ein Wandereinstieg ersetzt einen
-// anderen Wandereinstieg oder eine Talstation — aber niemals einen Bahnhof.
-const TAUSCHBAR = {
-  bergbahn: ['bergbahn', 'wandern'],
-  wandern: ['wandern', 'bergbahn', 'nationalpark'],
-  nationalpark: ['nationalpark', 'wandern'],
-  wasser: ['wasser'],
-  anreise: ['anreise'],
-  ort: ['ort'],
-  sonstiges: [],
-};
-// Wie weit ein Umweg je Zielart zumutbar ist. Fuer ein Ausflugsziel faehrt man
-// eine Viertelstunde weiter; zu einem ERSATZ-BAHNHOF nicht. Ohne diese
-// Unterscheidung schlug die Seite 14,4 km zum naechsten Bahnhof vor.
+// Wie weit ein Umweg je Zielart zumutbar ist. Fuer einen Berg faehrt man eine
+// Viertelstunde weiter; zu einem ERSATZ-BAHNHOF nicht. Ohne diese Unterscheidung
+// schlug die Seite 14,4 km zum naechsten Bahnhof vor.
 const MAX_KM = {
-  bergbahn: 15, wandern: 15, nationalpark: 15, wasser: 12,
-  anreise: 4, ort: 4, sonstiges: 3,
+  bergbahn: 15, wandern: 15, nationalpark: 15, klamm: 15,
+  see: 12, rad: 5, ort: 4, stadt: 3, anreise: 4, sonstiges: 3,
 };
-const MAX_KM_NAH = 3;      // ohne bekannte Zielart nur der direkte Nachbarort
-const MIN_ABSTAND = 20;    // so viel leerer muss die Alternative wenigstens sein
 
-let mitEmpfehlung = 0, zeitTipps = 0;
+/** Wie voll es hier ist, 0-100 — je kleiner, desto mehr Platz. Wo die Kapazitaet
+ *  bekannt ist, zaehlt sie; sonst der Perzentilrang. */
+function fuellung(p) {
+  if (p.auslastung != null) return Number(p.auslastung);
+  if (p.quote != null) return Number(p.quote);
+  return null;
+}
 
-for (const f of features) {
-  const p = f.properties;
-  p.alternative = null;
-  p.spaeter = null;
+/** Hat hier ein Gast wirklich Platz? Die Antwort kommt aus der EINEN
+ *  Statusfunktion — gruen heisst gruen. Eine eigene Schwelle stuende sonst
+ *  neben ihr und koennte von ihr abdriften; genau das war der Fehler, den die
+ *  Trennung Workflow/Frontend erzeugt hat. Wo die Kapazitaet bekannt ist,
+ *  kommt eine strengere Bedingung dazu: gruen reicht bis 75 %, hinschicken
+ *  wollen wir aber nur, wo wirklich noch Luft ist. */
+function hatPlatz(p) {
+  if (p.ampel !== 'gruen') return false;
+  if (p.auslastung != null) return Number(p.auslastung) <= FREI_BIS;
+  return true;
+}
 
-  // Nur bei echter Fuelle lenken. Alles darunter ist Information, kein Rat.
-  if (p.ampel !== 'rot') continue;
+/** Die naechste besuchbare Stunde, in der es spuerbar ruhiger ist. */
+function spaeterAls(kurve) {
+  if (!Array.isArray(kurve)) return null;
+  const jetztWert = kurve[stunde];
+  const hoechst = Math.max(...kurve.filter((v) => v != null), 0);
+  if (jetztWert == null || hoechst <= 0 || jetztWert < hoechst * 0.25) return null;
+  let beste = null;
+  for (let i = 1; i <= 6; i++) {
+    const h = (stunde + i) % 24;
+    const v = kurve[h];
+    if (v == null || h < 7 || h > 20) continue;
+    if (v < jetztWert * 0.7 && (beste === null || v < kurve[beste])) beste = h;
+  }
+  return beste === null
+    ? null
+    : { stunde: beste, anteil: Math.round((1 - kurve[beste] / jetztWert) * 100) };
+}
 
-  // Eine Alternative muss TATSAECHLICH Platz haben. Vorher genuegte ein
-  // niedrigerer Perzentilrang — dadurch wurde Alpsee P1 mit null freien
-  // Plaetzen als Ziel vorgeschlagen, weil er "normal voll" war.
-  const geschwister = (nachGruppe[p.gruppe] || [])
-    .filter((x) => x.properties.id !== p.id)
-    .map((x) => ({
-      f: x,
-      p: x.properties,
-      km: entfernungKm(f.geometry.coordinates, x.geometry.coordinates),
-    }))
-    .filter((x) => {
-      if (x.p.ampel === 'veraltet' || x.p.ampel === 'geschlossen') return false;
-      const frei = x.p.auslastung != null ? Number(x.p.auslastung) : null;
-      if (frei != null) return frei <= FREI_BIS;            // absolut noch Platz
-      return x.p.quote != null && x.p.quote < 50;           // ohne Kapazitaet: deutlich leerer
-    });
+// ------------------------------------------------------------- Ziele bauen
+const featureVon = {};
+for (const f of features) featureVon[f.properties.id] = f;
 
-  const meineArt = (p.ziel && p.ziel.art) || 'sonstiges';
-  const meinEinstieg = p.ziel && p.ziel.einstieg;
+const ziele = [];
+for (const z of ZIELE) {
+  const zug = (z.zugaenge || []).map((id) => featureVon[id]).filter(Boolean);
+  if (!zug.length) continue;
 
-  // STUFE 1 — gleiches Ziel, anderer Zugang. Selten (nur 11 Einstiege haben
-  // ueberhaupt mehrere Zugaenge), dafuer nie falsch: Es ist derselbe Ort.
-  let treffer = meinEinstieg
-    ? geschwister.filter((x) => x.p.ziel && x.p.ziel.einstieg === meinEinstieg)
-    : [];
-  let stufe = treffer.length ? 'zugang' : null;
+  const brauchbar = zug.filter(
+    (f) => f.properties.ampel !== 'veraltet' && f.properties.ampel !== 'geschlossen');
+  // Der Zugang mit dem meisten Platz bestimmt, wie es am Ziel aussieht: Wer
+  // hinfaehrt, stellt sich dorthin, wo noch etwas frei ist — nicht auf den
+  // vollsten Platz. Genau das war die Alpsee-Frage: P1 voll, P4 mit 57 frei.
+  const sortiert = [...brauchbar].sort(
+    (a, b) => (fuellung(a.properties) ?? 999) - (fuellung(b.properties) ?? 999));
+  const bester = sortiert[0] || zug[0];
+  const bp = bester.properties;
 
-  // STUFE 2 — anderer Zeitpunkt. Aus dem typischen Tagesverlauf: die naechste
-  // besuchbare Stunde, in der es spuerbar ruhiger ist. Kein Ortswechsel noetig.
-  if (!treffer.length && Array.isArray(p.tagesgang)) {
-    const jetztWert = p.tagesgang[stunde];
-    const hoechst = Math.max(...p.tagesgang.filter((v) => v != null), 0);
-    if (jetztWert != null && hoechst > 0 && jetztWert >= hoechst * 0.25) {
-      let beste = null;
-      for (let i = 1; i <= 6; i++) {
-        const h = (stunde + i) % 24;
-        const v = p.tagesgang[h];
-        if (v == null || h < 7 || h > 20) continue;
-        if (v < jetztWert * 0.7 && (beste === null || v < p.tagesgang[beste])) beste = h;
-      }
-      if (beste !== null) {
-        p.spaeter = {
-          stunde: beste,
-          anteil: Math.round((1 - p.tagesgang[beste] / jetztWert) * 100),
-        };
-        zeitTipps++;
-      }
-    }
+  let kapazitaet = null, belegt = null;
+  for (const f of brauchbar) {
+    const k = Number(f.properties.kapazitaet);
+    if (!Number.isFinite(k) || k <= 0 || f.properties.auslastung == null) continue;
+    kapazitaet = (kapazitaet || 0) + k;
+    belegt = (belegt || 0) + Math.round((Number(f.properties.auslastung) / 100) * k);
   }
 
-  // STUFE 3 — vergleichbares Ziel. Gleiche oder verwandte Zielart im Umkreis.
-  // Wo die Zielart unbekannt ist, gilt nur der enge Umkreis — sonst waere es
-  // wieder "irgendwas in der Naehe", und genau das schickte Gaeste vom Bahnhof
-  // Oberstaufen 12,6 km zum Alpsee.
-  if (!treffer.length) {
-    const erlaubt = TAUSCHBAR[meineArt] || [];
-    treffer = geschwister.filter((x) => {
-      const art = (x.p.ziel && x.p.ziel.art) || 'sonstiges';
-      if (meineArt === 'sonstiges' || art === 'sonstiges') return x.km <= MAX_KM_NAH;
-      return erlaubt.includes(art) && x.km <= (MAX_KM[meineArt] || MAX_KM_NAH);
-    });
-    if (treffer.length) stufe = 'ziel';
-  }
+  const voll = zug.filter((f) => f.properties.ampel === 'rot');
+  const frei = brauchbar.filter((f) => hatPlatz(f.properties));
 
-  if (!treffer.length) continue;
+  ziele.push({
+    id: z.id, name: z.name, gebiet: z.gebiet,
+    art: z.art, arten: z.arten || [z.art],
+    ort: z.ort || bp.ort || '',
+    lat: z.lat, lon: z.lon,
+    status: bp.status,
+    ampel: bp.ampel,
+    auslastung: bp.auslastung,
+    quote: bp.quote,
+    wert: bp.wert,
+    kapazitaet, belegt,
+    frei_plaetze: kapazitaet != null ? kapazitaet - belegt : null,
+    einheit: bp.einheit, metrik: bp.metrik,
+    quelle: bp.quelle, quelle_url: bp.quelle_url, hinweis: bp.hinweis,
+    alter_min: bp.alter_min, quell_ts: bp.quell_ts,
+    basis_tage: bp.basis_tage,
+    vergleich_art: bp.vergleich_art, vergleich_tage: bp.vergleich_tage,
+    tagesgang: bp.tagesgang,
+    sparkline: bp.sparkline,
+    haupt_zugang: bp.id,
+    zugaenge: zug.map((f) => ({
+      id: f.properties.id, name: f.properties.name,
+      ampel: f.properties.ampel, status: f.properties.status,
+      auslastung: f.properties.auslastung, kapazitaet: f.properties.kapazitaet,
+      lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0],
+    })),
+    // STUFE 1 — gleiches Ziel, anderer Zugang. Der beste Rat ueberhaupt, weil er
+    // niemanden umleitet: Es ist derselbe Ort, nur die andere Seite.
+    zugang_tipp: (voll.length && frei.length && zug.length > 1)
+      ? {
+          von: voll[0].properties.name,
+          nach: frei[0].properties.name,
+          nach_id: frei[0].properties.id,
+          km: entfernungKm(voll[0].geometry.coordinates, frei[0].geometry.coordinates),
+        }
+      : null,
+    spaeter: null,
+    alternative: null,
+  });
+}
+
+// ------------------------------------------------------- Lenken: die Stufenleiter
+// Nur bei echter Fuelle lenken. Alles darunter ist Information, kein Rat.
+let mitEmpfehlung = 0, zeitTipps = 0, zugangTipps = 0;
+for (const z of ziele) if (z.zugang_tipp) zugangTipps++;
+
+for (const z of ziele) {
+  if (z.ampel !== 'rot') continue;
+
+  // STUFE 2 — anderer Zeitpunkt. Kein Ortswechsel noetig, also vor dem Umleiten.
+  z.spaeter = spaeterAls(z.tagesgang);
+  if (z.spaeter) zeitTipps++;
+
+  // STUFE 3 — vergleichbares Ziel. Zwei Ziele sind tauschbar, wenn sich ihre
+  // Kategorien ueberschneiden: Ein Nationalpark-Einstieg zaehlt AUCH als Wandern,
+  // ein Bahnhof niemals als Badesee. Das steckt in `arten`, nicht in einer
+  // deutschen Stichwortliste — deshalb funktioniert es auch in Groeden.
+  const kandidaten = ziele
+    .filter((o) => o.id !== z.id
+      && o.gebiet === z.gebiet
+      && (o.arten || []).some((a) => (z.arten || []).includes(a))
+      && hatPlatz(o))
+    .map((o) => ({ z: o, km: entfernungKm([z.lon, z.lat], [o.lon, o.lat]) }))
+    .filter((x) => x.km <= (MAX_KM[z.art] || 3));
+
+  if (!kandidaten.length) continue;
 
   // Naehe schlaegt Leere: zehn Prozentpunkte leerer wiegen einen Kilometer auf.
-  // Sortiert wird nach der ABSOLUTEN Belegung, wo sie bekannt ist — der Gast
-  // will freie Plaetze, keinen guenstigen Rang.
-  const guete = (x) => (x.p.auslastung != null ? Number(x.p.auslastung) : (x.p.quote ?? 50));
-  treffer.sort((x, y) => (guete(x) + x.km * 10) - (guete(y) + y.km * 10));
-  const b = treffer[0];
-  p.alternative = {
-    id: b.p.id,
-    name: b.p.name,
-    quote: b.p.quote,
-    ampel: b.p.ampel,
+  const guete = (x) => (fuellung(x.z) ?? 50) + x.km * 10;
+  kandidaten.sort((x, y) => guete(x) - guete(y));
+  const b = kandidaten[0];
+  z.alternative = {
+    id: b.z.id, name: b.z.name, art: b.z.art,
+    ampel: b.z.ampel, status: b.z.status,
+    auslastung: b.z.auslastung, quote: b.z.quote,
+    frei_plaetze: b.z.frei_plaetze, kapazitaet: b.z.kapazitaet,
+    lat: b.z.lat, lon: b.z.lon,
     km: b.km,
-    stufe,
+    stufe: 'ziel',
   };
   mitEmpfehlung++;
 }
@@ -428,6 +489,7 @@ return [{
     vergleichszelle: { wochentag: dow, stunde },
     zusammenfassung: {
       sensoren: features.length,
+      ziele: ziele.length,
       mit_ampel: mitAmpel,
       veraltet,
       im_aufbau: ohneBasis,
@@ -435,7 +497,9 @@ return [{
       gedaempft,
       mit_empfehlung: mitEmpfehlung,
       zeit_tipps: zeitTipps,
+      zugang_tipps: zugangTipps,
     },
+    ziele,
     features,
   },
 }];

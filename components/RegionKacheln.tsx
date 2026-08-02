@@ -5,56 +5,56 @@ import Link from "next/link";
 import {
   EINZELREGIONEN,
   GAST_REIHENFOLGE,
+  STATUS_FARBE,
   VERBUND_BAYERN,
-  gastStatus,
   type Region,
 } from "@/lib/regionen";
-import type { SensorProps, StatusAntwort } from "@/lib/types";
+import type { StatusAntwort, ZielProps } from "@/lib/types";
 
 /** Was auf der Kachel steht: wie viele Ziele es gibt, wie viele Platz haben,
- *  und der eine Satz, der gerade zaehlt. */
+ *  und der eine Satz, der gerade zaehlt.
+ *
+ *  Gezaehlt werden ZIELE, nicht Messpunkte: "52 Parkplaetze" ist eine
+ *  Betriebszahl, "52 Ziele" ist die Antwort auf die Frage des Gastes. Und der
+ *  Status kommt fertig aus dem Workflow — hier wird nichts mehr abgeleitet. */
 interface Vorschau {
-  ziele: number;
+  anzahl: number;
   frei: number;
   voll: number;
   ohneVergleich: number;
-  bester: SensorProps | null;
-  vollster: SensorProps | null;
+  bester: ZielProps | null;
 }
 
-function auswerten(features: SensorProps[]): Vorschau {
-  const mit = features.map((p) => ({ p, s: gastStatus(p) }));
-  const zaehl = (a: string) => mit.filter((x) => x.s.ampel === a).length;
+function auswerten(ziele: ZielProps[]): Vorschau {
+  const zaehl = (a: string) => ziele.filter((z) => z.ampel === a).length;
   // Fuer den Tipp zaehlt nur, was wirklich frei ist — bei Gleichstand entscheidet
   // die feinere historische Einordnung.
-  const frei = mit
-    .filter((x) => x.s.ampel === "gruen")
-    .sort((a, b) => (a.p.quote ?? 50) - (b.p.quote ?? 50));
+  const frei = ziele
+    .filter((z) => z.ampel === "gruen")
+    .sort((a, b) => (a.auslastung ?? a.quote ?? 50) - (b.auslastung ?? b.quote ?? 50));
   return {
-    ziele: features.length,
+    anzahl: ziele.length,
     frei: zaehl("gruen"),
     voll: zaehl("rot"),
     ohneVergleich: zaehl("aufbau") + zaehl("veraltet") + zaehl("geschlossen"),
-    bester: frei[0]?.p ?? null,
-    vollster: null,
+    bester: frei[0] ?? null,
   };
 }
 
-function Punktreihe({ features }: { features: SensorProps[] }) {
+function Punktreihe({ ziele }: { ziele: ZielProps[] }) {
   // Alle Ziele als Punktreihe — auf einen Blick sichtbar, wie das Verhaeltnis
   // gerade steht, ohne dass man eine Zahl lesen muss.
-  const sortiert = [...features]
-    .map((p) => ({ p, s: gastStatus(p) }))
-    .sort((a, b) => GAST_REIHENFOLGE.indexOf(a.s.ampel) - GAST_REIHENFOLGE.indexOf(b.s.ampel));
+  const sortiert = [...ziele].sort(
+    (a, b) => GAST_REIHENFOLGE.indexOf(a.ampel) - GAST_REIHENFOLGE.indexOf(b.ampel));
   return (
     <div className="flex flex-wrap gap-1.5" aria-hidden>
-      {sortiert.slice(0, 34).map(({ p, s }) => (
+      {sortiert.slice(0, 34).map((z) => (
         <span
-          key={p.id}
+          key={z.id}
           className="h-2 w-2 rounded-full"
           style={{
-            background: s.farbe,
-            opacity: s.ampel === "aufbau" || s.ampel === "veraltet" ? 0.45 : 1,
+            background: STATUS_FARBE[z.ampel].farbe,
+            opacity: z.ampel === "aufbau" || z.ampel === "veraltet" ? 0.45 : 1,
           }}
         />
       ))}
@@ -66,11 +66,11 @@ function Punktreihe({ features }: { features: SensorProps[] }) {
 }
 
 function Kachel({ region, daten, verzug }: { region: Region; daten: StatusAntwort | null; verzug: number }) {
-  const features = useMemo(
-    () => (daten?.features ?? []).map((f) => f.properties).filter((p) => p.gruppe === region.gruppe),
+  const ziele = useMemo(
+    () => (daten?.ziele ?? []).filter((z) => z.gebiet === region.gruppe),
     [daten, region.gruppe],
   );
-  const v = useMemo(() => auswerten(features), [features]);
+  const v = useMemo(() => auswerten(ziele), [ziele]);
 
   const tipp = v.bester ? { titel: v.bester.name } : null;
 
@@ -100,8 +100,8 @@ function Kachel({ region, daten, verzug }: { region: Region; daten: StatusAntwor
           <>
             <div className="flex items-baseline gap-5">
               <span>
-                <span className="zahl text-4xl font-semibold leading-none text-tinte">{v.ziele}</span>
-                <span className="ml-1.5 text-sm text-tinte-weich">{region.zielPlural}</span>
+                <span className="zahl text-4xl font-semibold leading-none text-tinte">{v.anzahl}</span>
+                <span className="ml-1.5 text-sm text-tinte-weich">Ziele</span>
               </span>
               {v.frei > 0 && (
                 <span className="zahl text-sm font-medium" style={{ color: "var(--color-frei)" }}>
@@ -119,20 +119,20 @@ function Kachel({ region, daten, verzug }: { region: Region; daten: StatusAntwor
               )}
             </div>
 
-            <Punktreihe features={features} />
+            <Punktreihe ziele={ziele} />
 
             {tipp ? (
               <p className="mt-auto text-sm leading-relaxed text-tinte-weich">
                 Gerade am entspanntesten:{" "}
                 <strong className="font-semibold text-tinte">{tipp.titel}</strong>
               </p>
-            ) : v.voll === v.ziele ? (
+            ) : v.voll === v.anzahl ? (
               <p className="mt-auto text-sm leading-relaxed text-tinte-weich">
                 Gerade ist überall viel los.
               </p>
             ) : (
               <p className="mt-auto text-sm leading-relaxed text-tinte-weich">
-                {v.ohneVergleich === v.ziele
+                {v.ohneVergleich === v.anzahl
                   ? "Gerade geschlossen — die Werte laufen weiter mit."
                   : "Kein Ziel sticht gerade heraus."}
               </p>
@@ -166,10 +166,7 @@ function Kachel({ region, daten, verzug }: { region: Region; daten: StatusAntwor
 function BayernKachel({ daten }: { daten: StatusAntwort | null }) {
   const v = VERBUND_BAYERN;
   const alle = useMemo(
-    () =>
-      (daten?.features ?? [])
-        .map((f) => f.properties)
-        .filter((p) => v.gebiete.some((g) => g.gruppe === p.gruppe)),
+    () => (daten?.ziele ?? []).filter((z) => v.gebiete.some((g) => g.gruppe === z.gebiet)),
     [daten, v.gebiete],
   );
 
@@ -198,7 +195,7 @@ function BayernKachel({ daten }: { daten: StatusAntwort | null }) {
           {daten && (
             <p className="text-sm text-tinte-weich">
               <span className="zahl text-3xl font-semibold text-tinte">{alle.length}</span>{" "}
-              Parkplätze mit eigener Historie
+              Ziele mit eigener Historie
             </p>
           )}
         </div>
@@ -206,7 +203,7 @@ function BayernKachel({ daten }: { daten: StatusAntwort | null }) {
 
       <div className="grid gap-px bg-linie sm:grid-cols-3">
         {v.gebiete.map((g) => {
-          const f = alle.filter((p) => p.gruppe === g.gruppe);
+          const f = alle.filter((z) => z.gebiet === g.gruppe);
           const s = auswerten(f);
           return (
             <Link
@@ -218,7 +215,7 @@ function BayernKachel({ daten }: { daten: StatusAntwort | null }) {
               {daten ? (
                 <>
                   <p className="zahl text-sm text-tinte-weich">
-                    {s.ziele} Parkplätze
+                    {s.anzahl} Ziele
                     {s.frei > 0 && (
                       <span className="ml-2 font-medium" style={{ color: "var(--color-frei)" }}>
                         {s.frei} frei
@@ -230,7 +227,7 @@ function BayernKachel({ daten }: { daten: StatusAntwort | null }) {
                       </span>
                     )}
                   </p>
-                  <Punktreihe features={f} />
+                  <Punktreihe ziele={f} />
                 </>
               ) : (
                 <div className="h-2 w-full animate-pulse rounded bg-still-weich" />

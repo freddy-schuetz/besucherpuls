@@ -3,3 +3,8 @@ node_modules
 .env
 .env.local
 .vercel
+
+# Prüf-Bildschirmfotos und Build-Reste — Ergebnisse, keine Quellen
+scripts/.ui/
+scripts/__pycache__/
+tsconfig.tsbuildinfo

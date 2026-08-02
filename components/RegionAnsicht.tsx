@@ -3,19 +3,26 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import ZielKarte from "@/components/ZielKarte";
+import ZielKarte, { AmpelStufen } from "@/components/ZielKarte";
 import Tagesverlauf from "@/components/Tagesverlauf";
 import Ansage from "@/components/Ansage";
-import Vorhaben, { ZEITEN, wertFuerZeit, type VorhabenWahl, type ZeitWahl } from "@/components/Vorhaben";
+import Zielsuche, { ArtZeichen } from "@/components/Zielsuche";
 import {
+  ART_TEXT,
   GAST_REIHENFOLGE,
   REGIONEN,
-  STATUS_GAST,
-  gastStatus,
-  messwertText,
+  STATUS_FARBE,
+  messwertZiel,
   type Region,
 } from "@/lib/regionen";
-import { QUELLE_LABEL, alterText, type SensorProps, type StatusAntwort } from "@/lib/types";
+import {
+  QUELLE_LABEL,
+  alterText,
+  einordnungText,
+  type StatusAntwort,
+  type ZielProps,
+  type Zielart,
+} from "@/lib/types";
 
 const LiveMap = dynamic(() => import("@/components/LiveMap"), {
   ssr: false,
@@ -25,63 +32,19 @@ const LiveMap = dynamic(() => import("@/components/LiveMap"), {
 const REFRESH_MS = 60_000;
 const ERST_ZEIGEN = 9;
 
-/** Der eine Satz, der oben steht. Reihenfolge der Faelle ist Absicht:
- *  erst die Empfehlung (das Produkt), dann Entwarnung, dann Ehrlichkeit. */
-function antwort(ziele: SensorProps[], region: Region) {
-  // Nur empfehlen, wenn der Punkt nach der bereinigten Bewertung wirklich voll ist.
-  // Ungefiltert schlug die Seite auch dann eine Alternative vor, wenn 209 von 340
-  // Plaetzen frei waren — historisch ungewoehnlich, aber niemand muss deshalb
-  // woandershin fahren.
-  const mitAlternative = ziele.find(
-    (p) => gastStatus(p).ampel === "rot" && p.alternative,
-  );
-  if (mitAlternative) {
-    // Wortlaut an die Tatsache binden: Bei 100 % Belegung ist es schlicht voll.
-    // "voller als sonst" ist ein Vergleich und klingt bei einem randvollen
-    // Parkplatz nach Beschoenigung.
-    const wirklichVoll = (mitAlternative.auslastung ?? 0) >= 92;
-    return {
-      art: "empfehlung" as const,
-      kopf: wirklichVoll
-        ? `${mitAlternative.name} ist voll`
-        : `${mitAlternative.name} ist voller als sonst`,
-      text: `Bei ${mitAlternative.alternative!.name} ist gerade deutlich mehr Platz — ${mitAlternative.alternative!.km} km entfernt.`,
-      ziel: mitAlternative.alternative!.id,
-    };
-  }
-  const voll = ziele.filter((p) => gastStatus(p).ampel === "rot");
-  if (voll.length) {
-    // Wortwahl an die Quelle der Aussage binden: „voller als sonst" ist ein
-    // Vergleich mit der Vergangenheit. Kommt die Zahl aus der gemeldeten
-    // Auslastung, ist sie schlicht voll — das darf man nicht vermischen.
-    const ausVergleich = voll.some((p) => gastStatus(p).art === "vergleich");
-    const frei = ziele.filter((p) => gastStatus(p).ampel === "gruen");
-    return {
-      art: "warnung" as const,
-      kopf: ausVergleich
-        ? `${voll.length} ${voll.length === 1 ? region.ziel : region.zielPlural} voller als sonst`
-        : `${voll.length} ${voll.length === 1 ? region.ziel : region.zielPlural} derzeit voll`,
-      text: frei.length
-        ? `Dafür haben ${frei.length} andere gerade Platz — sie stehen unten zuerst.`
-        : "In der Nähe ist gerade nichts spürbar leerer — hier hilft eher ein anderer Zeitpunkt.",
-      ziel: voll[0].id,
-    };
-  }
-  const frei = ziele.filter((p) => gastStatus(p).ampel === "gruen");
-  if (frei.length) {
-    return {
-      art: "entwarnung" as const,
-      kopf: "Gerade entspannt",
-      text: `${frei.length} von ${ziele.length} haben gerade gut Platz.`,
-      ziel: frei[0].id,
-    };
-  }
-  return {
-    art: "aufbau" as const,
-    kopf: "Noch keine Einordnung möglich",
-    text: `Die Live-Werte laufen bereits, aber für diese Tageszeit fehlen noch Vergleichswerte. Sie entstehen mit jedem Tag, den ${region.name} mitgemessen wird.`,
-    ziel: null,
-  };
+/** Wann jemand losfahren will. Die Zeit sortiert nach dem TYPISCHEN Wert dieser
+ *  Stunde — mehr als „typischerweise" geben die Daten nicht her, und mehr wird
+ *  auch nicht behauptet. */
+const ZEITEN: { wert: string; text: string; stunde: number | null }[] = [
+  { wert: "jetzt", text: "Jetzt", stunde: null },
+  { wert: "nachmittag", text: "Heute Nachmittag", stunde: 15 },
+  { wert: "morgen", text: "Morgen früh", stunde: 9 },
+];
+
+function wertFuerZeit(z: ZielProps, stunde: number | null): number | null {
+  if (stunde == null) return z.auslastung ?? z.quote ?? null;
+  if (!z.tagesgang) return null;
+  return z.tagesgang[stunde];
 }
 
 export default function RegionAnsicht({ region }: { region: Region }) {
@@ -89,10 +52,11 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const [fehler, setFehler] = useState<string | null>(null);
   const [gewaehlt, setGewaehlt] = useState<string | null>(null);
   const [alleZeigen, setAlleZeigen] = useState(false);
-  const [vorhaben, setVorhaben] = useState<VorhabenWahl>(null);
-  const [zeit, setZeit] = useState<ZeitWahl>("jetzt");
+  const [suche, setSuche] = useState("");
+  const [kategorie, setKategorie] = useState<Zielart | null>(null);
+  const [zeit, setZeit] = useState("jetzt");
   const laeuft = useRef(false);
-  const kartenBereich = useRef<HTMLDivElement | null>(null);
+  const antwortBereich = useRef<HTMLDivElement | null>(null);
 
   const holen = useCallback(async () => {
     if (laeuft.current) return;
@@ -125,56 +89,58 @@ export default function RegionAnsicht({ region }: { region: Region }) {
     };
   }, [holen]);
 
-  const gefiltert = useMemo(() => {
-    if (!daten) return null;
-    const features = daten.features.filter((f) => f.properties.gruppe === region.gruppe);
-    return { ...daten, features } satisfies StatusAntwort;
+  /** Alle Ziele dieses Gebiets, nach Platz sortiert. */
+  const ziele = useMemo(() => {
+    if (!daten?.ziele) return [];
+    return daten.ziele
+      .filter((z) => z.gebiet === region.gruppe)
+      .sort((a, b) => {
+        const ra = GAST_REIHENFOLGE.indexOf(a.ampel);
+        const rb = GAST_REIHENFOLGE.indexOf(b.ampel);
+        if (ra !== rb) return ra - rb;
+        return (a.auslastung ?? a.quote ?? 999) - (b.auslastung ?? b.quote ?? 999);
+      });
   }, [daten, region.gruppe]);
 
-  const ziele = useMemo(() => {
-    if (!gefiltert) return [];
-    return [...gefiltert.features]
-      .map((f) => f.properties)
-      .sort((a, b) => {
-        const ra = GAST_REIHENFOLGE.indexOf(gastStatus(a).ampel);
-        const rb = GAST_REIHENFOLGE.indexOf(gastStatus(b).ampel);
-        if (ra !== rb) return ra - rb;
-        return (a.quote ?? 999) - (b.quote ?? 999);
-      });
-  }, [gefiltert]);
-
-  const a = useMemo(() => (ziele.length ? antwort(ziele, region) : null), [ziele, region]);
-  const detail = useMemo(() => ziele.find((p) => p.id === gewaehlt) ?? null, [ziele, gewaehlt]);
-
-  // Auswahl anwenden: Vorhaben filtert, die Zeit sortiert um. Fuer "nachmittags"
-  // zaehlt nicht der Jetzt-Wert, sondern der typische Wert um 15 Uhr.
+  /**
+   * Die Auswahl — und zwar EINE für Liste und Karte.
+   *
+   * Vorher filterte die Kategoriewahl nur die Liste: Wer „Bergbahn" wählte, sah
+   * unten neun Einträge und auf der Karte weiterhin alle 52 Punkte. Beide
+   * beziehen jetzt dieselbe Menge.
+   */
   const auswahl = useMemo(() => {
     let liste = ziele;
-    if (vorhaben) liste = liste.filter((p) => p.ziel?.art === vorhaben);
-    const stunde = ZEITEN.find((z) => z.wert === zeit)?.stunde ?? null;
+    if (kategorie) liste = liste.filter((z) => (z.arten ?? [z.art]).includes(kategorie));
+    const stunde = ZEITEN.find((x) => x.wert === zeit)?.stunde ?? null;
     if (stunde != null) {
       liste = liste
-        .filter((p) => wertFuerZeit(p, stunde) != null)
+        .filter((z) => wertFuerZeit(z, stunde) != null)
         .slice()
         .sort((a, b) => (wertFuerZeit(a, stunde) ?? 999) - (wertFuerZeit(b, stunde) ?? 999));
     }
     return liste;
-  }, [ziele, vorhaben, zeit]);
+  }, [ziele, kategorie, zeit]);
 
-  // Bei 31 Baedern ist die volle Liste eine Zumutung — erst das Wesentliche.
   const sichtbar = useMemo(
     () => (alleZeigen ? auswahl : auswahl.slice(0, ERST_ZEIGEN)),
     [auswahl, alleZeigen],
   );
+
+  const detail = useMemo(() => ziele.find((z) => z.id === gewaehlt) ?? null, [ziele, gewaehlt]);
+  const hatTagesgang = useMemo(() => ziele.some((z) => z.tagesgang), [ziele]);
   const nurKapazitaet = useMemo(
-    () => ziele.length > 0 && ziele.every((p) => gastStatus(p).art !== "vergleich"),
+    () => ziele.length > 0 && ziele.every((z) => z.status.art !== "vergleich"),
     [ziele],
   );
 
-  const waehlen = (id: string) => {
+  const waehlen = useCallback((id: string) => {
     setGewaehlt(id);
-    kartenBereich.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
+    // Erst im nächsten Frame scrollen — sonst steht die Antwortkarte noch nicht.
+    requestAnimationFrame(() =>
+      antwortBereich.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+    );
+  }, []);
 
   return (
     <main>
@@ -217,8 +183,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
           <p className="mt-4 max-w-2xl leading-relaxed text-tinte-weich">{region.versprechen}</p>
 
           <p className="zahl mt-5 text-sm text-tinte-zart">
-            {gefiltert
-              ? `${ziele.length} ${region.zielPlural} · Stand ${new Date(gefiltert.erzeugt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr`
+            {daten
+              ? `${ziele.length} Ziele · Stand ${new Date(daten.erzeugt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr`
               : "Live-Werte werden geladen …"}
           </p>
         </div>
@@ -232,155 +198,130 @@ export default function RegionAnsicht({ region }: { region: Region }) {
           </p>
         )}
 
-        {/* --------------------------------------------------------- Antwort */}
-        {a && (
-          <section
-            className="karte auftauchen relative -mt-6 overflow-hidden p-6 sm:-mt-8 sm:p-8"
-            aria-live="polite"
-          >
-            <div
-              className="absolute inset-y-0 left-0 w-1.5"
-              style={{
-                background:
-                  a.art === "empfehlung" || a.art === "entwarnung"
-                    ? "var(--color-frei)"
-                    : a.art === "warnung"
-                      ? "var(--color-voll)"
-                      : "var(--color-still)",
-              }}
-            />
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
-              {a.art === "empfehlung"
-                ? "Empfehlung"
-                : a.art === "warnung"
-                  ? "Gerade voll"
-                  : a.art === "entwarnung"
-                    ? "Gute Nachricht"
-                    : "Hinweis"}
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold leading-tight text-tinte sm:text-[1.9rem]">
-              {a.kopf}
-            </h2>
-            <p className="mt-2.5 max-w-2xl leading-relaxed text-tinte-weich">{a.text}</p>
-            {a.ziel && (
-              <button
-                onClick={() => waehlen(a.ziel!)}
-                className="mt-5 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
-                style={{ background: region.akzent }}
-              >
-                Auf der Karte zeigen
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M3 8h9m0 0L8.5 4.5M12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            )}
-          </section>
+        {/* ------------------------------------------------------- Einstieg */}
+        {ziele.length > 0 && (
+          <Zielsuche
+            ziele={ziele}
+            region={region}
+            suche={suche}
+            kategorie={kategorie}
+            onSuche={setSuche}
+            onKategorie={(k) => {
+              setKategorie(k);
+              setAlleZeigen(false);
+            }}
+            onZiel={waehlen}
+          />
         )}
 
-        {/* --------------------------------------------------------- Vorhaben */}
-        {ziele.length > 4 && (
-          <div className="mt-10">
-            <Vorhaben
-              ziele={ziele}
-              region={region}
-              vorhaben={vorhaben}
-              zeit={zeit}
-              onVorhaben={setVorhaben}
-              onZeit={setZeit}
-            />
-          </div>
-        )}
-
-        {/* --------------------------------------------------------- Ziele */}
-        <section className="py-12 sm:py-14">
-          <h2 className="text-xl font-semibold text-tinte">
-            {vorhaben || zeit !== "jetzt" ? "Passend dazu" : `Alle ${region.zielPlural}`}{" "}
-            <span className="text-sm font-normal text-tinte-zart">
-              {zeit === "jetzt"
-                ? "— die mit dem meisten Platz zuerst"
-                : `— nach dem typischen Wert um ${ZEITEN.find((z) => z.wert === zeit)?.stunde}:00 Uhr`}
-            </span>
-          </h2>
-          {nurKapazitaet && (
-            // Einmal je Abschnitt statt auf jeder Karte: der Hinweis stand vorher
-            // 31-mal untereinander und erschlug die eigentliche Information.
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-tinte-zart">
-              Die Angaben stammen hier direkt aus der gemeldeten Auslastung. Der Vergleich
-              mit sonst — „voller als üblich um diese Zeit" — kommt dazu, sobald genug Tage
-              erfasst sind.
-            </p>
-          )}
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sichtbar.map((p, i) => (
-              <ZielKarte
-                key={p.id}
-                p={p}
-                region={region}
-                verzug={Math.min(i, 9) * 45}
-                aktiv={p.id === gewaehlt}
-                onWaehlen={() => waehlen(p.id)}
-              />
-            ))}
-            {!auswahl.length && ziele.length > 0 && (
-              <p className="col-span-full text-sm text-tinte-weich">
-                Für diese Auswahl liegt gerade nichts vor — bei „{ZEITEN.find((z) => z.wert === zeit)?.text}"
-                zählen nur Ziele mit genug eigenem Verlauf.
-              </p>
-            )}
-            {!ziele.length &&
-              [0, 1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="karte h-40 animate-pulse bg-still-weich/40" />
-              ))}
-          </div>
-          {auswahl.length > ERST_ZEIGEN && (
-            <button
-              onClick={() => setAlleZeigen((v) => !v)}
-              className="mt-6 rounded-full border border-linie bg-karte px-5 py-2.5 text-sm font-semibold text-tinte transition hover:border-tinte-zart"
-            >
-              {alleZeigen
-                ? "Weniger anzeigen"
-                : `Alle ${auswahl.length} ${region.zielPlural} anzeigen`}
-            </button>
-          )}
-        </section>
-
-        {/* --------------------------------------------------------- Karte */}
-        <section ref={kartenBereich} className="pb-14 sm:pb-16">
-          <h2 className="text-xl font-semibold text-tinte">Auf der Karte</h2>
-          <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
-            <div className="karte h-[26rem] overflow-hidden lg:h-[30rem]">
-              <LiveMap
-                daten={gefiltert}
-                ausgewaehlt={gewaehlt}
-                onSelect={setGewaehlt}
-                start={{ mitte: region.mitte, zoom: region.zoom }}
-              />
-            </div>
-
-            <aside className="karte flex flex-col gap-5 p-6">
-              {detail ? (
-                <>
-                  <div>
-                    <span
-                      className="inline-block rounded-full px-2.5 py-1 text-[11px] font-semibold"
-                      style={{
-                        background: gastStatus(detail).feld,
-                        color: gastStatus(detail).farbe,
-                      }}
-                    >
-                      {gastStatus(detail).kurz}
-                    </span>
-                    <h3 className="mt-3 text-lg font-semibold text-tinte">{detail.name}</h3>
-                    <p className="zahl mt-1 text-sm text-tinte-weich">{messwertText(detail)}</p>
+        {/* -------------------------------------------------------- Antwort
+            ERST wenn ein Ziel gewählt ist. Vorher stand hier immer eine
+            Empfehlung — auch dann, wenn niemand gesagt hatte, was er vorhat.
+            Für jemanden, der zum Nebelhorn will, war „Alpsee P1 ist voll" eine
+            Zufallsinfo. Ohne Eingabe sagt die Seite deshalb nichts mehr. */}
+        {/* data-ziel am Kasten: welches Ziel die Karte gerade beantwortet. Macht
+            von aussen prüfbar, dass ein Klick auf die Empfehlung wirklich dorthin
+            führt — an blossem Text lässt sich das nicht festmachen. */}
+        <div ref={antwortBereich} className="scroll-mt-4">
+          {detail && (
+            <section data-ziel={detail.id} className="karte auftauchen mt-6 overflow-hidden">
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-linie p-6 sm:p-7">
+                <div className="min-w-0">
+                  <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
+                    <ArtZeichen art={detail.art} groesse={13} />
+                    {detail.art === "sonstiges"
+                      ? detail.ort || "Parkplatz"
+                      : ART_TEXT[detail.art]}
+                    {detail.zugaenge.length > 1 && ` · ${detail.zugaenge.length} Zugänge`}
+                  </p>
+                  <h2 className="mt-1.5 text-2xl font-semibold leading-tight text-tinte sm:text-[1.9rem]">
+                    {detail.name}
+                  </h2>
+                  <div className="mt-2">
+                    {detail.metrik === "ampelstufe" ? (
+                      <AmpelStufen stufe={detail.wert} farbe={STATUS_FARBE[detail.ampel].farbe} />
+                    ) : (
+                      <p className="zahl text-sm text-tinte-weich">{messwertZiel(detail)}</p>
+                    )}
                   </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-semibold"
+                    style={{
+                      background: STATUS_FARBE[detail.ampel].feld,
+                      color: STATUS_FARBE[detail.ampel].farbe,
+                    }}
+                  >
+                    {detail.status.kurz}
+                  </span>
+                  <button
+                    onClick={() => setGewaehlt(null)}
+                    aria-label="Auswahl aufheben"
+                    className="rounded-full border border-linie p-2 text-tinte-zart transition hover:text-tinte"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden>
+                      <path d="m4 4 8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
 
-                  <Ansage p={detail} region={region} />
+              <div className="grid gap-6 p-6 sm:p-7 lg:grid-cols-[1.05fr_1fr]">
+                <div className="space-y-4">
+                  <Ansage z={detail} region={region} onZiel={waehlen} />
 
-                  {detail.tagesgang && (
-                    <Tagesverlauf kurve={detail.tagesgang} akzent={region.akzent} />
+                  {einordnungText(detail) && (
+                    <p className="text-sm leading-relaxed text-tinte-weich">
+                      {einordnungText(detail)}
+                    </p>
                   )}
 
-                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-linie pt-4 text-sm">
+                  {/* Mehrere Zugänge einzeln zeigen — das ist die konkrete
+                      Handlungsinformation: nicht „am Alpsee ist Platz", sondern
+                      an welchem der vier Parkplätze. */}
+                  {detail.zugaenge.length > 1 && (
+                    <div className="rounded-2xl border border-linie p-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
+                        Zugänge
+                      </p>
+                      <ul className="mt-3 space-y-2.5">
+                        {detail.zugaenge.map((zg) => (
+                          <li key={zg.id} className="flex items-center gap-3 text-sm">
+                            <span
+                              className="h-2.5 w-2.5 shrink-0 rounded-full"
+                              style={{ background: STATUS_FARBE[zg.ampel].farbe }}
+                            />
+                            <span className="min-w-0 flex-1 truncate text-tinte">{zg.name}</span>
+                            <span className="zahl shrink-0 text-tinte-weich">
+                              {zg.auslastung != null && zg.kapazitaet
+                                ? `${Math.max(0, Math.round(zg.kapazitaet - (zg.auslastung / 100) * zg.kapazitaet))} frei`
+                                : zg.status.kurz}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  {detail.tagesgang ? (
+                    <Tagesverlauf kurve={detail.tagesgang} akzent={region.akzent} />
+                  ) : (
+                    <div className="rounded-2xl border border-linie p-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
+                        Typischer Tagesverlauf
+                      </p>
+                      <p className="mt-2 text-[13px] leading-relaxed text-tinte-weich">
+                        {detail.basis_tage > 0
+                          ? "Der Verlauf hier ist über den Tag praktisch gleich — dann ist eine Kurve keine Information, sondern Zierde. Sie erscheint, sobald sich die Stunden erkennbar unterscheiden."
+                          : "Wird aufgebaut: Für eine Tageskurve braucht es mehrere gemessene Tage."}
+                      </p>
+                    </div>
+                  )}
+
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                     <dt className="text-tinte-zart">Stand</dt>
                     <dd className="zahl text-right text-tinte">{alterText(detail.alter_min)}</dd>
                     {detail.vergleich_tage > 0 && (
@@ -391,46 +332,136 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                         </dd>
                       </>
                     )}
+                    <dt className="text-tinte-zart">Quelle</dt>
+                    <dd className="text-right">
+                      <a
+                        href={detail.quelle_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-tinte underline underline-offset-4 hover:text-tinte-weich"
+                      >
+                        {QUELLE_LABEL[detail.quelle]}
+                      </a>
+                    </dd>
                   </dl>
 
                   <p className="text-[13px] leading-relaxed text-tinte-zart">{detail.hinweis}</p>
-                </>
-              ) : (
-                <>
-                  <h3 className="text-lg font-semibold text-tinte">
-                    {region.ziel} auswählen
-                  </h3>
-                  <p className="text-sm leading-relaxed text-tinte-weich">
-                    Tippe oben auf eine Karte oder auf einen Punkt in der Karte — hier erscheint
-                    dann der typische Tagesverlauf und woher die Zahl kommt.
-                  </p>
-                  <ul className="mt-1 space-y-2 border-t border-linie pt-4">
-                    {(["gruen", "gelb", "rot", "geschlossen"] as const).map((k) => (
-                      <li key={k} className="flex items-center gap-2.5 text-sm text-tinte-weich">
-                        <span
-                          className="h-2.5 w-2.5 rounded-full"
-                          style={{ background: STATUS_GAST[k].farbe }}
-                        />
-                        {STATUS_GAST[k].kurz}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
 
-              <p className="mt-auto border-t border-linie pt-4 text-[13px] text-tinte-zart">
-                Quelle:{" "}
-                <a
-                  href={region.quelleUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-tinte-weich"
-                >
-                  {detail ? QUELLE_LABEL[detail.quelle] : region.quelle}
-                </a>
-              </p>
-            </aside>
+        {/* ---------------------------------------------------------- Liste */}
+        <section className="py-12 sm:py-14">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2 className="text-xl font-semibold text-tinte">
+              {kategorie ? ART_TEXT[kategorie] : "Alle Ziele"}{" "}
+              <span className="text-sm font-normal text-tinte-zart">
+                {zeit === "jetzt"
+                  ? "— die mit dem meisten Platz zuerst"
+                  : `— nach dem typischen Wert um ${ZEITEN.find((z) => z.wert === zeit)?.stunde}:00 Uhr`}
+              </span>
+            </h2>
+            {hatTagesgang && (
+              <div className="flex flex-wrap gap-1.5">
+                {ZEITEN.map((z) => (
+                  <button
+                    key={z.wert}
+                    onClick={() => setZeit(z.wert)}
+                    className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${
+                      zeit === z.wert
+                        ? "text-white"
+                        : "border border-linie bg-karte text-tinte-weich hover:border-tinte-zart hover:text-tinte"
+                    }`}
+                    style={zeit === z.wert ? { background: region.akzent } : undefined}
+                  >
+                    {z.text}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
+          {nurKapazitaet && (
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-tinte-zart">
+              Die Angaben stammen hier direkt aus der gemeldeten Auslastung. Der Vergleich
+              mit sonst — „voller als üblich um diese Zeit" — kommt dazu, sobald genug Tage
+              erfasst sind.
+            </p>
+          )}
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {sichtbar.map((z, i) => (
+              <ZielKarte
+                key={z.id}
+                z={z}
+                region={region}
+                verzug={Math.min(i, 9) * 45}
+                aktiv={z.id === gewaehlt}
+                onWaehlen={() => waehlen(z.id)}
+              />
+            ))}
+            {!auswahl.length && ziele.length > 0 && (
+              <p className="col-span-full text-sm text-tinte-weich">
+                {zeit === "jetzt"
+                  ? "Für diese Auswahl liegt gerade nichts vor."
+                  : `Bei „${ZEITEN.find((z) => z.wert === zeit)?.text}" zählen nur Ziele mit genug eigenem Verlauf — hier hat noch keines genug.`}
+              </p>
+            )}
+            {!ziele.length &&
+              [0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="karte h-40 animate-pulse bg-still-weich/40" />
+              ))}
+          </div>
+
+          {auswahl.length > ERST_ZEIGEN && (
+            <button
+              onClick={() => setAlleZeigen((v) => !v)}
+              className="mt-6 rounded-full border border-linie bg-karte px-5 py-2.5 text-sm font-semibold text-tinte transition hover:border-tinte-zart"
+            >
+              {alleZeigen ? "Weniger anzeigen" : `Alle ${auswahl.length} Ziele anzeigen`}
+            </button>
+          )}
+        </section>
+
+        {/* ---------------------------------------------------------- Karte */}
+        <section className="pb-14 sm:pb-16">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="text-xl font-semibold text-tinte">Auf der Karte</h2>
+            <p className="text-sm text-tinte-zart">
+              {kategorie
+                ? `${auswahl.length} ${ART_TEXT[kategorie]}-Ziele`
+                : `${auswahl.length} Ziele`}
+            </p>
+          </div>
+          <div className="karte mt-5 h-[26rem] overflow-hidden lg:h-[32rem]">
+            <LiveMap
+              ziele={auswahl}
+              ausgewaehlt={gewaehlt}
+              onSelect={waehlen}
+              start={{ mitte: region.mitte, zoom: region.zoom }}
+            />
+          </div>
+          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+            {(
+              [
+                ["gruen", "Platz"],
+                ["gelb", "Wird eng"],
+                ["rot", "Voll"],
+                ["aufbau", "Noch ohne Vergleich"],
+                ["veraltet", "Keine Meldung"],
+              ] as const
+            ).map(([k, t]) => (
+              <li key={k} className="flex items-center gap-2 text-[13px] text-tinte-weich">
+                <span
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ background: STATUS_FARBE[k].farbe }}
+                />
+                {t}
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>

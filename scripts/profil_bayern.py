@@ -24,6 +24,7 @@ import re
 import statistics
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from datetime import datetime
@@ -87,6 +88,7 @@ while seite:
 print(f"{len(reihe_von)} Zeitreihen im Katalog\n")
 
 zeilen = []
+verworfen = []
 for i, s in enumerate(sensoren, 1):
     u = reihe_von.get(s.get("quelle_id"))
     if not u:
@@ -97,6 +99,31 @@ for i, s in enumerate(sensoren, 1):
             urllib.request.Request(u, headers=H_BCT), timeout=300).read()).get("data", [])
     except Exception as e:  # noqa: BLE001
         print(f"  {i:>3}/{len(sensoren)} {s['name'][:38]:<38} Fehler {str(e)[:40]}")
+        continue
+
+    # PRUEFUNG VOR DEM SCHREIBEN. Beim ersten Import habe ich nur gezaehlt, dass
+    # Zeilen ankamen — nicht, ob die Werte stimmen. Alpsee P1 lag ueber alle drei
+    # Jahre konstant auf 277 (bei Kapazitaet 140), Vitalpark zwischen 860 und 964.
+    # Solche Reihen erzeugen flache Tagesverlaeufe und einen Vergleich, der jeden
+    # Wert "normal" findet. Sie gehoeren gar nicht erst in die Tabelle.
+    werte = []
+    for punkt in roh:
+        try:
+            werte.append(float(punkt[1]))
+        except (ValueError, TypeError, IndexError):
+            pass
+    if not werte:
+        print(f"  {i:>3}/{len(sensoren)} {s['name'][:38]:<38} VERWORFEN: keine Werte")
+        verworfen.append((s["name"], "keine Werte"))
+        continue
+    hoch, tief, eindeutig = max(werte), min(werte), len(set(werte))
+    if hoch > 105:
+        print(f"  {i:>3}/{len(sensoren)} {s['name'][:38]:<38} VERWORFEN: Rate bis {hoch:.0f} %")
+        verworfen.append((s["name"], f"Rate bis {hoch:.0f} %"))
+        continue
+    if eindeutig < 5:
+        print(f"  {i:>3}/{len(sensoren)} {s['name'][:38]:<38} VERWORFEN: nur {eindeutig} verschiedene Werte")
+        verworfen.append((s["name"], f"nur {eindeutig} verschiedene Werte"))
         continue
 
     # Schritt 1: je (Datum, Stunde) den Median dieses Tages
@@ -136,7 +163,8 @@ for i, s in enumerate(sensoren, 1):
         "quelle_hist": "bayern",
     })
     print(f"  {i:>3}/{len(sensoren)} {s['name'][:38]:<38} "
-          f"{len(roh):>7} Punkte  {len(raster):>3} Zellen  {len(tage)} Tage")
+          f"{len(roh):>7} Punkte  {len(raster):>3} Zellen  {len(tage)} Tage  "
+          f"Spanne {tief:.0f}–{hoch:.0f} %, {eindeutig} verschiedene")
 
 groesse = max((len(z["raster"]) for z in zeilen), default=0)
 print(f"\n{len(zeilen)} Profilzeilen, groesstes Raster {groesse/1024:.1f} KB")
@@ -145,14 +173,32 @@ if TROCKEN:
     print("--dry: nichts geschrieben")
     sys.exit(0)
 
-# Bestehende bayerische Zeilen wuerden doppeln — vorher pruefen.
-vorhanden = json.loads(urllib.request.urlopen(urllib.request.Request(
-    f"{BASE}/data-tables/{PROFIL_TABLE}/rows?limit=250", headers=H_API), timeout=90).read())
-schon = {r["sensor_id"] for r in (vorhanden.get("data") or []) if str(r.get("sensor_id", "")).startswith("by-")}
-if schon:
-    print(f"ABBRUCH: {len(schon)} bayerische Profilzeilen liegen schon vor.")
-    print("Erst loeschen (MCP n8n_manage_datatable deleteRows, Filter sensor_id like 'by-%').")
-    sys.exit(1)
+# Der stuendliche Verdichter legt fuer neue Sensoren selbst Zeilen an (duenn,
+# ein Tag). Die wuerden hier doppeln. Frueher brach das Skript deshalb komplett
+# ab — jetzt werden nur die betroffenen Sensoren uebersprungen, damit ein
+# erneuter Lauf nicht alle 104 Zeitreihen noch einmal herunterlaedt.
+alle_vorhanden = set()
+cursor = None
+while True:
+    u = f"{BASE}/data-tables/{PROFIL_TABLE}/rows?limit=250"
+    if cursor:
+        u += "&cursor=" + urllib.parse.quote(cursor, safe="")
+    d = json.loads(urllib.request.urlopen(
+        urllib.request.Request(u, headers=H_API), timeout=90).read())
+    zs = d.get("data") or []
+    alle_vorhanden |= {r["sensor_id"] for r in zs}
+    cursor = d.get("nextCursor")
+    if not cursor or len(zs) < 250:
+        break
+doppelt = [z for z in zeilen if z["sensor_id"] in alle_vorhanden]
+if doppelt:
+    print(f"{len(doppelt)} Sensoren haben schon eine Profilzeile — werden uebersprungen:")
+    for z in doppelt:
+        print(f"   {z['sensor_id']}")
+    zeilen = [z for z in zeilen if z["sensor_id"] not in alle_vorhanden]
+if not zeilen:
+    print("Nichts zu schreiben.")
+    sys.exit(0)
 
 # In Bloecken schreiben — ein einzelner POST mit 109 Rastern waere sehr gross.
 for i in range(0, len(zeilen), 25):

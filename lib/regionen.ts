@@ -1,4 +1,4 @@
-import type { Ampel, Gruppe, SensorProps } from "./types";
+import type { Ampel, Gruppe, SensorProps, ZielProps, Zielart } from "./types";
 
 /**
  * Die Regionen in GASTSPRACHE.
@@ -82,10 +82,14 @@ export const REGIONEN: Region[] = [
     name: "Berchtesgadener Land",
     land: "Bayern",
     dach: "bayern",
-    aktivitaet: "Königssee, Kehlstein, Ramsau",
+    aktivitaet: "Kehlstein, Wimbachtal, Thumsee",
     frage: "Wo bekommst du heute noch einen Parkplatz?",
+    // Der Königssee stand hier, obwohl er nicht im Datensatz ist: Schönau
+    // bewirtschaftet über eine eigene Park-App ohne offene Schnittstelle. Ein
+    // Versprechen, das die Seite nicht halten kann, ist schlimmer als eine
+    // kleinere Auswahl — deshalb steht jetzt da, was wirklich gemessen wird.
     versprechen:
-      "Kehlstein, Wimbachbrücke, Hirschbichl und der Thumsee — die Zugänge zum meistbesuchten Alpenraum Deutschlands. Neun weitere Parkplätze der Region sind zwar erfasst, aber nicht mit Zählern ausgerüstet; die stehen deshalb nicht auf der Karte.",
+      "Kehlstein, Wimbachbrücke, Hirschbichl und der Thumsee — Zugänge zum meistbesuchten Alpenraum Deutschlands, jeder mit Kapazität und Belegung. Der Königssee fehlt bewusst: Schönau bewirtschaftet über eine eigene App, die keine offenen Daten herausgibt.",
     ziel: "Parkplatz",
     zielPlural: "Parkplätze",
     gruppe: "berchtesgaden",
@@ -209,100 +213,88 @@ export const VERBUND_BAYERN: Verbund = {
 export const EINZELREGIONEN = REGIONEN.filter((r) => r.dach !== "bayern");
 
 /**
- * Der Status, den ein Gast sieht — zweistufig.
+ * Farben zur Ampel. MEHR NICHT.
  *
- * Die historische Einordnung („voller als sonst") ist die wertvollere Aussage,
- * braucht aber Vergleichstage. Solange die fehlen, wäre „noch ohne Vergleich"
- * die einzige Auskunft — und das ist Unsinn, wenn die Quelle selbst schon sagt,
- * dass ein Bad voll ist oder nur noch drei von 340 Plätzen frei sind.
+ * Hier stand bis zuletzt `gastStatus()` — eine zweite, eigenständige
+ * Statusberechnung neben der im Workflow. Die Folgen waren keine Schönheits-
+ * fehler: Die Landkarte färbte nach dem einen Ergebnis, die Kacheln nach dem
+ * anderen, und die Empfehlungslogik im Workflow sah Wiens Bäder als „ohne
+ * Basis" — weshalb Wien und Gröden nie eine Empfehlung bekommen konnten.
  *
- * Also: Vergleich, wenn vorhanden. Sonst die absolute Auslastung, sprachlich
- * klar getrennt („fast voll" statt „voller als sonst").
+ * Der Status wird jetzt an genau einer Stelle berechnet (scripts/status_node.js)
+ * und kommt als `status`-Objekt mit. Dieses Modul darf ihn einfärben und
+ * sortieren — ableiten darf es nichts mehr.
  */
-export interface GastStatus {
-  ampel: Ampel;
-  kurz: string;
-  farbe: string;
-  feld: string;
-  /** Woher die Aussage stammt — steuert die Wortwahl im Umfeld */
-  art: "vergleich" | "kapazitaet" | "keiner";
-}
-
-function ausAmpel(a: Ampel, kurz: string, art: GastStatus["art"]): GastStatus {
-  return { ampel: a, kurz, farbe: STATUS_GAST[a].farbe, feld: STATUS_GAST[a].feld, art };
-}
-
-/** Ab dieser Belegung darf ein Ziel überhaupt „voll" heissen. Darunter ist mehr
- *  als ein Drittel frei — und dann ist ein Ortswechsel kein Rat, sondern Spott. */
-const VOLL_AB_PROZENT = 67;
-
-/** Was die gemeldete Auslastung für sich genommen sagt — ohne jeden Vergleich. */
-function ausKapazitaet(p: SensorProps): GastStatus | null {
-  if (p.metrik === "ampelstufe") {
-    const stufe = Math.round(p.wert);
-    if (stufe <= 1) return ausAmpel("gruen", "Noch Platz", "kapazitaet");
-    if (stufe <= 3) return ausAmpel("gelb", "Wird knapp", "kapazitaet");
-    if (stufe === 4) return ausAmpel("gelb", "Fast voll", "kapazitaet");
-    return ausAmpel("rot", "Derzeit voll", "kapazitaet");
-  }
-  if ((p.metrik === "frei_plaetze" || p.metrik === "dock_belegung") && p.auslastung != null) {
-    if (p.auslastung < 70) return ausAmpel("gruen", "Viel Platz", "kapazitaet");
-    if (p.auslastung < 90) return ausAmpel("gelb", "Wird knapp", "kapazitaet");
-    return ausAmpel("rot", "Fast voll", "kapazitaet");
-  }
-  // Zürich: keine Kapazität, aber die Vierstufen-Anzeige der Stadt, umgerechnet
-  // auf 12,5 / 37,5 / 62,5 / 87,5 %. Eigene Schwellen, weil eine von vier Stufen
-  // etwas anderes bedeutet als ein Prozentwert aus Kapazität und Belegung.
-  if (p.metrik === "personen" && p.auslastung != null) {
-    if (p.auslastung < 25) return ausAmpel("gruen", "Viel Platz", "kapazitaet");
-    if (p.auslastung < 75) return ausAmpel("gelb", "Gut besucht", "kapazitaet");
-    return ausAmpel("rot", "Sehr voll", "kapazitaet");
-  }
-  return null;
-}
-
-export function gastStatus(p: SensorProps): GastStatus {
-  if (p.ampel === "veraltet" || p.ampel === "geschlossen") {
-    return ausAmpel(p.ampel, STATUS_GAST[p.ampel].kurz, "keiner");
-  }
-
-  const kap = ausKapazitaet(p);
-
-  // Historischer Vergleich — die eigentliche Leistung, aber nicht um jeden Preis.
-  if (p.quote != null && (p.ampel === "gruen" || p.ampel === "gelb" || p.ampel === "rot")) {
-    // Zwei Leitplanken. Beide entstanden aus Faellen, die auf der Seite standen:
-    //
-    // (a) "Viel Platz" bei 0 von 500 freien Plaetzen — historisch voellig normal,
-    //     weil der Sensor seit Wochen dasselbe meldet. Fuer einen Gast trotzdem
-    //     falsch. Ist es absolut voll, gilt das, egal was der Vergleich sagt.
-    //
-    // (b) "Voller als sonst" bei 210 von 340 freien Plaetzen. Stimmt statistisch,
-    //     taugt aber nicht als Rat: Niemand muss woandershin fahren, wo zwei
-    //     Drittel frei sind. Solange mehr als ein Drittel frei ist, heisst es
-    //     hoechstens "gut besucht" — nie "voll".
-    if (kap && kap.ampel === "rot") return kap;
-    if (p.ampel === "rot" && (p.auslastung ?? 100) < VOLL_AB_PROZENT) {
-      return ausAmpel("gelb", "Gut besucht, aber Platz", "vergleich");
-    }
-    return ausAmpel(p.ampel, STATUS_GAST[p.ampel].kurz, "vergleich");
-  }
-
-  // Ohne Vergleich trägt die gemeldete Auslastung ab der ersten Minute.
-  if (kap) return kap;
-
-  return ausAmpel("aufbau", STATUS_GAST.aufbau.kurz, "keiner");
-}
-
-/** Wie ein Status heisst, wenn ein Gast ihn liest. */
-export const STATUS_GAST: Record<Ampel, { kurz: string; farbe: string; feld: string }> = {
-  gruen: { kurz: "Viel Platz", farbe: "var(--color-frei)", feld: "var(--color-frei-weich)" },
-  gelb: { kurz: "Normal viel los", farbe: "var(--color-mittel)", feld: "var(--color-mittel-weich)" },
-  rot: { kurz: "Voller als sonst", farbe: "var(--color-voll)", feld: "var(--color-voll-weich)" },
-  geschlossen: { kurz: "Geschlossen", farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
-  aufbau: { kurz: "Noch ohne Vergleich", farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
-  veraltet: { kurz: "Keine aktuellen Daten", farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
-  unbekannt: { kurz: "Unbekannt", farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
+export const STATUS_FARBE: Record<Ampel, { farbe: string; feld: string }> = {
+  gruen: { farbe: "var(--color-frei)", feld: "var(--color-frei-weich)" },
+  gelb: { farbe: "var(--color-mittel)", feld: "var(--color-mittel-weich)" },
+  rot: { farbe: "var(--color-voll)", feld: "var(--color-voll-weich)" },
+  geschlossen: { farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
+  aufbau: { farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
+  veraltet: { farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
+  unbekannt: { farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
 };
+
+/** Wie die Kategorien heissen, wenn ein Gast sie liest. */
+export const ART_TEXT: Record<Zielart, string> = {
+  bergbahn: "Bergbahn",
+  nationalpark: "Nationalpark",
+  wandern: "Wandern",
+  klamm: "Klamm & Wasserfall",
+  see: "Baden",
+  rad: "Rad leihen",
+  stadt: "Altstadt",
+  ort: "Im Ort",
+  anreise: "Bahn & Bus",
+  sonstiges: "Sonstiges",
+};
+
+/**
+ * Sinnbild je Kategorie als SVG-Pfad (16×16).
+ *
+ * Vorher standen hier Unicode-Zeichen (▲ ⛰ ◡ ⎇). Die rendert jede Schrift
+ * anders: „Wandern" und „Bergbahn" sahen im Ergebnis identisch aus, und ⎇ fiel
+ * je nach System ganz aus. Gezeichnete Pfade sehen überall gleich aus.
+ */
+export const ART_PFAD: Record<Zielart, string> = {
+  // Gipfel mit Seil darüber
+  bergbahn: "M1.5 13.5 6 6l3 4.2L11 7l3.5 6.5zM2 3.2 14 5.6M4.6 4.1v1.8M11.4 6.4v1.8",
+  // Baum
+  nationalpark: "M8 2 4.6 7.4h6.8zM8 5.6 4 12h8zM8 12v2.4",
+  // Zwei Gipfel
+  wandern: "M1 13.5 5.6 5l3.1 5.4M7 13.5l3.4-6 4.6 6z",
+  // Fallendes Wasser zwischen Felsen
+  klamm: "M4 2v11M12 2v11M8 3.5c1.6 1.7 1.6 3.4 0 5.1s-1.6 3.4 0 5.1",
+  // Welle
+  see: "M1.5 6.5c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0M1.5 11c2.2-2 4.3-2 6.5 0s4.3 2 6.5 0",
+  // Fahrrad
+  rad: "M4 12.5a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2M12 12.5a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2M4 9.9 7 4.6h3M6.6 9.9h5",
+  // Brücke über Wasser
+  stadt: "M1.5 9.5c2-3 4-4.5 6.5-4.5s4.5 1.5 6.5 4.5M4.5 9.5v4M11.5 9.5v4M1.5 13.5h13",
+  // Häuser
+  ort: "M1.5 14V7l3.6-2.8L8.7 7v7zM8.7 14V9.2l3-2.2 3 2.2V14",
+  // Gleis mit Bahnsteig
+  anreise: "M4 2h8v8.2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM4 6.6h8M6.2 14.4l1.2-1.9M9.8 14.4l-1.2-1.9",
+  // Punkt
+  sonstiges: "M8 5.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8",
+};
+
+/** Der Messwert eines ZIELS in einem Satz. Bei mehreren Zugängen wird summiert —
+ *  wer zum Alpsee fährt, will wissen, ob er dort irgendwo parken kann, nicht
+ *  wie es an P1 aussieht. */
+export function messwertZiel(z: ZielProps): string {
+  const n = z.zugaenge.length;
+  const wo = n > 1 ? ` auf ${n} Parkplätzen` : "";
+  if (z.frei_plaetze != null && z.kapazitaet != null) {
+    return `${Math.max(0, z.frei_plaetze)} von ${z.kapazitaet} Plätzen frei${wo}`;
+  }
+  return messwertText({
+    metrik: z.metrik,
+    wert: z.wert,
+    kapazitaet: z.kapazitaet,
+    einheit: z.einheit,
+  });
+}
 
 /** Reihenfolge in Listen: erst was Platz hat, Stilles ans Ende. */
 export const GAST_REIHENFOLGE: Ampel[] = [
@@ -316,7 +308,9 @@ export const GAST_REIHENFOLGE: Ampel[] = [
 ];
 
 /** Der Messwert in einem Satz, den ein Gast versteht. */
-export function messwertText(p: SensorProps): string {
+export function messwertText(
+  p: Pick<SensorProps, "metrik" | "wert" | "kapazitaet" | "einheit">,
+): string {
   switch (p.metrik) {
     case "frei_plaetze":
       return `${Math.max(0, Math.round(p.wert))} von ${p.kapazitaet} Plätzen frei`;
@@ -339,7 +333,9 @@ export function messwertText(p: SensorProps): string {
 }
 
 /** Kurzform fuer die Kachel — eine Zahl und ein Wort. */
-export function messwertKurz(p: SensorProps): { zahl: string; einheit: string } {
+export function messwertKurz(
+  p: Pick<SensorProps, "metrik" | "wert" | "kapazitaet" | "einheit">,
+): { zahl: string; einheit: string } {
   switch (p.metrik) {
     case "frei_plaetze":
       return { zahl: String(Math.max(0, Math.round(p.wert))), einheit: "Plätze frei" };

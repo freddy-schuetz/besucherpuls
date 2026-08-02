@@ -30,7 +30,10 @@ export default function Tagesverlauf({
           const ist = h === jetzt;
           const hoehe = v == null ? 2 : Math.max(3, (v / max) * 100);
           return (
-            <div key={h} className="group relative flex-1">
+            // h-full ist entscheidend: Ohne Hoehe am Wrapper loest die
+            // Prozenthoehe der Saeule gegen null auf — die Grafik blieb leer,
+            // nur Achse und "jetzt"-Fahne standen da.
+            <div key={h} className="relative flex h-full flex-1 items-end">
               <div
                 className="w-full rounded-t-[3px] transition-[height] duration-500"
                 style={{
@@ -40,8 +43,8 @@ export default function Tagesverlauf({
               />
               {ist && (
                 <span
-                  className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-white"
-                  style={{ background: akzent }}
+                  className="absolute left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-white"
+                  style={{ background: akzent, bottom: `calc(${hoehe}% + 4px)` }}
                 >
                   jetzt
                 </span>

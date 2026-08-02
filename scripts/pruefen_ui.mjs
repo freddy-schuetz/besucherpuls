@@ -159,8 +159,13 @@ async function seite(breite, hoehe) {
 // Ein grosses gruenes Feld liest sich dann als "hier ist alles in Ordnung".
 {
   const daten = await (await fetch(`${BASIS}/api/status`)).json();
+  // KEINE LEIHRAD-ZIELE. Deren `ampel` beschreibt die RUECKGABE ("kein Dock
+  // frei"), die Oberflaeche startet aber im Modus "Rad ausleihen" — und dort
+  // ist dieselbe Station mit fuenf Raedern gruen. Dann erscheint korrekt gar
+  // kein Empfehlungskasten, und die Pruefung meldete einen Fehler, den es
+  // nicht gibt. Fuer diesen Punkt taugen nur Ziele mit eindeutigem Zustand.
   const voll = (daten.ziele ?? []).find(
-    (z) => z.alternative && z.ampel === "rot" && gebietSlug2[z.gebiet]);
+    (z) => z.alternative && z.ampel === "rot" && !z.leihen && gebietSlug2[z.gebiet]);
   console.log(`
 FARBE DES EMPFEHLUNGSKASTENS`);
   if (!voll) {

@@ -15,7 +15,7 @@ text { font-family: 'BP Text', system-ui, sans-serif; fill: #0c1a17; }
 <g transform="translate(244 50)"><path d="M0 11.5h6.5l3-2.2 3.2-7.8 3.4 11.4 2.6-5.2 2.8 3.8 3-6.6 3.4 8.4 3-4.6 3 2.6H40" fill="none" stroke="#0f9d63" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></g>
 <text class="d" x="292" y="72" font-size="34" font-weight="800">puls</text>
 <text x="1124" y="62" text-anchor="end" font-size="17" fill="#7d8f87">besucherpuls.friedemann-schuetz.de</text>
-<text class="zahl" x="1124" y="86" text-anchor="end" font-size="14" fill="#7d8f87">Live-Stand 02.08.2026, 23:32 Uhr</text>
+<text class="zahl" x="1124" y="86" text-anchor="end" font-size="14" fill="#7d8f87">Live-Stand 02.08.2026, 23:47 Uhr</text>
 <text x="76" y="196" font-size="15" font-weight="600" fill="#0f9d63" letter-spacing="2.2">BESUCHERLENKUNG AUS OFFENEN DATEN</text>
 <text class="d" x="76" y="264" font-size="52" font-weight="700">Die meisten Seiten zeigen,</text>
 <text class="d" x="76" y="326" font-size="52" font-weight="700">wo es voll ist. Diese sagt,</text>
@@ -55,11 +55,11 @@ text { font-family: 'BP Text', system-ui, sans-serif; fill: #0c1a17; }
 <text x="180.8" y="1100" text-anchor="middle" font-size="17" fill="#7d8f87">Regionen</text>
 <text class="d zahl" x="390.40000000000003" y="1070" text-anchor="middle" font-size="42" font-weight="700">4</text>
 <text x="390.40000000000003" y="1100" text-anchor="middle" font-size="17" fill="#7d8f87">Länder</text>
-<text class="d zahl" x="600.0" y="1070" text-anchor="middle" font-size="42" font-weight="700">150</text>
+<text class="d zahl" x="600.0" y="1070" text-anchor="middle" font-size="42" font-weight="700">136</text>
 <text x="600.0" y="1100" text-anchor="middle" font-size="17" fill="#7d8f87">Ziele</text>
-<text class="d zahl" x="809.5999999999999" y="1070" text-anchor="middle" font-size="42" font-weight="700">196</text>
+<text class="d zahl" x="809.5999999999999" y="1070" text-anchor="middle" font-size="42" font-weight="700">176</text>
 <text x="809.5999999999999" y="1100" text-anchor="middle" font-size="17" fill="#7d8f87">Messpunkte</text>
-<text class="d zahl" x="1019.1999999999999" y="1070" text-anchor="middle" font-size="42" font-weight="700">8</text>
+<text class="d zahl" x="1019.1999999999999" y="1070" text-anchor="middle" font-size="42" font-weight="700">5</text>
 <text x="1019.1999999999999" y="1100" text-anchor="middle" font-size="17" fill="#7d8f87">offene Quellen</text>
-<text x="600.0" y="1154" text-anchor="middle" font-size="15" fill="#7d8f87">Daten: BayernCloud Tourismus · Open Data Hub Südtirol · Stadt Zürich · Stadt Wien · SprottenFlotte KielRegion · Stadt Luzern · OpenStreetMap</text>
+<text x="600.0" y="1154" text-anchor="middle" font-size="15" fill="#7d8f87">Daten: BayernCloud Tourismus · Stadt Wien · SprottenFlotte KielRegion · Stadt Zürich · Open Data Hub Südtirol · © OpenStreetMap-Mitwirkende</text>
 </svg>

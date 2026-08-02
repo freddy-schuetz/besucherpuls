@@ -73,18 +73,49 @@ r = urllib.request.Request(f"{env('N8N_BASE')}/webhook/besucherpuls-status",
 d = json.loads(urllib.request.urlopen(r, timeout=200).read())
 sensoren = json.load(io.open(SENSORS, encoding="utf-8"))["sensoren"]
 
-anz_ziele = d["zusammenfassung"]["ziele"]
-anz_punkte = d["zusammenfassung"]["sensoren"]
-anz_laender = len({s["land"] for s in sensoren})
-anz_quellen = len({s["quelle"] for s in sensoren})
-# Die Regionen stehen nur im Frontend, nicht in der Antwort des Workflows. Aus
-# der Datei zaehlen statt tippen — sonst behauptet die Grafik irgendwann eine
-# Zahl, die die Seite nicht mehr hergibt. Die vier Leerzeichen Einzug trennen
-# die Regionseintraege von der Typdeklaration und vom Dach-Eintrag „bayern".
-anz_regionen = len(re.findall(r'^    slug: "', io.open(REGIONEN, encoding="utf-8").read(),
-                              re.M))
-if not 3 <= anz_regionen <= 40:
+# Gezaehlt wird, was ein Besucher SIEHT — nicht, was im Datensatz liegt.
+#
+# Der Workflow liefert 150 Ziele aus 10 Gruppen und 8 Quellen; die Seite zeigt
+# davon 7 Regionen. Luzern, Meran, die Suedtiroler Leihraeder und nextbike
+# haben keine Region und tauchen nirgends auf. „150 Ziele" neben „7 Regionen"
+# zu stellen, waere also das Aufsummieren zweier verschiedener Mengen — die
+# Zahl stimmte formal und liesse sich auf der Seite trotzdem nicht nachzaehlen.
+quelltext = io.open(REGIONEN, encoding="utf-8").read()
+sichtbar = set(re.findall(r'gruppe: "([a-z-]+)"', quelltext))
+# Die vier Leerzeichen Einzug trennen die Regionseintraege von der
+# Typdeklaration und vom Dach-Eintrag „bayern".
+anz_regionen = len(re.findall(r'^    slug: "', quelltext, re.M))
+if not 3 <= anz_regionen <= 40 or not sichtbar:
     sys.exit(f"Regionszaehlung unplausibel ({anz_regionen}) — regionen.ts geaendert?")
+
+gezeigt = [z for z in d["ziele"] if z["gebiet"] in sichtbar]
+sensor_von = {s["id"]: s for s in sensoren}
+punkte = [g["id"] for z in gezeigt for g in z["zugaenge"]]
+anz_ziele = len(gezeigt)
+anz_punkte = len(punkte)
+anz_quellen = len({z["quelle"] for z in gezeigt})
+anz_laender = len({sensor_von[m]["land"] for m in punkte if m in sensor_von})
+
+# Die Quellennennung ist Lizenzpflicht, keine Deko — und sie muss zu der Zahl
+# passen, die daneben steht. Darum aus denselben Zielen abgeleitet.
+QUELLE_NAME = {
+    "bayern": "BayernCloud Tourismus", "st_parken": "Open Data Hub Südtirol",
+    "st_rad": "Open Data Hub Südtirol", "wien_baeder": "Stadt Wien",
+    "kiel_gbfs": "SprottenFlotte KielRegion", "zh_baeder": "Stadt Zürich",
+    "luzern": "Stadt Luzern", "gbfs": "nextbike",
+}
+fehlt = {z["quelle"] for z in gezeigt} - QUELLE_NAME.keys()
+if fehlt:
+    sys.exit(f"Unbenannte Quelle(n): {fehlt} — QUELLE_NAME ergaenzen.")
+# Reihenfolge nach Gewicht, damit die groesste Quelle vorn steht.
+nach_gewicht = sorted({z["quelle"] for z in gezeigt},
+                      key=lambda q: -sum(1 for z in gezeigt if z["quelle"] == q))
+namen, gesehen = [], set()
+for q in nach_gewicht:
+    if QUELLE_NAME[q] not in gesehen:
+        gesehen.add(QUELLE_NAME[q])
+        namen.append(QUELLE_NAME[q])
+namen.append("© OpenStreetMap-Mitwirkende")
 
 # Das Beispiel wird nach GENAU DER ZAHL gewaehlt, die danach auf der Grafik
 # steht: dem Anteil freier Plaetze.
@@ -107,9 +138,11 @@ def frei_anteil(x):
 
 paare = []
 von_id = {z["id"]: z for z in d["ziele"]}
-for z in d["ziele"]:
+for z in gezeigt:                  # nur Ziele, die auf der Seite auffindbar sind
     a = z.get("alternative")
     if not a or not z.get("kapazitaet") or not a.get("kapazitaet"):
+        continue
+    if (von_id.get(a["id"]) or {}).get("gebiet") not in sichtbar:
         continue
     if a.get("frei_plaetze") is None or z.get("frei_plaetze") is None:
         continue
@@ -133,6 +166,11 @@ satz = (ziel.get("begruendung") or "").strip()
 if len(satz) < 45 or satz.rstrip(".").endswith((zielobj.get("info") or {}).get("gebiet") or "\0"):
     satz = ""
 
+print(f"Sichtbar: {anz_regionen} Regionen · {anz_laender} Länder · {anz_ziele} Ziele · "
+      f"{anz_punkte} Messpunkte · {anz_quellen} Quellen "
+      f"(Datensatz gesamt: {d['zusammenfassung']['ziele']} Ziele, "
+      f"{d['zusammenfassung']['sensoren']} Messpunkte)")
+print(f"Quellen: {' · '.join(namen)}")
 print(f"Beispiel: {quelle['name']} ({quelle['frei_plaetze']}/{quelle['kapazitaet']}, "
       f"{frei_anteil(quelle):.0f}% frei) -> {ziel['name']} "
       f"({ziel['frei_plaetze']}/{ziel['kapazitaet']}, {frei_anteil(ziel):.0f}% frei, "
@@ -321,8 +359,7 @@ for i, (wert, wofuer) in enumerate(zahlen):
 # Die Quellen sind Lizenzpflicht, keine Deko — CC BY und ODbL verlangen die
 # Nennung auch dann, wenn die Grafik ausserhalb der Seite auftaucht.
 a(f'<text x="{B/2}" y="{H - 46}" text-anchor="middle" font-size="15" fill="{ZART}">'
-  f'Daten: BayernCloud Tourismus · Open Data Hub Südtirol · Stadt Zürich · '
-  f'Stadt Wien · SprottenFlotte KielRegion · Stadt Luzern · OpenStreetMap</text>')
+  f'Daten: {xml(" · ".join(namen))}</text>')
 a("</svg>")
 
 os.makedirs(AUS, exist_ok=True)

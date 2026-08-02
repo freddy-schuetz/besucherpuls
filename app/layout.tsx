@@ -72,9 +72,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
               <div className="max-w-xs text-sm leading-relaxed text-tinte-weich">
                 <p className="font-medium text-tinte">Daten</p>
+                {/* Die BayernCloud fehlte hier, ausgerechnet die groesste Quelle:
+                    57 der 136 gezeigten Ziele kommen von dort. Reihenfolge nach
+                    Gewicht. Die Anreicherung (Touren, POI-Texte) stammt ebenfalls
+                    aus der BayernCloud, steht aber unter CC BY-SA — die Lizenz je
+                    Objekt nennt die Zielkarte selbst. */}
                 <p className="mt-1.5">
-                  Open Data Hub Südtirol · Stadt Zürich (CC0) · Stadt Wien · SprottenFlotte
-                  KielRegion (CC0) · Stadt Luzern · © OpenStreetMap-Mitwirkende, © CARTO
+                  BayernCloud Tourismus (CC0) · Open Data Hub Südtirol · Stadt Wien ·
+                  SprottenFlotte KielRegion (CC0) · Stadt Zürich (CC0) · Stadt Luzern ·
+                  © OpenStreetMap-Mitwirkende, © CARTO
                 </p>
               </div>
               <div className="text-sm leading-relaxed">

@@ -109,6 +109,20 @@ export interface ZielInfo {
     lizenz?: string;
     quelle?: string;
   };
+  /**
+   * Beschreibungstext aus der BayernCloud. `eigen` unterscheidet, ob der Text
+   * das Ziel SELBST beschreibt („Parkplatz Grasgehren — direkt im Wander- und
+   * Skigebiet …") oder nur etwas in der Nähe („Gasthof Rehwinkl"). Ohne diese
+   * Unterscheidung behauptete die Seite über einen Parkplatz, was über ein
+   * Wirtshaus einen Kilometer weiter geschrieben steht.
+   */
+  poi?: {
+    name?: string;
+    text?: string;
+    lizenz?: string;
+    quelle?: string;
+    eigen?: boolean;
+  };
   /** Wien und Zürich: Hallenbad, Freibad, Kombibad, Familienbad, Seebad … */
   badtyp?: string;
   ausstattung?: string[];

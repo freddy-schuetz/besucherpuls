@@ -48,6 +48,12 @@ function fakten(z) {
   if (i.badtyp) teile.push(`Art: ${i.badtyp}`);
   if (i.ausstattung && i.ausstattung.length) teile.push(`Ausstattung: ${i.ausstattung.join(', ')}`);
   if (i.lage && i.lage.length) teile.push(`Lage: ${i.lage.join(', ')}`);
+  // Beschreibungstext. Der Unterschied ist wichtig: Was ueber das Ziel selbst
+  // geschrieben steht, darf das Modell als dessen Eigenschaft nehmen — was ueber
+  // die Nachbarschaft geschrieben steht, ausdruecklich nicht.
+  if (i.poi && i.poi.text) {
+    teile.push((i.poi.eigen ? 'Beschreibung: ' : `In der Naehe (${i.poi.name}): `) + i.poi.text);
+  }
   if (t.km) {
     const m = [`${t.km} km`];
     if (t.hm) m.push(`${t.hm} Hoehenmeter`);
@@ -70,9 +76,18 @@ for (const z of ziele) {
 
   const meine = fakten(z);
   const seine = fakten(ziel);
-  // Ohne Fakten auf BEIDEN Seiten gibt es nichts zu begruenden, was nicht
-  // ohnehin dasteht ("3,5 km entfernt, dort 555 Plaetze frei").
-  if (!seine.length) continue;
+
+  // NUR SUBSTANZIELLE FAKTEN GEHEN ANS MODELL.
+  //
+  // Wo als einziger Fakt "Lage: strand" oder "Gebiet: Puez Gruppe" steht, kann
+  // ein Modell nur ausschmuecken — gemessen kam dabei "Am Strand von
+  // Kalifornien koennen Sie Kuestenluft und Meeresblick geniessen" heraus.
+  // Solche Saetze schreibt die Regel unten besser, ehrlicher und kostenlos.
+  // Ein Modellaufruf lohnt erst, wenn es einen Beschreibungstext oder eine
+  // Tour gibt — also etwas, das man zusammenfassen KANN.
+  const i2 = ziel.info || {};
+  const substanziell = !!((i2.poi && i2.poi.text) || (i2.tour && i2.tour.km));
+  if (!substanziell) continue;
 
   const schluessel = `${z.id}>${a.id}`;
   const c = cache[schluessel];
@@ -88,21 +103,48 @@ for (const z of ziele) {
       von: z.name,
       nach: ziel.name,
       km: a.km,
+      // WAS DEN GAST DORT ERWARTET — nicht, warum es BESSER ist.
+      //
+      // Erst stand hier "warum die Alternative fuer ihn passt". Das las das
+      // Modell als Frage nach einem UNTERSCHIED und antwortete folgerichtig
+      // mit LEER: "Die beiden Ziele haben identische Fakten fuer die
+      // Wanderung und unterscheiden sich nur im Namen." Bei zwei Parkplaetzen
+      // 700 Meter auseinander stimmt das sogar — nur interessiert es keinen
+      // Gast. Er will wissen, was ihn dort erwartet, und das laesst sich auch
+      // dann sagen, wenn es am Ausgangsort dasselbe waere.
       prompt:
         'Du schreibst fuer eine Tourismus-Website. Ein Gast wollte zu einem Ziel, '
         + 'das gerade voll ist, und bekommt eine Alternative vorgeschlagen. '
-        + 'Schreibe EINEN Satz auf Deutsch (hoechstens 20 Woerter), warum die '
-        + 'Alternative fuer ihn passt.\n\n'
+        + 'Schreibe EINEN Satz auf Deutsch (hoechstens 20 Woerter): Was erwartet '
+        + 'ihn an der Alternative?\n\n'
         + 'STRENGE REGELN:\n'
         + '- Verwende AUSSCHLIESSLICH die unten genannten Fakten. Erfinde nichts.\n'
+        // DAS HIER IST DIE WICHTIGSTE REGEL. Ohne sie fuellt das Modell mit
+        // Weltwissen auf: Aus dem einzigen Fakt "Gebiet: Puez Gruppe" wurde
+        // "In der Vallunga erwartet Sie ein idyllisches Tal mit beeindruckenden
+        // Dolomiten-Felswaenden" — inhaltlich sogar richtig, aber eben NICHT
+        // aus unseren Daten. Fuer eine Demo, die mit "alles belegt" wirbt, ist
+        // das der teuerste Fehler ueberhaupt.
+        + '- KEINE Eigenschaftswoerter, die nicht in den Fakten stehen. Nicht '
+        + '"idyllisch", "malerisch", "historisch", "beeindruckend", "gemuetlich", '
+        + 'wenn das dort nicht woertlich steht.\n'
+        + '- Kein Wissen von aussen. Wenn du den Ort kennst, ignoriere das.\n'
+        + '- Wenn als Fakt nur ein Gebietsname dasteht, nenne ihn schlicht '
+        + '("Liegt in der Puez Gruppe.") — mehr nicht.\n'
+        + '- Es geht NICHT um einen Vergleich. Auch wenn beide Orte dasselbe '
+        + 'bieten, beschreibe einfach die Alternative.\n'
+        + '- Was unter "In der Naehe" steht, gehoert NICHT zum Ziel selbst. '
+        + 'Nenne es nur als Umgebung ("in der Naehe liegt ..."), niemals als '
+        + 'dessen Eigenschaft.\n'
         + '- Keine Auslastungszahlen und keine Entfernungen — die stehen schon daneben.\n'
         + '- Keine Anrede, keine Ausrufezeichen, kein "Tipp:".\n'
-        + '- Wenn die Fakten fuer einen sinnvollen Satz nicht reichen, antworte '
-        + 'mit dem Wort LEER.\n\n'
-        + `Ursprungsziel: ${z.name}\n`
-        + (meine.length ? meine.map((f) => '  ' + f).join('\n') + '\n' : '')
-        + `Vorgeschlagene Alternative: ${ziel.name}\n`
-        + seine.map((f) => '  ' + f).join('\n'),
+        + '- Antworte NUR mit dem Satz, ohne Erklaerung dazu.\n'
+        + '- Nur wenn unten ueberhaupt keine Fakten stehen, antworte mit LEER.\n\n'
+        + `Die Alternative heisst: ${ziel.name}\n`
+        + seine.map((f) => '  ' + f).join('\n')
+        + (meine.length
+            ? `\n\n(Zum Zusammenhang, NICHT beschreiben: Der Gast wollte urspruenglich zu ${z.name}.)`
+            : ''),
     },
   });
 }

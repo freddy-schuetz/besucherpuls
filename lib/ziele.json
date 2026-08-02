@@ -23,6 +23,13 @@
       ],
       "ortsziel": true,
       "info": {
+        "poi": {
+          "name": "Heimatkundliche Sammlung im Heimathaus",
+          "text": "Die Besucher des Heimathauses können Werkzeuge zur Landwirtschaft und zur Verarbeitung von Holz und Flachs, den wichtigsten Erwerbsquellen Pfrontens in der Vergangenheit, besichtigen.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Allgäuer Alpen",
         "gebiet_wikidata": "Q655747"
       }
@@ -46,8 +53,6 @@
       ],
       "ortsziel": true,
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Dorfloipe - Langlaufen in Balderschwang",
           "km": 1.7,
@@ -56,7 +61,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Planet B. Wintersport - Balderschwang",
+          "text": "Unsere Wintersportstation liegt in bester Lage direkt an der Schelpenbahn Talstation. Hier bekommst Du alles unter einem Dach: Verleih, Ausrüstung und Kurse.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -77,8 +91,6 @@
       ],
       "ortsziel": true,
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Verbindungsloipe Sonderdorf-Obermaiselstein",
           "km": 1.6,
@@ -86,7 +98,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Grill- und Picknickplatz Burgschrofen - Obermaiselstein",
+          "text": "Eine gemütliche, überdachte Grillstelle im Anschluss an eine Holzblockhütte, in der Biertische, Bänke und Stehtische lagern, eine große Grillstelle, Toiletten sowie einen Kinderspielplatz.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -106,8 +127,6 @@
       ],
       "ortsziel": true,
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Sonthofer See und Ortwanger See in einer Radrunde",
           "km": 24.7,
@@ -116,7 +135,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Anne's Zauberlädele",
+          "text": "Lass Dich verzaubern! In unserem kleinen Laden findest Du zauberhafte Geschenkartikel, echten Allgäuer Honig, Allgäuer Heilkräuterkerzen und vieles mehr...",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -154,8 +182,6 @@
       ],
       "ortsziel": true,
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Tiefenberger Moos - Spazieren im Moor bei Ofterschwang",
           "km": 4.1,
@@ -164,7 +190,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Barrierefreie WC-Anlage | Spital Sonthofen",
+          "text": "Die Toiletten befinden sich im Gebäude des Spital Sonthofen. Es stehen eine Damen- und eine Herrentoilette sowie ein rollstuhlgerechtes WC zur Verfügung. Der Zugang ist barrierefrei.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -184,8 +219,6 @@
         "by-parkplatz-soellereck-nord"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Wanderung um den Ochsenberg ab Obermaiselstein",
           "km": 10.3,
@@ -194,7 +227,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Panorama Cam Söllereck - Zwischenstation",
+          "text": "Blick von der Zwischenstation der Söllereckbahn.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -214,8 +256,6 @@
         "by-parkplatz-nebelhorn-oybele"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Radtour zum Illerursprung",
           "km": 6.4,
@@ -224,7 +264,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Himmelsritt Gleitschirm-Tandemflüge",
+          "text": "Als Gleitschirm Tandemunternehmen direkt in Oberstdorf bieten wir das Ganze Jahr über Paragliding Flüge in der malerischen Kulisse Oberstdorfs an. Los geht's direkt am Nebelhorn - einem der besten Fluggebiete der Nordalpen!",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -243,8 +292,6 @@
         "by-parkplatz-ifenbahn-talstation"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Alpwanderung von Balderschwang über den Piesenkopf mit Halt am Scheuenwasserfall",
           "km": 13.6,
@@ -253,7 +300,9 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -272,8 +321,6 @@
         "by-parkplatz-fellhornbahn-talstation"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Oberstdorfer Trettachtalrunde - mit dem Fahrrad ab Bolsterlang",
           "km": 32.6,
@@ -282,7 +329,9 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -300,6 +349,13 @@
         "by-parkplatz-weissbach-bahnhof"
       ],
       "info": {
+        "poi": {
+          "name": "Heimatkundliche Sammlung im Heimathaus",
+          "text": "Die Besucher des Heimathauses können Werkzeuge zur Landwirtschaft und zur Verarbeitung von Holz und Flachs, den wichtigsten Erwerbsquellen Pfrontens in der Vergangenheit, besichtigen.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Allgäuer Alpen",
         "gebiet_wikidata": "Q655747"
       }
@@ -320,6 +376,13 @@
         "by-meilingen-falkensteinweg"
       ],
       "info": {
+        "poi": {
+          "name": "Heimatkundliche Sammlung im Heimathaus",
+          "text": "Die Besucher des Heimathauses können Werkzeuge zur Landwirtschaft und zur Verarbeitung von Holz und Flachs, den wichtigsten Erwerbsquellen Pfrontens in der Vergangenheit, besichtigen.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Allgäuer Alpen",
         "gebiet_wikidata": "Q655747"
       }
@@ -339,6 +402,13 @@
         "by-parkplatz-ried-bahnhof-p1"
       ],
       "info": {
+        "poi": {
+          "name": "Heimatkundliche Sammlung im Heimathaus",
+          "text": "Die Besucher des Heimathauses können Werkzeuge zur Landwirtschaft und zur Verarbeitung von Holz und Flachs, den wichtigsten Erwerbsquellen Pfrontens in der Vergangenheit, besichtigen.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Allgäuer Alpen",
         "gebiet_wikidata": "Q655747"
       }
@@ -358,6 +428,13 @@
         "by-parkplatz-berg-hansmarte-weg"
       ],
       "info": {
+        "poi": {
+          "name": "Heimatkundliche Sammlung im Heimathaus",
+          "text": "Die Besucher des Heimathauses können Werkzeuge zur Landwirtschaft und zur Verarbeitung von Holz und Flachs, den wichtigsten Erwerbsquellen Pfrontens in der Vergangenheit, besichtigen.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Allgäuer Alpen",
         "gebiet_wikidata": "Q655747"
       }
@@ -439,8 +516,6 @@
         "by-parkplatz-mittagbahn"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Radtour zum Inselsee Blaichach - Abkühlung garantiert",
           "km": 27.4,
@@ -449,7 +524,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Mittagbahn",
+          "text": "Aufstieg mal anders – von der Stadt direkt auf den Berg Der 1.451 m hohe Mittagberg bietet ein unvergleichbares Panorama mit herrlicher Aussicht auf die Region zwischen Alpsee und Grünten sowie in die Oberstdorfer Berge.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -488,8 +572,6 @@
         "by-parkplatz-passhoehe-schoenberg"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
           "km": 1.8,
@@ -498,7 +580,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Haltestelle Riedbergpass / Mittelalpe Obermaiselstein",
+          "text": "Direkt nach der Passhöhe am Riedbergpasses Ausgangspunkt und Einstieg für Wanderungen um Obermaiselstein und die Hörnerdörfer. Busanbindung über den Riedbergpass nach Grasgehren -&gt; Balderschwang -&gt; Hittisau (AT) Tag 4,00 €, 2 Std.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -516,8 +607,6 @@
         "by-parkplatz-obermaiselstein-grasgehren"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
           "km": 1.8,
@@ -526,7 +615,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Grasgehren",
+          "text": "Direkt im Wander- und Skigebiet Grasgehren unterhalb der Grasgehrenhütte mit Einstiegsmöglichkeit für die Wanderung zur Mittelalpe. Direkte Busanbindung nach Obermaiselstein und Balderschwang.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -547,8 +645,6 @@
         "by-parkplatz-alpsee-p6"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Die Allgäuer Mitte - eine Erkundungsfahrt von Fischen nach Untermaiselstein",
           "km": 42.2,
@@ -557,7 +653,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Alpsee Segler \"Santa Maria Loreto\"",
+          "text": "Die \"Santa Maria Loreto\" ist ein Personenfahrgastschiff unter Segeln, das nach dem Vorbild eines mittelalterlichen Lastenseglers gebaut wurde.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -575,8 +680,6 @@
         "by-parkplatz-passhoehe-mittelalpe"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
           "km": 1.8,
@@ -585,7 +688,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Haltestelle Riedbergpass / Mittelalpe Obermaiselstein",
+          "text": "Direkt nach der Passhöhe am Riedbergpasses Ausgangspunkt und Einstieg für Wanderungen um Obermaiselstein und die Hörnerdörfer. Busanbindung über den Riedbergpass nach Grasgehren -&gt; Balderschwang -&gt; Hittisau (AT) Tag 4,00 €, 2 Std.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -603,8 +715,6 @@
         "by-parkplatz-lappachweg"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Dorfloipe - Langlaufen in Balderschwang",
           "km": 1.7,
@@ -613,7 +723,9 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -631,8 +743,6 @@
         "by-parkplatz-scheuen-alpe"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
           "km": 1.8,
@@ -641,7 +751,9 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -659,8 +771,6 @@
         "by-parkplatz-am-erlebnisbad-aquaria"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Zwei Länder Radtour via Riedbergpass",
           "km": 74.0,
@@ -669,7 +779,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Aquaria",
+          "text": "Das Parkdeck des Erlebnisbads Aquaria bietet Besuchern Parkmöglichkeiten im Freien. Während des Aufenthalts im Erlebnisbad erhältst Du durch Abstempeln der Parkkarte an der Kasse eine Ermäßigung von 50% auf das Parkticket.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -705,7 +824,15 @@
       "zugaenge": [
         "by-parkplatz-moorweiher-sommerau"
       ],
-      "info": {}
+      "info": {
+        "poi": {
+          "name": "Heimatmuseum Buchenberg",
+          "text": "Ein ehemaliges kleinbäuerliches Anwesen beherbergt das Buchenberger Heimatmuseum. Gezeigt werden Wohnstube, Küche und Schlafzimmer einer Kleinbauernfamilie aus der 1. Hälfte des 20. Jh.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        }
+      }
     },
     {
       "id": "z-zufahrt-autal-stubenbach",
@@ -722,8 +849,6 @@
         "by-parkplatz-zufahrt-autal-stubenbach"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Spaziergang über den Verbindungsweg Allgäuer Berghof zur Hochbichl-Hütte",
           "km": 1.5,
@@ -732,7 +857,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Mautstraße Gunzesried",
+          "text": "Die Mautstraße im Gunzesrieder Tal ist je nach Witterung von Mai bis November geöffnet. Bitte beachten, dass eine Einfahrt nur zwischen 6.00 Uhr und 21.00 Uhr möglich ist.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -750,8 +884,6 @@
         "by-parkplatz-alpenblick"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Radtour zu Füßen des Wächters - Rund um den Grünten ab Ofterschwang",
           "km": 41.3,
@@ -760,7 +892,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Kinderskilift Riedlift",
+          "text": "Bei ausreichenden Schneebedingungen öffnet öffnet der Skiclub Burgberg den \"Riedlift\" im Burgberger Ortsteil Auf dem Ried. Ideales Trainingsgelände, um die ersten Schwünge üben zu können.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -778,8 +919,6 @@
         "by-parkplatz-ostertal"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Spaziergang über den Verbindungsweg Allgäuer Berghof zur Hochbichl-Hütte",
           "km": 1.5,
@@ -788,7 +927,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Ostertal",
+          "text": "Parkgebühren: Halbe Stunde kostenfrei bis 4 Stunden 4,00 € bis 12 Stunden 8,00 € bis 24 Stunden 10,00 € Jeder weitere Tag 5,00 € (Höchstparkdauer = 72 Stunden)",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -807,8 +955,6 @@
         "by-parkplatz-starzlachklamm"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Sonthofer See und Ortwanger See in einer Radrunde",
           "km": 24.7,
@@ -817,7 +963,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Starzlachklamm",
+          "text": "Die Starzlachklamm in Sonthofen ist ein Naturerlebnis für die ganze Familie und ohne Zweifel eines der Top-Highlights der Region zwischen Alpsee und Grünten. Nicht umsonst gilt sie als bedeutendstes Naturdenkmal Sonthofens .",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -835,8 +990,6 @@
         "by-p5-missener-strasse"
       ],
       "info": {
-        "gebiet": "Allgäuer Alpen",
-        "gebiet_wikidata": "Q655747",
         "tour": {
           "name": "Radtour zum Inselsee Blaichach - Abkühlung garantiert",
           "km": 27.4,
@@ -845,7 +998,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Allgäutissimo Bike-Center und Verleihstation",
+          "text": "Der Bikeshop, direkt in Immenstadt gelegen, ist auf das Mountainbike (und E-MTB) spezialisiert. Angeboten wird ein breites Mietangebot aller gängigen Bike-Klassen.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
       }
     },
     {
@@ -871,8 +1033,6 @@
       ],
       "ortsziel": true,
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
           "km": 5.9,
@@ -881,7 +1041,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Vitalzentrum Bodenmais",
+          "text": "Vitalzentrum am Silberberg Bade- und Saunapark Bodenmais.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -903,8 +1072,6 @@
       ],
       "ortsziel": true,
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig N 19 Mauth – Philippsreut",
           "km": 9.9,
@@ -913,7 +1080,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Haus Wolfsteiner Hütte",
+          "text": "Hausanschrift: Bischof-Firmian-Straße 24 94158 Philippsreut-Mitterfirmiansreut Tel. +49 (0)8556 / 9729-0 Anmeldung: Erlebnistage Bayerischer Wald Bischofsreut 23 - 94145 Haidmühle Tel.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -932,8 +1108,6 @@
         "by-parkplatz-nationalparkzentrum-falkenstein"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Eine Reise in die Steinzeit",
           "km": 2.5,
@@ -942,7 +1116,16 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Nationalparkzentrum Falkenstein",
+          "text": "200 PKW-Stellplätze (gebührenpflichtig)Anschluss an den Igelbus (Falkenstein-Bus, Linie 7150). Fahrpläne unter www.bayerwald-ticket.com und bahnland-bayern.deToilette vorhandenBesucherservice vorhanden",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -962,9 +1145,6 @@
         "by-parkplatz-nationalparkzentrum-lusen-p1"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
-        "schutzgebiet": "Nationalpark Bayerischer Wald",
         "tour": {
           "name": "Rundweg Flusskrebs - Familienfreundliche Tour über Stock und Stein",
           "km": 2.0,
@@ -973,7 +1153,17 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Nationalparkzentrum Lusen",
+          "text": "Zugang zum Nationalparkzentrum Lusen mit Hans-Eisenmann-Haus, Tier-Freigelände und Baumwipfelpfad Anschluss an den Igelbus (Lusen-Bus, Linie 602 und Finsterau-Bus, Linie 603).",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald"
       }
     },
     {
@@ -992,8 +1182,6 @@
         "by-parkplatz-silberbergbahn"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
           "km": 5.9,
@@ -1002,7 +1190,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Winterrodelbahn Silberberg",
+          "text": "Winterspaß für die ganze Familie beim Schlittenfahren, bietet die Winterrodelbahn am Silberberg bei Bodenmais.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -1021,8 +1218,6 @@
         "by-parkplatz-schoenebene"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
           "km": 5.9,
@@ -1031,7 +1226,9 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -1050,8 +1247,6 @@
         "by-parkplatz-risslochfaelle"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Auerhahn-Höhenloipe - Erweiterung",
           "km": 1.7,
@@ -1060,7 +1255,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Naturerlebnis \"Rißlochwasserfälle\"",
+          "text": "Länge: ca. 7-14 km / Wanderzeit: 2-5,5 Stunden Mehrere Wanderwege führen zu den Rißlochfällen, den höchsten Wasserfällen im Bayerischen Wald.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -1078,8 +1282,6 @@
         "by-parkplatz-huettenparkplatz"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
           "km": 5.9,
@@ -1088,7 +1290,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Museum Kammersänger Bernd Weikl",
+          "text": "Kammersänger Bernd Weikl kann auf eine lange internationale Karriere zurückblicken, nicht nur auf Opern- und Konzertbühnen, sondern auch als Regisseur, Buchautor und Dozent.",
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -1106,8 +1317,6 @@
         "by-parkplatz-freibad"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
           "km": 5.9,
@@ -1116,7 +1325,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Silberberg-Freibad Bodenmais",
+          "text": "Das Freibad im Urlaubsort Bodenmais bietet Badespaß und Badevergnügen für die ganze Familie.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -1135,8 +1353,6 @@
         "by-parkplatz-arberhochstrasse"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
         "tour": {
           "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
           "km": 5.9,
@@ -1145,7 +1361,16 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Naturrodelbahn Scherau",
+          "text": "Familienfreundliche Rodeltour mit Bustransfer. Infos zur Naturrodelbahn Scherau Start: Arberhochstraße - Ziel: Waldweg Länge: ca.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207"
       }
     },
     {
@@ -1166,9 +1391,6 @@
         "by-parkplatz-zwieslerwaldhaus"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
-        "schutzgebiet": "Nationalpark Bayerischer Wald",
         "tour": {
           "name": "Wanderlinie Einbeere (Seebachschleife - Schwellhäusl)",
           "km": 2.2,
@@ -1177,7 +1399,17 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Zwieslerwaldhaus",
+          "text": "Anschluss an den Igelbus (Falkenstein-Bus, Linie 7150). Fahrpläne unter www.bayerwald-ticket.com und bahnland-bayern.deParkplatz (gebührenfrei)",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald"
       }
     },
     {
@@ -1195,9 +1427,6 @@
         "by-p-r-spiegelau"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
-        "schutzgebiet": "Nationalpark Bayerischer Wald",
         "tour": {
           "name": "Rundweg Tagpfauenauge durch das Waldspielgelände",
           "km": 1.7,
@@ -1206,7 +1435,17 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "P+R Spiegelau",
+          "text": "200 PKW-Stellplätze (gebührenfrei)Anschluss an den Igelbus (Rachel-Bus, Linie 601 und Finsterau-Bus, Linie 603). Igelbusse verkehren von Mitte Mai bis Ende der bayerischen Herbstferien.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald"
       }
     },
     {
@@ -1225,9 +1464,6 @@
         "by-parkplatz-waldhaeuser-kirche"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
-        "schutzgebiet": "Nationalpark Bayerischer Wald",
         "tour": {
           "name": "Rundweg Bockkäfer - Rund um Guglöd",
           "km": 3.2,
@@ -1236,7 +1472,17 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Waldhäuser Kirche",
+          "text": "Anschluss an den Igelbus Richtung Lusen (Lusen-Bus, Linie 602). Igelbusse verkehren von Mitte Mai bis Ende der bayerischen Herbstferien.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald"
       }
     },
     {
@@ -1255,9 +1501,6 @@
         "by-parkplatz-waldhaeuser-ausblick"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
-        "schutzgebiet": "Nationalpark Bayerischer Wald",
         "tour": {
           "name": "Rundweg Bockkäfer - Rund um Guglöd",
           "km": 3.2,
@@ -1266,7 +1509,17 @@
           "rund": true,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Parkplatz Waldhäuser Ausblick",
+          "text": "Anschluss an den Igelbus Richtung Lusen (Lusen-Bus, Linie 602). Igelbusse verkehren von Mitte Mai bis Ende der bayerischen Herbstferien.",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald"
       }
     },
     {
@@ -1284,9 +1537,6 @@
         "by-parkplatz-schillerstrasse"
       ],
       "info": {
-        "gebiet": "Bayerischer Wald",
-        "gebiet_wikidata": "Q4207",
-        "schutzgebiet": "Nationalpark Bayerischer Wald",
         "tour": {
           "name": "Wanderlinie Einbeere (Seebachschleife - Schwellhäusl)",
           "km": 2.2,
@@ -1295,7 +1545,17 @@
           "rund": false,
           "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
           "quelle": "BayernCloud Tourismus"
-        }
+        },
+        "poi": {
+          "name": "Waldgasthof \"Zum Falkenstein\"",
+          "text": "Ansprechpartner: Gabriel Scharnagl Zwieslerwaldhaus 2 94227 Lindberg Tel. +49 (0)9925 / 262 www.waldgasthof-scharnagl.de",
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald"
       }
     },
     {
@@ -1313,6 +1573,13 @@
         "by-parkplatz-wachterl"
       ],
       "info": {
+        "poi": {
+          "name": "Wirtshaus Wachterl",
+          "text": "Bayerische Schmankerl oder mediterrane Köstlichkeiten zaubert Küchenchef Thomas Graßl aus besten Zutaten der Region. Wild aus dem Nationalpark Berchtesgaden oder Fleisch von den Ramsauer Bauern werden ebenso zubereitet wie feine Kuchen.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": true
+        },
         "gebiet": "Lattengebirge",
         "gebiet_wikidata": "Q1710694"
       }
@@ -1375,6 +1642,13 @@
         "by-parkplatz-kehlstein-p1"
       ],
       "info": {
+        "poi": {
+          "name": "Dokumentation Obersalzberg",
+          "text": "Die neugestaltete Dauerausstellung \"Idyll und Verbrechen\" gewährt Besuchern einen umfassenden Einblick in die Geschichte des Obersalzbergs und seiner Verbindung zu Adolf Hitler und dem Nationalsozialismus.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Göllstock",
         "gebiet_wikidata": "Q1559321"
       }
@@ -1395,6 +1669,13 @@
         "by-parkplatz-hirschbichl"
       ],
       "info": {
+        "poi": {
+          "name": "Hintersee bei Ramsau",
+          "text": "Wer das Idealbild eines romantischen Bergsees sucht, findet es im Hintersee in Ramsau verwirklicht.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Reiter Alpe",
         "gebiet_wikidata": "Q2142096"
       }
@@ -1415,6 +1696,13 @@
         "by-parkplatz-wimbachbruecke"
       ],
       "info": {
+        "poi": {
+          "name": "Gasthof Rehwinkl",
+          "text": "Daer Gasthof Rehwinkl liegt unweit der Wimbachbrücke, einem wichtigen Ausgangspunkt für zahlreiche Wanderungen im Bergsteigerdorf Ramsau. Hier kocht Küchenmeister Anton Sandholz traditionell bayerische Gerichte.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Hochkalterstock",
         "gebiet_wikidata": "Q883041"
       }
@@ -1434,6 +1722,13 @@
         "by-parkplatz-neuhausenbruecke"
       ],
       "info": {
+        "poi": {
+          "name": "Bergkurgarten Ramsau",
+          "text": "Unter dem Aspekt, einen Platz der Erholung und der Begegnung für Einheimische und für Gäste zu schaffen, entstand der Bergkurgarten Ramsau. Er wurde 1989 eingeweiht und 2006 umfassend neu gestaltet.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Lattengebirge",
         "gebiet_wikidata": "Q1710694"
       }
@@ -1453,6 +1748,13 @@
         "by-parkplatz-seeklause"
       ],
       "info": {
+        "poi": {
+          "name": "Zauberwald",
+          "text": "Im Zauberwald am Hintersee ist die Idee eines urwüchsigen Bergwaldes Wirklichkeit geworden.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Hochkalterstock",
         "gebiet_wikidata": "Q883041"
       }
@@ -1472,6 +1774,13 @@
         "by-parkplatz-pfeiffenmacher"
       ],
       "info": {
+        "poi": {
+          "name": "Wallfahrtskirche Maria Himmelfahrt am Kunterweg",
+          "text": "Die Wallfahrtskirche Maria Himmelfahrt ist ein echtes heiliges Kleinod im Bergsteigerdorf Ramsau. Über den schönen Kunterweg ist sie auf einem kurzen Spaziergang erreichbar.",
+          "lizenz": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "quelle": "BayernCloud Tourismus",
+          "eigen": false
+        },
         "gebiet": "Lattengebirge",
         "gebiet_wikidata": "Q1710694"
       }
@@ -1509,7 +1818,7 @@
         "st-p-plan-de-gralba"
       ],
       "info": {
-        "gebiet": "Grupa dl Sëla - Gruppo del Sella - Sellagruppe"
+        "gebiet": "Grupa dl Sëla"
       }
     },
     {
@@ -1528,7 +1837,7 @@
         "st-p-garage-dantercepies"
       ],
       "info": {
-        "gebiet": "Puez Gruppe - Gruppo del Puez"
+        "gebiet": "Puez Gruppe"
       }
     },
     {
@@ -1566,7 +1875,7 @@
         "st-p-parcheggio-vallunga"
       ],
       "info": {
-        "gebiet": "Puez Gruppe - Gruppo del Puez"
+        "gebiet": "Puez Gruppe"
       }
     },
     {
@@ -2293,7 +2602,7 @@
         "st-r-toblach"
       ],
       "info": {
-        "gebiet": "Sextner Dolomiten - Dolomiti di Sesto"
+        "gebiet": "Sextner Dolomiten"
       }
     },
     {
@@ -2367,7 +2676,7 @@
         "st-r-marling"
       ],
       "info": {
-        "gebiet": "Ortleralpen - Alpi dell'Ortles",
+        "gebiet": "Ortleralpen",
         "gebiet_wikidata": "Q63521967"
       }
     },
@@ -2462,7 +2771,7 @@
         "st-r-ehrenburg"
       ],
       "info": {
-        "gebiet": "Plose-Peitlerkofel-Gruppe - Gruppo Plose-Putia"
+        "gebiet": "Plose-Peitlerkofel-Gruppe"
       }
     },
     {

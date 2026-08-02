@@ -32,11 +32,12 @@ export default function Zielinfo({ z }: { z: ZielProps }) {
   const i = z.info ?? {};
   const t = i.tour;
 
+  const poi = i.poi;
   const hatOrt = i.gebiet || i.schutzgebiet;
   const hatTour = t && (t.km || t.hm);
   const hatBad = i.badtyp || i.ausstattung?.length;
   const hatLage = i.lage?.length;
-  if (!hatOrt && !hatTour && !hatBad && !hatLage) return null;
+  if (!hatOrt && !hatTour && !hatBad && !hatLage && !poi?.text) return null;
 
   const LAGE_TEXT: Record<string, string> = {
     strand: "am Strand",
@@ -81,6 +82,25 @@ export default function Zielinfo({ z }: { z: ZielProps }) {
         <p className="zahl mt-1.5 text-[13px] text-tinte-zart">
           Heute {i.oeffnung[(new Date().getDay() + 6) % 7] ?? "—"}
         </p>
+      )}
+
+      {poi?.text && (
+        <div className="mt-3 border-t border-linie pt-3">
+          {/* Ein Text über die NACHBARSCHAFT wird auch so benannt. Sonst liest
+              sich die Beschreibung eines Gasthofs wie die des Parkplatzes. */}
+          {!poi.eigen && poi.name && (
+            <p className="text-sm font-medium text-tinte">In der Nähe: {poi.name}</p>
+          )}
+          <p className={`text-sm leading-relaxed text-tinte-weich ${poi.eigen ? "" : "mt-1"}`}>
+            {poi.text}
+          </p>
+          {poi.quelle && (
+            <p className="mt-1.5 text-[12px] text-tinte-zart">
+              {poi.quelle}
+              {poi.lizenz && ` · ${lizenzKurz(poi.lizenz)}`}
+            </p>
+          )}
+        </div>
       )}
 
       {hatTour && (

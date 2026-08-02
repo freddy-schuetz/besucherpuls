@@ -346,6 +346,17 @@ def geometrie_holen(gruppe, flaechen):
     return raus
 
 
+def name_kurz(n):
+    """OSM fuehrt in Suedtirol dreisprachige Namen: "Puez Gruppe - Gruppo del
+    Puez", "Grupa dl Sela - Gruppo del Sella - Sellagruppe". Auf einer Kachel
+    ist das eine Zeile Rauschen; im Satz "Liegt in Puez Gruppe - Gruppo del
+    Puez" wird es unlesbar. Die erste Variante genuegt."""
+    for trenner in (" - ", " / ", " – "):
+        if trenner in n:
+            n = n.split(trenner)[0].strip()
+    return n
+
+
 def gebiet_waehlen(flaechen, z, geometrie=None):
     """Der Name, den ein Gast wiedererkennt — die KLEINSTE Flaeche, die passt.
 
@@ -447,14 +458,14 @@ def lauf_overpass():
         for z in teil:
             fuer_gast, nationalpark = gebiet_waehlen(flaechen, z, geometrie)
             if fuer_gast:
-                z["info"]["gebiet"] = fuer_gast["name"]
+                z["info"]["gebiet"] = name_kurz(fuer_gast["name"])
                 if fuer_gast.get("wikidata"):
                     z["info"]["gebiet_wikidata"] = fuer_gast["wikidata"]
                 n += 1
             else:
                 ohne.append(z["name"])
             if nationalpark:
-                z["info"]["schutzgebiet"] = nationalpark["name"]
+                z["info"]["schutzgebiet"] = name_kurz(nationalpark["name"])
         beispiel = next((z["info"].get("gebiet") for z in teil if z["info"].get("gebiet")), "—")
         print(f"   {g:<18} {len(flaechen):>3} Flaechen, {len(geometrie)} mit Umriss"
               f"  ->  {n}/{len(teil)} Ziele   z. B. {beispiel}")
@@ -509,6 +520,37 @@ def bct_klassifikation(uuid, kopf):
 
 
 SCHWER = {"leicht", "mittel", "schwer", "einfach", "schwierig"}
+
+# POIs im Nahbereich. Die BayernCloud fuehrt 24 484 davon, und im Gegensatz zu
+# den Touren decken sie auch Berchtesgaden ab (dort gibt es 0 Touren, aber
+# 6 von 9 Zielen haben einen POI mit Beschreibungstext im Kilometer).
+#
+# Der beste Treffer ist der POI, der das ZIEL SELBST beschreibt: Fuer
+# "Obermaiselstein-Grasgehren" liefert die Quelle "Parkplatz Grasgehren —
+# Direkt im Wander- und Skigebiet Grasgehren unterhalb der Grasgehrenhuette
+# mit Einstiegsmoeglichkeit fuer die Wanderung ...". Genau das will ein Gast
+# wissen, und es steht dort woertlich.
+POI_UMKREIS_M = 1200
+POI_MAX_ZEICHEN = 240
+
+
+def entzerrt(s):
+    """Umlaute und Akzente weg — fuer den Namensabgleich mit den POIs."""
+    s = (s or "").lower().replace("ä", "ae").replace("ö", "oe")
+    s = s.replace("ü", "ue").replace("ß", "ss").replace("ë", "e")
+    return re.sub(r"[^a-z0-9 ]", " ", s)
+
+
+def text_sauber(t):
+    t = re.sub(r"<[^>]+>", " ", t or "").replace("&nbsp;", " ").replace("&amp;", "&")
+    t = re.sub(r"\s+", " ", t).strip()
+    if len(t) > POI_MAX_ZEICHEN:
+        # An der letzten Satzgrenze kappen — ein mitten im Wort abgeschnittener
+        # Text wirkt kaputt, und das Modell wuerde ihn zu Ende erfinden.
+        schnitt = t[:POI_MAX_ZEICHEN]
+        punkt = max(schnitt.rfind(". "), schnitt.rfind("! "), schnitt.rfind("? "))
+        t = (schnitt[:punkt + 1] if punkt > 80 else schnitt.rstrip() + " …")
+    return t
 
 
 def lauf_bct():
@@ -579,6 +621,53 @@ def lauf_bct():
             cache_sichern()
     cache_sichern()
     print(f"   {treffer} von {len(bayern)} bayerischen Zielen haben eine Tour")
+
+    # --- POIs mit Beschreibungstext
+    print("\n=== BayernCloud: POI-Beschreibungen im Nahbereich ===")
+    poi_treffer = 0
+    for i, z in enumerate(bayern, 1):
+        s_ = f"poi:{z['lat']:.5f},{z['lon']:.5f}"
+        if s_ in cache:
+            rohe = cache[s_]
+        else:
+            u = (f"{BCT}/endpoints/list_poi?page[size]=25"
+                 f"&filter[geo][in][perimeter][]={z['lon']}"
+                 f"&filter[geo][in][perimeter][]={z['lat']}"
+                 f"&filter[geo][in][perimeter][]={POI_UMKREIS_M}")
+            try:
+                d = jhole(u, kopf=kopf, timeout=120)
+            except (urllib.error.HTTPError, urllib.error.URLError):
+                continue
+            rohe = []
+            for o in d.get("@graph", []):
+                t = text_sauber(o.get("description"))
+                if not t:
+                    continue
+                rohe.append({
+                    "name": o.get("name"), "text": t,
+                    "lizenz": o.get("cc:license") or o.get("sdLicense"),
+                })
+            cache[s_] = rohe
+            time.sleep(0.4)
+
+        if not rohe:
+            continue
+        # Erst der POI, der das Ziel selbst beschreibt — sonst der erste beste.
+        stamm = entzerrt(z["name"]).split()[-1] if z["name"] else ""
+        eigen = next((r for r in rohe if stamm and stamm in entzerrt(r["name"] or "")), None)
+        r = eigen or rohe[0]
+        z["info"]["poi"] = {
+            "name": r["name"], "text": r["text"],
+            "lizenz": r.get("lizenz"), "quelle": "BayernCloud Tourismus",
+            "eigen": bool(eigen),
+        }
+        poi_treffer += 1
+        if i % 20 == 0:
+            cache_sichern()
+    cache_sichern()
+    print(f"   {poi_treffer} von {len(bayern)} Zielen haben eine POI-Beschreibung")
+    eigen = sum(1 for z in bayern if (z["info"].get("poi") or {}).get("eigen"))
+    print(f"   davon {eigen} ueber das Ziel SELBST (nicht nur die Nachbarschaft)")
     for g in ("allgaeu", "bayerischer-wald", "berchtesgaden"):
         teil = [z for z in bayern if z["gebiet"] == g]
         n = sum(1 for z in teil if z["info"].get("tour"))

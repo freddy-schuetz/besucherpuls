@@ -62,15 +62,57 @@ if (neu.length) {
   }
 }
 
+/**
+ * Der Regelsatz — fuer alle Ziele, deren Fakten fuer ein Modell zu duenn sind.
+ *
+ * Er ist bewusst karg: Er behauptet genau das, was in den Daten steht, und
+ * kein Wort mehr. Damit bekommt JEDE Empfehlung einen Satz, ohne dass irgendwo
+ * ausgeschmueckt wird.
+ */
+const LAGE_SATZ = {
+  strand: 'Liegt direkt am Strand.',
+  hafen: 'Liegt am Hafen.',
+  bahnhof: 'Liegt am Bahnhof — auch mit der Bahn erreichbar.',
+  see: 'Liegt an einem See.',
+};
+
+function regelsatz(z) {
+  const i = z.info || {};
+  if (i.schutzgebiet) return `Liegt im ${i.schutzgebiet}.`;
+  if (i.badtyp) {
+    const zu = (i.ausstattung || []).slice(0, 2).join(', ');
+    return zu ? `${i.badtyp} mit ${zu}.` : `${i.badtyp}.`;
+  }
+  if (i.lage && i.lage.length) {
+    // Die aussagekraeftigste Lage zuerst — "am Strand" schlaegt "am Ort".
+    for (const l of ['strand', 'see', 'hafen', 'bahnhof']) {
+      if (i.lage.includes(l)) return LAGE_SATZ[l];
+    }
+  }
+  // "Liegt in Puez Gruppe" waere falsch, "Liegt in den Puez Gruppe" auch —
+  // deutsche Artikel bei Gebirgsnamen sind nicht regelbar (die Allgaeuer
+  // Alpen, das Lattengebirge, der Watzmannstock). "Im Gebiet X" stimmt immer.
+  if (i.gebiet) return `Im Gebiet ${i.gebiet}.`;
+  return '';
+}
+
 // --- Einsetzen
-let gesetzt = 0;
+let gesetzt = 0, ausRegel = 0;
 for (const z of sammlung.ziele || []) {
   const a = z.alternative;
   if (!a) continue;
+  const ziel = (sammlung.ziele || []).find((x) => x.id === a.id);
   const t = texte[`${z.id}>${a.id}`];
-  if (t) { a.begruendung = t; gesetzt++; }
+  if (t) {
+    a.begruendung = t;
+    gesetzt++;
+  } else if (ziel) {
+    const r = regelsatz(ziel);
+    if (r) { a.begruendung = r; ausRegel++; }
+  }
 }
-sammlung.zusammenfassung.mit_begruendung = gesetzt;
-console.log(`Begruendungen gesetzt: ${gesetzt} (davon ${neu.length} neu erzeugt)`);
+sammlung.zusammenfassung.mit_begruendung = gesetzt + ausRegel;
+sammlung.zusammenfassung.begruendung_aus_regel = ausRegel;
+console.log(`Begruendungen: ${gesetzt} vom Modell (${neu.length} neu), ${ausRegel} aus der Regel`);
 
 return [{ json: sammlung }];

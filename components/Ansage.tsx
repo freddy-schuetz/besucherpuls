@@ -1,7 +1,67 @@
 "use client";
 
-import { ART_TEXT, type Region } from "@/lib/regionen";
+import {
+  ART_TEXT,
+  alternativeFuer,
+  kleinAnfang,
+  ruhigerAb,
+  statusFuerZeit,
+  type Region,
+} from "@/lib/regionen";
 import type { ZielProps } from "@/lib/types";
+
+/**
+ * Die Aussage für eine GEWÄHLTE Stunde — bewusst schwächer formuliert als die
+ * Jetzt-Ansage. Was in der Zukunft liegt, ist ein typischer Wert und keine
+ * Messung, und genau so steht es da.
+ */
+function ZeitAnsage({ z, stunde }: { z: ZielProps; stunde: number }) {
+  const st = statusFuerZeit(z, stunde);
+  const wert = z.tagesgang?.[stunde];
+  const spaeter = ruhigerAb(z.tagesgang, stunde);
+
+  if (wert == null) {
+    return (
+      <div className="rounded-2xl border border-linie p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
+          Um {stunde} Uhr
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-tinte-weich">
+          Für diese Stunde gibt es hier noch keinen Verlauf. Er entsteht mit jedem
+          Tag, den mitgemessen wird.
+        </p>
+      </div>
+    );
+  }
+
+  const voll = st?.ampel === "rot" || st?.ampel === "gelb";
+  return (
+    <div
+      className="rounded-2xl p-5"
+      style={{ background: voll ? "var(--color-mittel-weich)" : "var(--color-frei-weich)" }}
+    >
+      <p
+        className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+        style={{ color: voll ? "#95580f" : "#0b6b46" }}
+      >
+        Um {stunde} Uhr typischerweise
+      </p>
+      <p
+        className="mt-2 text-lg font-semibold leading-snug"
+        style={{ color: voll ? "#7c4708" : "#0b5138" }}
+      >
+        {st ? st.kurz : `${Math.round(wert)} %`}
+      </p>
+      <p
+        className="mt-1.5 text-sm leading-relaxed"
+        style={{ color: voll ? "#95580f" : "#0b6b46" }}
+      >
+        {Math.round(wert)} % belegt im Mittel über {z.basis_tage} beobachtete Tage.
+        {spaeter && ` Ab ${spaeter.stunde}:00 Uhr ist es hier typischerweise rund ${spaeter.anteil} % ruhiger.`}
+      </p>
+    </div>
+  );
+}
 
 /**
  * Genau EINE Aussage zu einem Ziel — das ist der Kern der Besucherlenkung.
@@ -21,12 +81,23 @@ export default function Ansage({
   z,
   region,
   onZiel,
+  stunde,
+  leihen = false,
 }: {
   z: ZielProps;
   region: Region;
   /** Empfehlung anklickbar machen: führt zum empfohlenen Ziel und fliegt die Karte hin */
   onZiel?: (id: string) => void;
+  /** Gewählte Stunde, oder null für „jetzt". */
+  stunde?: number | null;
+  /** Nur bei Leihrädern: Absicht des Gastes. */
+  leihen?: boolean;
 }) {
+  // FÜR EINE GEWÄHLTE STUNDE gilt eine andere Aussage als für jetzt. Vorher
+  // stand unter „Heute Nachmittag" weiterhin „Lieber ab 13:00 Uhr" — ein Rat,
+  // der zum Zeitpunkt der Auswahl längst Vergangenheit war.
+  if (stunde != null) return <ZeitAnsage z={z} stunde={stunde} />;
+
   if (z.ampel === "veraltet") {
     return (
       <div className="rounded-2xl border border-linie p-5">
@@ -40,7 +111,22 @@ export default function Ansage({
       </div>
     );
   }
-  if (z.ampel === "geschlossen") return null;
+  if (z.ampel === "geschlossen") {
+    return (
+      <div className="rounded-2xl border border-linie p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
+          Geschlossen
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-tinte-weich">
+          {z.status.kurz} — der Betreiber meldet das selbst.
+        </p>
+      </div>
+    );
+  }
+
+  // Bei Leihrädern gilt die Aussage für die gewählte Absicht.
+  const alt = alternativeFuer(z, leihen);
+  const eigene = leihen && z.leihen ? z.leihen.status : z.status;
 
   // 1. Anderer Zugang — der beste Rat überhaupt, weil er niemanden umleitet.
   if (z.zugang_tipp) {
@@ -82,16 +168,18 @@ export default function Ansage({
 
   // 3. Woandershin. Klickbar: Wer hier tippt, landet beim empfohlenen Ziel und
   //    die Karte fliegt hin. Ohne das war die Empfehlung eine Sackgasse.
-  if (z.alternative) {
-    const a = z.alternative;
+  if (alt) {
+    const a = alt;
     const platz =
-      a.frei_plaetze != null && a.kapazitaet != null
-        ? `${a.frei_plaetze} von ${a.kapazitaet} Plätzen frei`
-        : a.status.kurz.toLowerCase();
+      a.raeder != null
+        ? `${a.raeder} ${a.raeder === 1 ? "Rad" : "Räder"}`
+        : a.frei_plaetze != null && a.kapazitaet != null
+          ? `${a.frei_plaetze} von ${a.kapazitaet} Plätzen frei`
+          : kleinAnfang(a.status.kurz);
     const inhalt = (
       <>
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "#0b6b46" }}>
-          Heute besser dorthin
+          {leihen && z.leihen ? "Hier gibt es Räder" : "Heute besser dorthin"}
         </p>
         <p className="mt-2 flex items-center gap-2 text-lg font-semibold leading-snug" style={{ color: "#0b5138" }}>
           {a.name}
@@ -123,7 +211,7 @@ export default function Ansage({
 
   // 4. Losfahren — die häufigste und langweiligste Aussage, und genau deshalb
   //    muss sie dastehen: Sonst wirkt Schweigen wie eine Warnung.
-  if (z.ampel === "gruen") {
+  if (eigene.ampel === "gruen") {
     return (
       <div className="rounded-2xl p-5" style={{ background: "var(--color-frei-weich)" }}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "#0b6b46" }}>
@@ -141,11 +229,11 @@ export default function Ansage({
     );
   }
 
-  if (z.ampel === "rot") {
+  if (eigene.ampel === "rot") {
     return (
       <div className="rounded-2xl p-5" style={{ background: "var(--color-voll-weich)" }}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "#a02b39" }}>
-          Gerade voll
+          {leihen && z.leihen ? "Kein Rad hier" : "Gerade voll"}
         </p>
         <p className="mt-2 text-sm leading-relaxed" style={{ color: "#a02b39" }}>
           In der Nähe ist gerade nichts spürbar leerer, und der Tagesverlauf gibt keine

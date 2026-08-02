@@ -44,6 +44,8 @@ export default function Zielsuche({
   onSuche,
   onKategorie,
   onZiel,
+  leihen,
+  onLeihen,
 }: {
   ziele: ZielProps[];
   region: Region;
@@ -52,6 +54,9 @@ export default function Zielsuche({
   onSuche: (s: string) => void;
   onKategorie: (k: Zielart | null) => void;
   onZiel: (id: string) => void;
+  /** Nur bei Leihrädern: will der Gast eines holen oder abgeben? */
+  leihen?: boolean;
+  onLeihen?: (v: boolean) => void;
 }) {
   const [offen, setOffen] = useState(false);
   const feld = useRef<HTMLInputElement | null>(null);
@@ -164,6 +169,33 @@ export default function Zielsuche({
           </p>
         )}
       </div>
+
+      {/* ------------------------------------------------------ Absicht
+          Bei Leihrädern bedeutet „voll" zwei verschiedene Dinge. Ohne diese
+          Wahl stand die Seite auf der Rückgabe-Seite fest — und schickte
+          jemanden, der ein Rad holen wollte, zu einer Station mit null Rädern. */}
+      {onLeihen && ziele.some((z) => z.leihen) && (
+        <>
+          <p className="mt-6 text-sm font-medium text-tinte">Was hast du vor?</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {([true, false] as const).map((v) => (
+              <button
+                key={String(v)}
+                onClick={() => onLeihen(v)}
+                aria-pressed={leihen === v}
+                className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${
+                  leihen === v
+                    ? "text-white"
+                    : "border border-linie bg-karte text-tinte-weich hover:border-tinte-zart hover:text-tinte"
+                }`}
+                style={leihen === v ? { background: region.akzent } : undefined}
+              >
+                {v ? "Rad ausleihen" : "Rad abgeben"}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* ------------------------------------------------------ Kategorien */}
       {kategorien.length > 0 && (

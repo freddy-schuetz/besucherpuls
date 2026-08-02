@@ -10,9 +10,14 @@ import Zielsuche, { ArtZeichen } from "@/components/Zielsuche";
 import {
   ART_TEXT,
   GAST_REIHENFOLGE,
+  alternativeFuer,
+  fuellungFuer,
+  kleinAnfang,
+  messwertAbsicht,
   REGIONEN,
   STATUS_FARBE,
   messwertZiel,
+  statusFuerZeit,
   type Region,
 } from "@/lib/regionen";
 import {
@@ -55,6 +60,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const [suche, setSuche] = useState("");
   const [kategorie, setKategorie] = useState<Zielart | null>(null);
   const [zeit, setZeit] = useState("jetzt");
+  // Bei Leihrädern: „Rad ausleihen" ist der häufigere Fall und deshalb Vorgabe.
+  const [leihen, setLeihen] = useState(true);
   const laeuft = useRef(false);
   const antwortBereich = useRef<HTMLDivElement | null>(null);
 
@@ -95,12 +102,16 @@ export default function RegionAnsicht({ region }: { region: Region }) {
     return daten.ziele
       .filter((z) => z.gebiet === region.gruppe)
       .sort((a, b) => {
-        const ra = GAST_REIHENFOLGE.indexOf(a.ampel);
-        const rb = GAST_REIHENFOLGE.indexOf(b.ampel);
+        // Sortierung folgt der Absicht: Wer ein Rad LEIHEN will, soll die
+        // Stationen mit Rädern oben sehen, nicht die mit freien Docks.
+        const aa = (leihen && a.leihen ? a.leihen.status.ampel : a.ampel);
+        const bb = (leihen && b.leihen ? b.leihen.status.ampel : b.ampel);
+        const ra = GAST_REIHENFOLGE.indexOf(aa);
+        const rb = GAST_REIHENFOLGE.indexOf(bb);
         if (ra !== rb) return ra - rb;
-        return (a.auslastung ?? a.quote ?? 999) - (b.auslastung ?? b.quote ?? 999);
+        return (fuellungFuer(a, leihen) ?? 999) - (fuellungFuer(b, leihen) ?? 999);
       });
-  }, [daten, region.gruppe]);
+  }, [daten, region.gruppe, leihen]);
 
   /**
    * Die Auswahl — und zwar EINE für Liste und Karte.
@@ -112,15 +123,22 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const auswahl = useMemo(() => {
     let liste = ziele;
     if (kategorie) liste = liste.filter((z) => (z.arten ?? [z.art]).includes(kategorie));
-    const stunde = ZEITEN.find((x) => x.wert === zeit)?.stunde ?? null;
-    if (stunde != null) {
+    const h = ZEITEN.find((x) => x.wert === zeit)?.stunde ?? null;
+    if (h != null) {
       liste = liste
-        .filter((z) => wertFuerZeit(z, stunde) != null)
+        .filter((z) => wertFuerZeit(z, h) != null)
         .slice()
-        .sort((a, b) => (wertFuerZeit(a, stunde) ?? 999) - (wertFuerZeit(b, stunde) ?? 999));
+        .sort((a, b) => (wertFuerZeit(a, h) ?? 999) - (wertFuerZeit(b, h) ?? 999));
     }
     return liste;
   }, [ziele, kategorie, zeit]);
+
+  /** Die gewählte Stunde — null heisst „jetzt". Genau EINE Quelle für Liste,
+   *  Kachel, Karte, Ansage und Kurvenmarker. */
+  const stunde = useMemo(
+    () => ZEITEN.find((x) => x.wert === zeit)?.stunde ?? null,
+    [zeit],
+  );
 
   const sichtbar = useMemo(
     () => (alleZeigen ? auswahl : auswahl.slice(0, ERST_ZEIGEN)),
@@ -132,6 +150,13 @@ export default function RegionAnsicht({ region }: { region: Region }) {
   const nurKapazitaet = useMemo(
     () => ziele.length > 0 && ziele.every((z) => z.status.art !== "vergleich"),
     [ziele],
+  );
+
+  // Stabile Referenz: Als Objektliteral im JSX erzeugte `start` bei JEDEM Render
+  // ein neues Objekt und liess den Daten-Effekt der Karte unnötig neu laufen.
+  const kartenStart = useMemo(
+    () => ({ mitte: region.mitte, zoom: region.zoom }),
+    [region.mitte, region.zoom],
   );
 
   const waehlen = useCallback((id: string) => {
@@ -209,8 +234,13 @@ export default function RegionAnsicht({ region }: { region: Region }) {
             onKategorie={(k) => {
               setKategorie(k);
               setAlleZeigen(false);
+              // Sonst konkurrieren zwei Kamerabewegungen: das Zentrieren auf die
+              // Kategorie und das Anfliegen des gewählten Ziels.
+              setGewaehlt(null);
             }}
             onZiel={waehlen}
+            leihen={leihen}
+            onLeihen={setLeihen}
           />
         )}
 
@@ -241,7 +271,9 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                     {detail.metrik === "ampelstufe" ? (
                       <AmpelStufen stufe={detail.wert} farbe={STATUS_FARBE[detail.ampel].farbe} />
                     ) : (
-                      <p className="zahl text-sm text-tinte-weich">{messwertZiel(detail)}</p>
+                      <p className="zahl text-sm text-tinte-weich">
+                        {detail.leihen ? messwertAbsicht(detail, leihen) : messwertZiel(detail)}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -249,11 +281,15 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                   <span
                     className="whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-semibold"
                     style={{
-                      background: STATUS_FARBE[detail.ampel].feld,
-                      color: STATUS_FARBE[detail.ampel].farbe,
+                      background: STATUS_FARBE[statusFuerZeit(detail, stunde)?.ampel ?? "aufbau"].feld,
+                      color: STATUS_FARBE[statusFuerZeit(detail, stunde)?.ampel ?? "aufbau"].farbe,
                     }}
                   >
-                    {detail.status.kurz}
+                    {stunde == null
+                      ? detail.status.kurz
+                      : statusFuerZeit(detail, stunde)
+                        ? `Um ${stunde} Uhr meist ${kleinAnfang(statusFuerZeit(detail, stunde)!.kurz)}`
+                        : `Für ${stunde} Uhr kein Verlauf`}
                   </span>
                   <button
                     onClick={() => setGewaehlt(null)}
@@ -269,7 +305,13 @@ export default function RegionAnsicht({ region }: { region: Region }) {
 
               <div className="grid gap-6 p-6 sm:p-7 lg:grid-cols-[1.05fr_1fr]">
                 <div className="space-y-4">
-                  <Ansage z={detail} region={region} onZiel={waehlen} />
+                  <Ansage
+                    z={detail}
+                    region={region}
+                    onZiel={waehlen}
+                    stunde={stunde}
+                    leihen={leihen}
+                  />
 
                   {einordnungText(detail) && (
                     <p className="text-sm leading-relaxed text-tinte-weich">
@@ -307,7 +349,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
 
                 <div className="space-y-4">
                   {detail.tagesgang ? (
-                    <Tagesverlauf kurve={detail.tagesgang} akzent={region.akzent} />
+                    <Tagesverlauf kurve={detail.tagesgang} akzent={region.akzent} stunde={stunde} />
                   ) : (
                     <div className="rounded-2xl border border-linie p-4">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tinte-zart">
@@ -400,6 +442,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                 verzug={Math.min(i, 9) * 45}
                 aktiv={z.id === gewaehlt}
                 onWaehlen={() => waehlen(z.id)}
+                stunde={stunde}
+                leihen={leihen}
               />
             ))}
             {!auswahl.length && ziele.length > 0 && (
@@ -440,7 +484,10 @@ export default function RegionAnsicht({ region }: { region: Region }) {
               ziele={auswahl}
               ausgewaehlt={gewaehlt}
               onSelect={waehlen}
-              start={{ mitte: region.mitte, zoom: region.zoom }}
+              start={kartenStart}
+              stunde={stunde}
+              leihen={leihen}
+              ausschnittSchluessel={`${kategorie ?? "alle"}|${zeit}|${leihen}`}
             />
           </div>
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2">

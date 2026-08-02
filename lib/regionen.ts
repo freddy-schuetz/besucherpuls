@@ -1,4 +1,4 @@
-import type { Ampel, Gruppe, SensorProps, ZielProps, Zielart } from "./types";
+import type { Ampel, Gruppe, SensorProps, Status, ZielProps, Zielart } from "./types";
 
 /**
  * Die Regionen in GASTSPRACHE.
@@ -125,9 +125,9 @@ export const REGIONEN: Region[] = [
     name: "Zürich",
     land: "Schweiz",
     aktivitaet: "Baden am See & an der Limmat",
-    frage: "Wann ist es im Bad am schönsten?",
+    frage: "In welchem Bad ist gerade Platz?",
     versprechen:
-      "Zürichs See-, Fluss- und Freibäder zählen ihre Gäste an den Zugängen. Neben dem Jetzt-Wert zeigt jede Karte den typischen Tagesverlauf — und damit die entspannteste Stunde.",
+      "Zürichs See-, Fluss- und Freibäder zählen ihre Gäste an den Zugängen — als einzige Region hier steht eine echte Besucherzahl auf der Karte. Die Stadt veröffentlicht schubweise, etwa alle anderthalb Stunden; wie alt ein Wert ist, steht dabei.",
     ziel: "Bad",
     zielPlural: "Bäder",
     gruppe: "zuerich-baeder",
@@ -234,6 +234,90 @@ export const STATUS_FARBE: Record<Ampel, { farbe: string; feld: string }> = {
   veraltet: { farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
   unbekannt: { farbe: "var(--color-still)", feld: "var(--color-still-weich)" },
 };
+
+/**
+ * Der Status, der für die gewählte Zeit gilt.
+ *
+ * `stunde === null` heisst jetzt — dann ist es der Live-Status. Sonst kommt er
+ * aus `tagesgang_status`, das der Workflow mit DERSELBEN Funktion je Stunde
+ * berechnet. Hier wird nichts abgeleitet; das war der Fehler, der Wien und
+ * Gröden monatelang stumm gemacht hat.
+ *
+ * Null bedeutet: Für diese Stunde gibt es keine belastbare Aussage — entweder
+ * fehlt der Verlauf, oder die Quelle liefert keine Prozentwerte (Zürich zählt
+ * Personen, die Radzähler Räder).
+ */
+export function statusFuerZeit(
+  z: ZielProps,
+  stunde: number | null,
+  leihen = false,
+): Status | null {
+  if (stunde == null) return leihen && z.leihen ? z.leihen.status : z.status;
+  return z.tagesgang_status?.[stunde] ?? null;
+}
+
+/** „Viel Platz" → „viel Platz". Nur der erste Buchstabe, sonst wird aus
+ *  „Viel Platz" ein „viel platz" und aus „Wird eng" ein „wird eng" — beim
+ *  zweiten stimmt es zufällig, beim ersten nicht. */
+export function kleinAnfang(s: string): string {
+  return s ? s[0].toLowerCase() + s.slice(1) : s;
+}
+
+/** Wie voll es für die gewählte Absicht ist — spiegelt fuellungFuer() im Workflow. */
+export function fuellungFuer(z: ZielProps, leihen: boolean): number | null {
+  if (leihen && z.leihen) return z.leihen.auslastung;
+  return z.auslastung ?? z.quote ?? null;
+}
+
+/** Die Empfehlung für die gewählte Absicht. */
+export function alternativeFuer(z: ZielProps, leihen: boolean) {
+  return leihen && z.leihen ? z.leihen.alternative : z.alternative;
+}
+
+/** Der Messwert-Satz für die gewählte Absicht — bei Rädern zählt etwas anderes,
+ *  je nachdem ob man eines holen oder abgeben will. */
+export function messwertAbsicht(z: ZielProps, leihen: boolean): string {
+  if (!z.leihen) return messwertZiel(z);
+  const raeder = z.leihen.raeder;
+  const frei = z.kapazitaet != null ? Math.max(0, z.kapazitaet - raeder) : null;
+  if (leihen) {
+    return raeder === 0
+      ? "Gerade kein Rad hier"
+      : `${raeder} ${raeder === 1 ? "Rad" : "Räder"} zum Mitnehmen`;
+  }
+  return frei === 0
+    ? "Kein Platz zum Abgeben"
+    : `${frei} ${frei === 1 ? "Rückgabeplatz" : "Rückgabeplätze"} frei`;
+}
+
+/**
+ * Die nächste besuchbare Stunde, in der es spürbar ruhiger ist.
+ *
+ * Spiegelt `spaeterAls()` aus scripts/status_node.js — bewusst dieselbe
+ * Arithmetik auf derselben gelieferten Kurve, damit die Aussage auch für eine
+ * GEWÄHLTE Stunde entsteht und nicht nur für die Serverstunde. Es ist kein
+ * zweiter Statusrechner: Hier werden nur Kurvenwerte verglichen, keine Ampel
+ * vergeben.
+ */
+export function ruhigerAb(
+  kurve: (number | null)[] | null,
+  ab: number,
+): { stunde: number; anteil: number } | null {
+  if (!kurve) return null;
+  const start = kurve[ab];
+  const hoechst = Math.max(...kurve.filter((v): v is number => v != null), 0);
+  if (start == null || hoechst <= 0 || start < hoechst * 0.25) return null;
+  let beste: number | null = null;
+  for (let i = 1; i <= 6; i++) {
+    const h = (ab + i) % 24;
+    const v = kurve[h];
+    if (v == null || h < 7 || h > 20) continue;
+    if (v < start * 0.7 && (beste === null || v < (kurve[beste] ?? Infinity))) beste = h;
+  }
+  return beste === null
+    ? null
+    : { stunde: beste, anteil: Math.round((1 - (kurve[beste] ?? 0) / start) * 100) };
+}
 
 /** Wie die Kategorien heissen, wenn ein Gast sie liest. */
 export const ART_TEXT: Record<Zielart, string> = {

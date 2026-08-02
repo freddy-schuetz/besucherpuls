@@ -31,6 +31,9 @@ HIER = os.path.dirname(os.path.abspath(__file__))
 ENVDATEI = os.path.join(HIER, "..", ".env.local")
 
 FREI_BIS = 70
+LENKEN_AB = 60          # ab hier darf gelb ueberhaupt lenken
+MIN_ABSTAND = 15        # so viel leerer muss der Kandidat sein
+VERGLEICH_AB = 40       # darunter faerbt der Vergleich die Ampel nicht
 MAX_KM = {"bergbahn": 15, "wandern": 15, "nationalpark": 15, "klamm": 15,
           "see": 12, "rad": 5, "ort": 4, "stadt": 3, "anreise": 4, "sonstiges": 3}
 
@@ -58,13 +61,24 @@ def km(a, b):
     return round(2 * R * math.asin(math.sqrt(s)), 1)
 
 
+def fuellung(z):
+    if z.get("auslastung") is not None:
+        return z["auslastung"]
+    return z.get("quote")
+
+
 def hat_platz(z):
-    """Muss der Regel im Workflow entsprechen (status_node.js, hatPlatz)."""
-    if z["ampel"] != "gruen":
+    """Muss der Regel im Workflow entsprechen (status_node.js, hatPlatz).
+
+    Die Bedingung `ampel == gruen` ist BEWUSST weg: Plan de Gralba in Groeden
+    war zu 12,3 % belegt und trotzdem gelb, weil sein Perzentilrang 86 betrug —
+    damit war ganz Groeden empfehlungstot.
+    """
+    if z["ampel"] in ("veraltet", "geschlossen", "aufbau"):
         return False
     if z.get("auslastung") is not None:
         return z["auslastung"] <= FREI_BIS
-    return True
+    return z.get("quote") is not None and z["quote"] < 50
 
 
 d = holen()
@@ -115,6 +129,10 @@ for f in features:
         krumm.append(f"{p['name']}: gruen trotz {a} % belegt")
     if a is not None and a < 75 and st.get("kurz") == "Voll":
         krumm.append(f"{p['name']}: 'Voll' bei nur {a} %")
+    # Der Vergleich darf unterhalb 40 % Belegung nicht faerben — sonst steht
+    # "Gut besucht" bei 43 von 50 freien Plaetzen.
+    if a is not None and a < VERGLEICH_AB and st.get("art") == "vergleich"             and st.get("ampel") != "gruen":
+        krumm.append(f"{p['name']}: Vergleich faerbt bei nur {a} % belegt ({st.get('kurz')})")
 print(f"  Widersprueche in {len(features)} Zugaengen: {len(krumm)}")
 for s in krumm[:10]:
     print(f"     {s}")
@@ -149,6 +167,13 @@ for z in mit:
         fehler.append(f"Empfehlung {z['name']} -> {a['name']}: Ziel ist selbst zu {a['auslastung']} % belegt")
     if a["km"] > MAX_KM.get(z["art"], 3):
         fehler.append(f"Empfehlung {z['name']} -> {a['name']}: {a['km']} km ueberschreitet die Grenze")
+    fz, fa = fuellung(z), fuellung(a)
+    if fz is not None and fa is not None and fz - fa < MIN_ABSTAND:
+        fehler.append(f"Empfehlung {z['name']} -> {a['name']}: nur {fz - fa:.0f} Punkte leerer "
+                      f"(mindestens {MIN_ABSTAND})")
+    if z["ampel"] == "gelb" and (fz or 0) < LENKEN_AB:
+        fehler.append(f"Empfehlung {z['name']}: lenkt bei nur {fz:.0f} % Belegung "
+                      f"(Schwelle {LENKEN_AB})")
 
 for z in ziele:
     if z.get("zugang_tipp"):

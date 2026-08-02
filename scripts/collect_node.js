@@ -112,8 +112,13 @@ try {
     const p = f.properties || {};
     const name = String(p.NAME || '').trim();
     const kat = Number(p.AUSLASTUNG_AMPEL_KATEGORIE_0);
-    // -99 = das Bad meldet nichts, 0 = geschlossen. Beides ist kein Messwert.
-    if (!name || !Number.isFinite(kat) || kat <= 0) continue;
+    // -99 heisst: das Bad meldet nichts. Das ist kein Messwert und faellt raus.
+    //
+    // 0 heisst GESCHLOSSEN — und das ist sehr wohl eine Auskunft. Frueher flog
+    // sie hier mit heraus: Amalienbad und Joergerbad verschwanden dadurch
+    // komplett von der Seite, statt als "geschlossen" dazustehen. Ein Gast, der
+    // sein Bad nicht findet, denkt an einen Fehler, nicht an Ruhetag.
+    if (!name || !Number.isFinite(kat) || kat < 0) continue;
     // TIMESTAMP_MODIFIED_FORMAT kommt als "01.08.2026 21:10" in Wiener Ortszeit.
     // Date.parse versteht das Format nicht — von Hand zerlegen, sonst wird jeder
     // Wert als "ungueltiges Datum" verworfen und Wien bliebe dauerhaft leer.
@@ -203,7 +208,12 @@ for (const s of SENSOREN) {
     auslastung = gesamt ? Math.round((treffer.wert / gesamt) * 1000) / 10 : null;
   } else if (s.m === 'ampelstufe') {
     // Stufe 1 (noch Platz) bis 5 (voll) auf 0-100 spreizen.
-    auslastung = Math.round(((treffer.wert - 1) / 4) * 1000) / 10;
+    // Stufe 0 = geschlossen: Dann gibt es keine Auslastung, und ohne diese
+    // Ausnahme kaeme (0-1)/4*100 = -25 % heraus — eine Zahl, die es nicht gibt.
+    // Der Status erkennt den Fall an `metrik === 'ampelstufe' && wert === 0`.
+    auslastung = treffer.wert > 0
+      ? Math.round(((treffer.wert - 1) / 4) * 1000) / 10
+      : null;
   } else if (s.m === 'personen' && treffer.stufe != null) {
     // Zuerichs eigene Vierstufen-Anzeige als Auslastung. Keine echte Kapazitaet,
     // aber die Einschaetzung des Betreibers — und damit belastbarer als alles,

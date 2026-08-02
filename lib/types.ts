@@ -74,6 +74,8 @@ export interface Alternative {
   lon: number;
   km: number;
   stufe: "ziel";
+  /** Nur bei Leihrädern: wie viele Räder dort stehen */
+  raeder?: number | null;
 }
 
 /** Ein Zugang zu einem Ziel — Parkplatz, Eingang, Station. */
@@ -131,11 +133,25 @@ export interface ZielProps {
   vergleich_art: SensorProps["vergleich_art"];
   vergleich_tage: number;
   tagesgang: (number | null)[] | null;
+  tagesgang_status: (Status | null)[] | null;
   sparkline: [string, number][];
 
   /** Der Zugang, dessen Werte das Ziel repräsentieren (der mit dem meisten Platz) */
   haupt_zugang: string;
   zugaenge: Zugang[];
+
+  /**
+   * Zwei Absichten bei Leihrädern (nur Kiel). `auslastung` bedeutet dort der
+   * Anteil belegter RÜCKGABEPLÄTZE — 100 % heisst „hier lässt sich kein Rad
+   * abgeben". Wer leihen will, braucht die umgekehrte Aussage: Live standen
+   * zehn von dreissig Stationen auf grün „Viel Platz" und hatten null Räder.
+   */
+  leihen: {
+    auslastung: number;
+    raeder: number;
+    status: Status;
+    alternative: Alternative | null;
+  } | null;
 
   /** Stufe 1 — gleiches Ziel, anderer Zugang */
   zugang_tipp: { von: string; nach: string; nach_id: string; km: number } | null;
@@ -196,6 +212,16 @@ export interface SensorProps {
   /** Typischer Tagesverlauf, 24 Stundenwerte (null wo keine Beobachtung).
    *  Null, wenn die Kurve flach ist — eine gerade Linie ist kein Tagesverlauf. */
   tagesgang: (number | null)[] | null;
+  /**
+   * Derselbe Status, aber für jede Stunde des typischen Tages — berechnet mit
+   * DERSELBEN Funktion im Workflow. Wer oben „Heute Nachmittag" wählt, soll
+   * auch die Nachmittags-Ampel sehen; bisher sortierte die Liste nach 15 Uhr,
+   * während Kachel, Karte und Ansage den Jetzt-Zustand zeigten.
+   *
+   * Null, wo der Tagesverlauf keine Prozentwerte trägt (Zürich zählt Personen,
+   * die Radzähler Räder) — dort wäre eine absolute Schwelle erfunden.
+   */
+  tagesgang_status: (Status | null)[] | null;
   /** [ISO-Zeitstempel, Wert] — jüngste zuletzt */
   sparkline: [string, number][];
   /** Zu welchem Ziel dieser Zugang gehört */

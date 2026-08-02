@@ -10,14 +10,21 @@
 export default function Tagesverlauf({
   kurve,
   akzent,
+  stunde,
 }: {
   kurve: (number | null)[];
   akzent: string;
+  /** Gewählte Stunde, oder null für „jetzt". Bestimmt, welche Säule markiert ist. */
+  stunde?: number | null;
 }) {
   const belegt = kurve.filter((v): v is number => v != null);
   if (belegt.length < 6) return null;
 
-  const jetzt = new Date().getHours();
+  // Der Marker folgte immer der echten Uhrzeit — auch wenn oben „Heute
+  // Nachmittag" gewählt war. Dann zeigte die Kurve auf 11 Uhr, während die
+  // Liste nach 15 Uhr sortierte.
+  const jetzt = stunde ?? new Date().getHours();
+  const eigeneZeit = stunde != null;
   const max = Math.max(...belegt, 1);
 
   return (
@@ -46,7 +53,7 @@ export default function Tagesverlauf({
                   className="absolute left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-white"
                   style={{ background: akzent, bottom: `calc(${hoehe}% + 4px)` }}
                 >
-                  jetzt
+                  {eigeneZeit ? `${jetzt} Uhr` : "jetzt"}
                 </span>
               )}
             </div>

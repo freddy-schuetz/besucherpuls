@@ -39,6 +39,12 @@ import urllib.parse
 import urllib.request
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+# Alles, was in ein Stundenraster einsortiert wird, muss dieselbe Zeitzone
+# benutzen wie der Workflow — sonst beschreibt Zelle "13" eine andere Stunde,
+# als der Gast meint, wenn er 13 Uhr liest.
+BERLIN = ZoneInfo("Europe/Berlin")
 
 UA = {"User-Agent": "besucherpuls/0.1 (+https://friedemann-schuetz.de)"}
 HIER = os.path.dirname(os.path.abspath(__file__))
@@ -78,6 +84,18 @@ BASE, KEY = n8n_base_und_key()
 H_API = {"X-N8N-API-KEY": KEY, "Content-Type": "application/json"}
 
 sensoren = json.load(io.open(SENSORS, encoding="utf-8"))["sensoren"]
+
+# Quellen, die dieser Lauf NICHT anfassen soll. Die bayerischen Profile stammen
+# aus scripts/profil_bayern.py (drei Jahre Historie direkt von der BayernCloud);
+# aus dem Ringpuffer liessen sich hier nur ein paar duenne Tage bauen, die das
+# Gute ueberschreiben wuerden.
+OHNE = set()
+if "--ohne" in sys.argv:
+    OHNE = {q.strip() for q in sys.argv[sys.argv.index("--ohne") + 1].split(",") if q.strip()}
+    vorher = len(sensoren)
+    sensoren = [s for s in sensoren if s["quelle"] not in OHNE]
+    print(f"--ohne {','.join(sorted(OHNE))}: {vorher - len(sensoren)} Sensoren uebersprungen")
+
 nach_quelle = defaultdict(list)
 for s in sensoren:
     nach_quelle[s["quelle"]].append(s)
@@ -242,10 +260,20 @@ for s in sensoren:
     werte = beob.get(s["id"])
     if not werte:
         continue
-    # Schritt 1: je (Datum, Stunde) den Median der Messungen dieses Tages
+    # Schritt 1: je (Datum, Stunde) den Median der Messungen dieses Tages.
+    #
+    # ORTSZEIT, NICHT UTC. Hier lag ein Fehler, der jede Zeitaussage verdreht hat:
+    # Der Suedtiroler Open Data Hub liefert `mvalidtime` mit +0000, die Zuercher
+    # Besuchsdaten ebenso — beide werden korrekt als UTC geparst. `t.hour` gab
+    # dann aber die UTC-Stunde, waehrend der Workflow (status_node.js,
+    # verdichten_node.js) in Europe/Berlin rechnet. Im Sommer sind das zwei
+    # Stunden Versatz. Fuer Passo Sella behauptete das Profil zu Stunde 13 null
+    # Prozent, waehrend der Sensor 90,5 % mass — die Empfehlung "lieber ab
+    # 13 Uhr" schickte Gaeste in die vollste Stunde des Tages.
     je_tag_stunde = defaultdict(list)
     for t, v in werte:
-        je_tag_stunde[(t.date(), t.hour)].append(v)
+        o = t.astimezone(BERLIN)
+        je_tag_stunde[(o.date(), o.hour)].append(v)
     tageswerte = {k: statistics.median(v) for k, v in je_tag_stunde.items()}
 
     # Schritt 2: nach (Wochentag, Stunde) gruppieren — ein Eintrag JE TAG
@@ -293,19 +321,37 @@ if TROCKEN:
     sys.exit(0)
 
 # ---------------------------------------------------------------- schreiben
-# WICHTIG: Die Tabelle muss VORHER leer sein. Ein DELETE auf
-# /data-tables/{id}/rows beantwortet die REST-API mit 405 — leeren geht nur
+# Die betroffenen Zeilen muessen VORHER weg sein. Ein DELETE auf
+# /data-tables/{id}/rows beantwortet die REST-API mit 405 — loeschen geht nur
 # ueber das MCP-Werkzeug n8n_manage_datatable (action deleteRows) oder die
 # Oberflaeche. Wird das vergessen, stehen alte Zeilen neben den neuen und der
 # Status-Webhook liest je Sensor eine zufaellige von beiden.
-alt = jget(f"{BASE}/data-tables/{PROFIL_TABLE}/rows?limit=250", headers=H_API)
-alt_zeilen = alt.get("data") if isinstance(alt, dict) else alt
-if isinstance(alt_zeilen, dict):
-    alt_zeilen = alt_zeilen.get("data") or []
-if alt_zeilen:
-    print(f"\nABBRUCH: Die Profil-Tabelle enthaelt noch {len(alt_zeilen)} Zeilen.")
-    print("Erst leeren (MCP: n8n_manage_datatable deleteRows), dann erneut starten.")
+#
+# Geprueft wird nur, was dieser Lauf auch schreibt. Frueher verlangte das Skript
+# eine komplett LEERE Tabelle — damit haette jeder Teil-Neuaufbau die 55
+# bayerischen Zeitreihen mitgerissen, die aus einer ganz anderen Quelle stammen
+# (scripts/profil_bayern.py, drei Jahre Historie, zehn Minuten Download).
+meine_quellen = {z["quelle_hist"] for z in zeilen}
+alle_alt, cursor = [], None
+while True:
+    u = f"{BASE}/data-tables/{PROFIL_TABLE}/rows?limit=250"
+    if cursor:
+        u += "&cursor=" + urllib.parse.quote(cursor, safe="")
+    d = jget(u, headers=H_API)
+    teil = d.get("data") or []
+    alle_alt += teil
+    cursor = d.get("nextCursor")
+    if not cursor or len(teil) < 250:
+        break
+kollision = [r for r in alle_alt if r.get("quelle_hist") in meine_quellen]
+if kollision:
+    print(f"\nABBRUCH: {len(kollision)} Zeilen der Quellen "
+          f"{', '.join(sorted(meine_quellen))} liegen schon vor.")
+    print("Erst loeschen (MCP: n8n_manage_datatable deleteRows, Filter quelle_hist),")
+    print("dann erneut starten. Bayerische Zeilen bleiben unberuehrt.")
     sys.exit(1)
+print(f"\n{len(alle_alt)} Zeilen in der Tabelle, davon 0 aus "
+      f"{', '.join(sorted(meine_quellen))} — Bahn frei.")
 
 req = urllib.request.Request(f"{BASE}/data-tables/{PROFIL_TABLE}/rows",
                              data=json.dumps({"data": zeilen}).encode("utf-8"),

@@ -37,16 +37,35 @@ const MIN_TAGE_POOL = 5;   // gepoolte Stufen erst ab so vielen Tagen
 const VOLL_AB = 92;        // ab hier: voll
 const ENG_AB = 75;         // ab hier: wird eng
 const FREI_BIS = 70;       // nur so leere Ziele taugen als Empfehlung
+// Unterhalb dieser Belegung darf der historische Vergleich die Ampel NICHT
+// faerben. Sonst entstehen Saetze wie "Gut besucht" bei 43 von 50 freien
+// Plaetzen — und, seit auch gelb lenkt, Empfehlungen WEG von einem fast leeren
+// Parkplatz. Details in statusVon().
+const VERGLEICH_AB = 40;
+// Ab hier wird ueberhaupt gelenkt. Die Ampel darf frueher gelb werden — "gut
+// besucht" ist eine Information. Ein Ortswechsel ist es nicht: Bei 41 % Belegung
+// stehen an der Mittagbahn 175 von 300 Plaetzen frei, und die Seite schickte
+// Gaeste 6 km weg, weil der Perzentilrang hoch war. Unterhalb dieser Grenze
+// bleibt es bei der Auskunft.
+const LENKEN_AB = 60;
+// So viel leerer muss eine Alternative mindestens sein, damit der Umweg lohnt.
+// Ohne diese Grenze entstanden Empfehlungen wie "Weissbach 12 % -> Ried 16,7 %"
+// (der Kandidat ist VOLLER) oder "Meilingen 1,1 % -> Berg Hansmarte 2,5 %"
+// (von leer nach leer).
+const MIN_ABSTAND = 15;
 const MAX_SPARK = 12;      // Punkte je Sensor (Fenster ist 30 min, siehe deploy_status.py)
 
 // Frischeschwelle je Quelle — eine pauschale Grenze waere falsch: die Suedtiroler
 // Radzaehler liefern regulaer mit rund einem Tag Verzug, GBFS im Minutentakt.
-// Zuerich stand auf 240 Minuten — dadurch galt der eingefrorene Schlusswert
-// nach Betriebsende noch stundenlang als aktuell (Seebad Utoquai zeigte um
-// 0:10 noch 156 Gaeste, Zeitstempel 23:40). Der Feed aktualisiert im Betrieb
-// etwa alle zehn Minuten; 45 Minuten trennen Betrieb und Stillstand sauber.
+//
+// ZUERICH stand erst auf 240 Minuten (der eingefrorene Schlusswert galt nach
+// Betriebsende stundenlang als aktuell), dann auf 45. Beides war falsch:
+// Gemessen laesst die Stadt zwischen zwei Veroeffentlichungen 94 Minuten
+// 46 Sekunden verstreichen — mittags an einem sonnigen Sonntag, nicht nachts.
+// Bei 45 Minuten stand Zuerich rund die HAELFTE jedes Zyklus auf grau, obwohl
+// nichts kaputt war. 120 Minuten decken den gemessenen Rhythmus mit Reserve.
 const VERALTET_MIN = {
-  luzern: 180, zh_baeder: 45, st_parken: 60, st_rad: 2880,
+  luzern: 180, zh_baeder: 120, st_parken: 60, st_rad: 2880,
   gbfs: 30, wien_baeder: 2880, kiel_gbfs: 30, bayern: 180,
 };
 
@@ -169,6 +188,58 @@ function vergleichsmenge(dh) {
   return null;
 }
 
+/**
+ * DIE EINZIGE STATUSBERECHNUNG.
+ *
+ * Vorher gab es zwei: diese hier und eine zweite im Frontend. Die Karte sah Wien
+ * gruen, die Empfehlungslogik sah dieselben Baeder als "ohne Basis" — deshalb
+ * konnten Wien und Groeden NIE eine Empfehlung bekommen. Jetzt entscheidet nur
+ * noch diese Funktion; das Frontend liest ihr Ergebnis, und der Tagesverlauf
+ * benutzt sie ein zweites Mal je Stunde.
+ */
+function statusVon({ istVeraltet, referenzArt, auslastung, quote, geschlossen }) {
+  // Der Betreiber sagt selbst, dass zu ist — das schlaegt jede Rechnung.
+  // Wien meldet Stufe 0 fuer geschlossene Baeder; die fielen frueher komplett
+  // aus der Seite heraus, statt als "geschlossen" dazustehen.
+  if (geschlossen) return { ampel: 'geschlossen', kurz: 'Heute geschlossen', art: 'keiner' };
+  if (istVeraltet) return { ampel: 'veraltet', kurz: 'Keine aktuellen Daten', art: 'keiner' };
+  // "Geschlossen" nur, wo Schliessen ueberhaupt ein Begriff ist — Baeder,
+  // Bergbahnen. Ein Skiparkplatz, der im Sommer auf 0 steht, ist nicht
+  // geschlossen, sondern leer; dafuer ist unten die Kapazitaetsregel zustaendig.
+  if (referenzArt === 'geschlossen' && auslastung == null) {
+    return { ampel: 'geschlossen', kurz: 'Geschlossen', art: 'keiner' };
+  }
+
+  // 1. Absolute Auslastung, wo sie bekannt ist. "0 von 140 frei" ist voll,
+  //    egal wie normal das fuer die Uhrzeit sein mag.
+  if (auslastung != null) {
+    if (auslastung >= VOLL_AB) return { ampel: 'rot', kurz: 'Voll', art: 'kapazitaet' };
+    if (auslastung >= ENG_AB) return { ampel: 'gelb', kurz: 'Wird eng', art: 'kapazitaet' };
+
+    // 2. Der Vergleich darf verfeinern — aber erst, wenn absolut ueberhaupt
+    //    etwas los ist. Weissbach Bahnhof stand auf "Gut besucht" bei 43 von 50
+    //    FREIEN Plaetzen, weil der Perzentilrang 96 war; der Nachbarplatz mit
+    //    51 % Belegung stand daneben auf "Viel Platz". Gleich voll, gegenteiliges
+    //    Label — und der halbvolle Platz gruener als der zu 14 % belegte.
+    //    Unterhalb dieser Grenze zaehlt deshalb nur die Kapazitaet.
+    if (quote != null && auslastung >= VERGLEICH_AB) {
+      if (quote > AMPEL_ROT) return { ampel: 'gelb', kurz: 'Gut besucht', art: 'vergleich' };
+      if (quote < AMPEL_GRUEN) return { ampel: 'gruen', kurz: 'Viel Platz', art: 'vergleich' };
+      return { ampel: 'gruen', kurz: 'Platz da', art: 'vergleich' };
+    }
+    return { ampel: 'gruen', kurz: 'Viel Platz', art: 'kapazitaet' };
+  }
+
+  // 3. Ohne Kapazitaet bleibt nur der Vergleich — Luzern, Radzaehler, Baeder
+  //    ohne Bezugsgroesse. Dort ist er die einzige Grundlage, die es gibt.
+  if (quote != null) {
+    if (quote > AMPEL_ROT) return { ampel: 'rot', kurz: 'Voller als sonst', art: 'vergleich' };
+    if (quote < AMPEL_GRUEN) return { ampel: 'gruen', kurz: 'Leerer als sonst', art: 'vergleich' };
+    return { ampel: 'gelb', kurz: 'Wie üblich', art: 'vergleich' };
+  }
+  return { ampel: 'aufbau', kurz: 'Noch ohne Vergleich', art: 'keiner' };
+}
+
 /** Typischer Tagesverlauf: je Stunde der Median aller beobachteten Tage.
  *  Das ist der Inhalt fuer das Schaufenster "Ausweichen in der Zeit". */
 function tagesgang(dh) {
@@ -193,6 +264,28 @@ function tagesgang(dh) {
   const echt = kurve.filter((v) => v != null);
   if (Math.max(...echt) - Math.min(...echt) < 5) return null;
   return kurve;
+}
+
+/**
+ * Derselbe Status, aber fuer jede Stunde des typischen Tages.
+ *
+ * Der Gast waehlt oben "Heute Nachmittag" — dann muss die Ampel auch den
+ * Nachmittag meinen. Bisher sortierte die Liste nach dem 15-Uhr-Wert, waehrend
+ * Kachel, Karte und Ansage weiter den Jetzt-Zustand zeigten: Ein Ziel konnte
+ * unter "Nachmittag" ganz oben stehen und rot leuchten.
+ *
+ * Es ist bewusst DIESELBE Funktion wie fuer den Jetzt-Wert. Eine zweite waere
+ * eine zweite Wahrheit, und genau daran ist die Demo schon einmal gescheitert.
+ *
+ * Nur wo die Kurve Prozent bedeutet. Bei Zuerich, Luzern und den Radzaehlern
+ * sind es Personen bzw. Raeder — eine absolute Schwelle waere dort erfunden,
+ * deshalb bleibt es null und das Frontend sagt nur "typischerweise am vollsten".
+ */
+function tagesgangStatus(kurve, istProzent) {
+  if (!Array.isArray(kurve) || !istProzent) return null;
+  return kurve.map((v) => (v == null
+    ? null
+    : statusVon({ istVeraltet: false, referenzArt: null, auslastung: v, quote: null })));
 }
 
 // ---------------------------------------------------------------- Features bauen
@@ -229,42 +322,10 @@ for (const s of SENSOREN) {
     else if (istWert === 0) referenzArt = 'geschlossen';
   }
 
-  // DIE EINZIGE STATUSBERECHNUNG.
-  // Vorher gab es zwei: diese hier und eine zweite im Frontend. Die Karte sah
-  // Wien gruen, die Empfehlungslogik sah dieselben Baeder als "ohne Basis" —
-  // deshalb konnten Wien und Groeden NIE eine Empfehlung bekommen. Jetzt
-  // entscheidet nur noch diese Funktion, das Frontend liest ihr Ergebnis.
-  const st = (() => {
-    if (istVeraltet) return { ampel: 'veraltet', kurz: 'Keine aktuellen Daten', art: 'keiner' };
-    // "Geschlossen" nur, wo Schliessen ueberhaupt ein Begriff ist — Baeder,
-    // Bergbahnen. Ein Skiparkplatz, der im Sommer auf 0 steht, ist nicht
-    // geschlossen, sondern leer; dafuer ist unten die Kapazitaetsregel zustaendig.
-    if (referenzArt === 'geschlossen' && auslastung == null) {
-      return { ampel: 'geschlossen', kurz: 'Geschlossen', art: 'keiner' };
-    }
-
-    // 1. Absolute Auslastung, wo sie bekannt ist. "0 von 140 frei" ist voll,
-    //    egal wie normal das fuer die Uhrzeit sein mag.
-    if (auslastung != null) {
-      if (auslastung >= VOLL_AB) return { ampel: 'rot', kurz: 'Voll', art: 'kapazitaet' };
-      if (auslastung >= ENG_AB) return { ampel: 'gelb', kurz: 'Wird eng', art: 'kapazitaet' };
-      // 2. Genug Platz — jetzt darf der Vergleich verfeinern, aber nicht ueberstimmen.
-      if (quote != null) {
-        if (quote > AMPEL_ROT) return { ampel: 'gelb', kurz: 'Gut besucht', art: 'vergleich' };
-        if (quote < AMPEL_GRUEN) return { ampel: 'gruen', kurz: 'Viel Platz', art: 'vergleich' };
-        return { ampel: 'gruen', kurz: 'Platz da', art: 'vergleich' };
-      }
-      return { ampel: 'gruen', kurz: 'Viel Platz', art: 'kapazitaet' };
-    }
-
-    // 3. Ohne Kapazitaet bleibt nur der Vergleich — Luzern, Radzaehler.
-    if (quote != null) {
-      if (quote > AMPEL_ROT) return { ampel: 'rot', kurz: 'Voller als sonst', art: 'vergleich' };
-      if (quote < AMPEL_GRUEN) return { ampel: 'gruen', kurz: 'Leerer als sonst', art: 'vergleich' };
-      return { ampel: 'gelb', kurz: 'Wie üblich', art: 'vergleich' };
-    }
-    return { ampel: 'aufbau', kurz: 'Noch ohne Vergleich', art: 'keiner' };
-  })();
+  // Wien: Stufe 0 heisst geschlossen (siehe collect_node.js).
+  const meldetZu = s.metrik === 'ampelstufe' && Number(a.wert) === 0;
+  const st = statusVon({ istVeraltet, referenzArt, auslastung, quote, geschlossen: meldetZu });
+  const kurve = p ? tagesgang(p.dh) : null;
 
   const ampel = st.ampel;
   if (ampel === 'veraltet') veraltet++;
@@ -308,7 +369,8 @@ for (const s of SENSOREN) {
       quell_ts: a.quell_ts,
       basis_tage: p ? p.basis_tage : 0,
       basis_n: p ? p.n : 0,
-      tagesgang: p ? tagesgang(p.dh) : null,
+      tagesgang: kurve,
+      tagesgang_status: tagesgangStatus(kurve, auslastung != null),
       sparkline,
     },
   });
@@ -339,27 +401,48 @@ function fuellung(p) {
   return null;
 }
 
-/** Hat hier ein Gast wirklich Platz? Die Antwort kommt aus der EINEN
- *  Statusfunktion — gruen heisst gruen. Eine eigene Schwelle stuende sonst
- *  neben ihr und koennte von ihr abdriften; genau das war der Fehler, den die
- *  Trennung Workflow/Frontend erzeugt hat. Wo die Kapazitaet bekannt ist,
- *  kommt eine strengere Bedingung dazu: gruen reicht bis 75 %, hinschicken
- *  wollen wir aber nur, wo wirklich noch Luft ist. */
+/**
+ * Hat hier ein Gast wirklich Platz?
+ *
+ * Frueher stand hier `ampel === 'gruen'`. Das klang nach "eine Wahrheit", war
+ * aber der teuerste Fehler der Demo: Plan de Gralba in Groeden ist zu 12,3 %
+ * belegt und hat 351 freie Plaetze — steht aber auf gelb, weil sein
+ * Perzentilrang 86 statt 85 betraegt. Damit war GANZ Groeden dauerhaft
+ * empfehlungstot, obwohl 2,6 km entfernt ein fast leerer Parkplatz liegt.
+ *
+ * Die Vergleichsregel darf die Kapazitaetsregel nicht ueberstimmen. Wo die
+ * Kapazitaet bekannt ist, entscheidet sie hier allein.
+ */
 function hatPlatz(p) {
-  if (p.ampel !== 'gruen') return false;
+  if (p.ampel === 'veraltet' || p.ampel === 'geschlossen' || p.ampel === 'aufbau') return false;
   if (p.auslastung != null) return Number(p.auslastung) <= FREI_BIS;
-  return true;
+  return p.quote != null && p.quote < 50;
 }
 
-/** Die naechste besuchbare Stunde, in der es spuerbar ruhiger ist. */
-function spaeterAls(kurve) {
+/** Fuer den Zugangstipp genuegt weniger. Es geht nicht um einen Umweg, sondern
+ *  um die andere Seite DESSELBEN Ziels: Wenn die Nebelhorn-Talstation zu 100 %
+ *  voll ist und Oybele 19 von 215 Plaetzen frei hat, ist das die nuetzlichste
+ *  Auskunft ueberhaupt — auch wenn 19 Plaetze fuer eine Umleitung ueber
+ *  Kilometer zu wenig waeren. */
+function nochWasFrei(p) {
+  if (p.ampel === 'veraltet' || p.ampel === 'geschlossen') return false;
+  if (p.auslastung != null) return Number(p.auslastung) < VOLL_AB;
+  return p.ampel !== 'rot';
+}
+
+/** Die naechste besuchbare Stunde, in der es spuerbar ruhiger ist.
+ *  `ab` ist der Bezugspunkt — normalerweise jetzt, aber das Frontend rechnet
+ *  damit auch fuer eine gewaehlte Stunde neu. Deshalb nimmt die Funktion die
+ *  Stunde als Parameter statt aus dem Modul-Zustand. */
+function spaeterAls(kurve, ab) {
   if (!Array.isArray(kurve)) return null;
-  const jetztWert = kurve[stunde];
+  const start = ab == null ? stunde : ab;
+  const jetztWert = kurve[start];
   const hoechst = Math.max(...kurve.filter((v) => v != null), 0);
   if (jetztWert == null || hoechst <= 0 || jetztWert < hoechst * 0.25) return null;
   let beste = null;
   for (let i = 1; i <= 6; i++) {
-    const h = (stunde + i) % 24;
+    const h = (start + i) % 24;
     const v = kurve[h];
     if (v == null || h < 7 || h > 20) continue;
     if (v < jetztWert * 0.7 && (beste === null || v < kurve[beste])) beste = h;
@@ -397,7 +480,7 @@ for (const z of ZIELE) {
   }
 
   const voll = zug.filter((f) => f.properties.ampel === 'rot');
-  const frei = brauchbar.filter((f) => hatPlatz(f.properties));
+  const frei = brauchbar.filter((f) => nochWasFrei(f.properties));
 
   ziele.push({
     id: z.id, name: z.name, gebiet: z.gebiet,
@@ -417,6 +500,7 @@ for (const z of ZIELE) {
     basis_tage: bp.basis_tage,
     vergleich_art: bp.vergleich_art, vergleich_tage: bp.vergleich_tage,
     tagesgang: bp.tagesgang,
+    tagesgang_status: bp.tagesgang_status,
     sparkline: bp.sparkline,
     haupt_zugang: bp.id,
     zugaenge: zug.map((f) => ({
@@ -437,16 +521,109 @@ for (const z of ZIELE) {
       : null,
     spaeter: null,
     alternative: null,
+
+    // ZWEI ABSICHTEN BEI LEIHRAEDERN.
+    //
+    // `auslastung` ist bei Kiel der Anteil belegter RUECKGABEPLAETZE: 100 %
+    // heisst "hier laesst sich kein Rad abgeben". Fuer jemanden, der ein Rad
+    // LEIHEN will, ist die Aussage genau umgekehrt — und sie fehlte. Live
+    // standen sieben von dreissig Stationen auf gruen "Viel Platz" und hatten
+    // NULL Raeder; die einzige Empfehlung, die Kiel erzeugte, fuehrte zu einer
+    // davon. Wer leihen wollte, fuhr ins Leere.
+    //
+    // Beide Werte stecken in derselben Zahl (sie ergaenzen sich zu 100), es
+    // braucht also weder eine neue Spalte noch einen zweiten Abruf.
+    leihen: bp.metrik === 'dock_belegung' && bp.auslastung != null
+      ? (() => {
+          const fuellung_leihen = Math.round((100 - Number(bp.auslastung)) * 10) / 10;
+          return {
+            auslastung: fuellung_leihen,
+            raeder: Math.round(Number(bp.wert)),
+            status: statusVon({
+              istVeraltet: bp.ampel === 'veraltet',
+              referenzArt: null, auslastung: fuellung_leihen, quote: null,
+            }),
+            alternative: null,
+          };
+        })()
+      : null,
   });
 }
 
 // ------------------------------------------------------- Lenken: die Stufenleiter
-// Nur bei echter Fuelle lenken. Alles darunter ist Information, kein Rat.
+// AB WANN GELENKT WIRD. Frueher nur bei 'rot'. Das klang vorsichtig, war aber
+// eine Nullaussage: Von 173 Zielen bekamen VIER eine Empfehlung. Nebelhorn mit
+// 25 freien von 415 Plaetzen bekam keine, weil es bei 91,6 % lag und die
+// Schwelle fuer rot bei 92 steht — zwei Stellplaetze von 415 trennten "kein
+// Rat" von "voller Lenkung". Wer 'wird eng' sieht, will wissen, wohin sonst.
 let mitEmpfehlung = 0, zeitTipps = 0, zugangTipps = 0;
 for (const z of ziele) if (z.zugang_tipp) zugangTipps++;
 
+/** Wie voll es fuer die gewaehlte ABSICHT ist. Fuer "zurueckgeben" ist das der
+ *  gespeicherte Wert, fuer "leihen" sein Gegenstueck. */
+function fuellungFuer(z, leihen) {
+  if (leihen && z.leihen) return z.leihen.auslastung;
+  return fuellung(z);
+}
+
+function ampelFuer(z, leihen) {
+  if (leihen && z.leihen) return z.leihen.status.ampel;
+  return z.ampel;
+}
+
+/** Die Stufenleiter, einmal je Absicht. */
+function lenken(leihen) {
+  for (const z of ziele) {
+    // Der Leih-Durchgang betrifft nur Ziele, die ueberhaupt zwei Absichten
+    // kennen — sonst gaebe es kein Feld, in das das Ergebnis gehoert.
+    if (leihen && !z.leihen) continue;
+    const meineAmpel = ampelFuer(z, leihen);
+    const meine = fuellungFuer(z, leihen);
+    if (meineAmpel !== 'rot' && !(meineAmpel === 'gelb' && (meine ?? 0) >= LENKEN_AB)) continue;
+
+    const kandidaten = ziele
+      .filter((o) => {
+        if (o.id === z.id || o.gebiet !== z.gebiet) return false;
+        if (!(o.arten || []).some((a) => (z.arten || []).includes(a))) return false;
+        if (o.ampel === 'veraltet' || o.ampel === 'geschlossen' || o.ampel === 'aufbau') return false;
+        const seine = fuellungFuer(o, leihen);
+        return seine != null && seine <= FREI_BIS;
+      })
+      .map((o) => ({ z: o, km: entfernungKm([z.lon, z.lat], [o.lon, o.lat]) }))
+      .filter((x) => x.km <= (MAX_KM[z.art] || 3))
+      .filter((x) => {
+        const seine = fuellungFuer(x.z, leihen);
+        return meine == null || seine == null || meine - seine >= MIN_ABSTAND;
+      });
+    if (!kandidaten.length) continue;
+
+    const guete = (x) => (fuellungFuer(x.z, leihen) ?? 50) + x.km * 10;
+    kandidaten.sort((x, y) => guete(x) - guete(y));
+    const b = kandidaten[0];
+    const eintrag = {
+      id: b.z.id, name: b.z.name, art: b.z.art,
+      ampel: ampelFuer(b.z, leihen),
+      status: leihen && b.z.leihen ? b.z.leihen.status : b.z.status,
+      auslastung: fuellungFuer(b.z, leihen),
+      quote: b.z.quote,
+      raeder: leihen && b.z.leihen ? b.z.leihen.raeder : null,
+      frei_plaetze: b.z.frei_plaetze, kapazitaet: b.z.kapazitaet,
+      lat: b.z.lat, lon: b.z.lon, km: b.km, stufe: 'ziel',
+    };
+    if (leihen) z.leihen.alternative = eintrag;
+    else { z.alternative = eintrag; mitEmpfehlung++; }
+  }
+}
+
+// Die Leih-Absicht laeuft ueber dieselbe Funktion — kein zweiter Regelsatz.
+lenken(true);
+
 for (const z of ziele) {
-  if (z.ampel !== 'rot') continue;
+  // Rot lenkt immer. Gelb nur, wenn auch absolut wenig frei ist — sonst
+  // entstehen Umleitungen von Plaetzen, an denen zwei Drittel leer stehen.
+  // Wo es gar keine Kapazitaet gibt (Zuerich, Luzern, Radzaehler), ist der
+  // Vergleich das einzige Signal; dort zaehlt rot allein.
+  if (z.ampel !== 'rot' && !(z.ampel === 'gelb' && (fuellung(z) ?? 0) >= LENKEN_AB)) continue;
 
   // STUFE 2 — anderer Zeitpunkt. Kein Ortswechsel noetig, also vor dem Umleiten.
   z.spaeter = spaeterAls(z.tagesgang);
@@ -456,13 +633,21 @@ for (const z of ziele) {
   // Kategorien ueberschneiden: Ein Nationalpark-Einstieg zaehlt AUCH als Wandern,
   // ein Bahnhof niemals als Badesee. Das steckt in `arten`, nicht in einer
   // deutschen Stichwortliste — deshalb funktioniert es auch in Groeden.
+  const meine = fuellung(z);
   const kandidaten = ziele
     .filter((o) => o.id !== z.id
       && o.gebiet === z.gebiet
       && (o.arten || []).some((a) => (z.arten || []).includes(a))
       && hatPlatz(o))
     .map((o) => ({ z: o, km: entfernungKm([z.lon, z.lat], [o.lon, o.lat]) }))
-    .filter((x) => x.km <= (MAX_KM[z.art] || 3));
+    .filter((x) => x.km <= (MAX_KM[z.art] || 3))
+    // Der Umweg muss sich lohnen. Ohne diese Bedingung schickte die Seite
+    // Gaeste von einem zu 12 % belegten Bahnhofsparkplatz zu einem zu 16,7 %
+    // belegten — messbar schlechter, und als Rat schlicht laecherlich.
+    .filter((x) => {
+      const seine = fuellung(x.z);
+      return meine == null || seine == null || meine - seine >= MIN_ABSTAND;
+    });
 
   if (!kandidaten.length) continue;
 

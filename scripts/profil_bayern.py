@@ -27,7 +27,11 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+# Dieselbe Zeitzone wie der Workflow (status_node.js, verdichten_node.js).
+BERLIN = ZoneInfo("Europe/Berlin")
 
 HIER = os.path.dirname(os.path.abspath(__file__))
 SENSORS = os.path.join(HIER, "..", "lib", "sensors.json")
@@ -126,7 +130,14 @@ for i, s in enumerate(sensoren, 1):
         verworfen.append((s["name"], f"nur {eindeutig} verschiedene Werte"))
         continue
 
-    # Schritt 1: je (Datum, Stunde) den Median dieses Tages
+    # Schritt 1: je (Datum, Stunde) den Median dieses Tages — in ORTSZEIT.
+    #
+    # Die BayernCloud liefert den Offset mit ("2026-08-02T14:51:07.687+02:00"),
+    # `fromisoformat` gibt hier also schon Ortszeit. Verlassen sollte man sich
+    # darauf nicht: In profil_neu.py hat genau diese Annahme das Suedtiroler
+    # Raster um zwei Stunden verschoben. Deshalb wird hier explizit umgerechnet
+    # — bei einer Quelle mit Offset kostet das nichts, bei einer ohne rettet es
+    # das Profil.
     je_tag_stunde = defaultdict(list)
     for punkt in roh:
         try:
@@ -134,6 +145,9 @@ for i, s in enumerate(sensoren, 1):
             v = float(punkt[1])
         except (ValueError, TypeError, IndexError):
             continue
+        if t.tzinfo is None:
+            t = t.replace(tzinfo=timezone.utc)
+        t = t.astimezone(BERLIN)
         je_tag_stunde[(t.date(), t.hour)].append(v)
 
     # Schritt 2: nach (Wochentag, Stunde) gruppieren, ein Eintrag JE TAG

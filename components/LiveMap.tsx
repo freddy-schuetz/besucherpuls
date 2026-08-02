@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import maplibregl, { Map as MlMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { AMPEL_FARBE, type ZielProps } from "@/lib/types";
+import { statusFuerZeit } from "@/lib/regionen";
 
 /**
  * Karte fuer die Ziele.
@@ -28,17 +29,34 @@ export default function LiveMap({
   ausgewaehlt,
   onSelect,
   start,
+  stunde,
+  leihen,
+  ausschnittSchluessel,
 }: {
   ziele: ZielProps[];
   ausgewaehlt: string | null;
   onSelect: (id: string) => void;
   /** Fester Startausschnitt. Ohne diesen wird auf alle Punkte gezoomt. */
   start?: { mitte: [number, number]; zoom: number };
+  /** Gewählte Stunde, oder null für „jetzt" — bestimmt die Farbe der Punkte. */
+  stunde?: number | null;
+  /** Nur bei Leihrädern: Absicht des Gastes, bestimmt ebenfalls die Farbe. */
+  leihen?: boolean;
+  /**
+   * Ändert sich genau dann, wenn sich die Auswahl semantisch ändert
+   * (Kategorie oder Zeit). Nur DARAUF wird neu zentriert — nicht auf `ziele`,
+   * denn dessen Referenz wechselt auch bei jedem Minuten-Refresh, und dann
+   * risse der Ausschnitt dem Nutzer jede Minute unter den Fingern weg.
+   */
+  ausschnittSchluessel?: string;
 }) {
   const container = useRef<HTMLDivElement | null>(null);
   const map = useRef<MlMap | null>(null);
   const bereit = useRef(false);
   const ersteDaten = useRef(true);
+  const ersterAusschnitt = useRef(true);
+  const zieleRef = useRef<ZielProps[]>([]);
+  const zuletztGeflogen = useRef<string | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
@@ -188,15 +206,21 @@ export default function LiveMap({
         features: ziele.map((z) => ({
           type: "Feature" as const,
           geometry: { type: "Point" as const, coordinates: [z.lon, z.lat] },
-          properties: {
-            id: z.id,
-            name: z.name,
-            ampel: z.ampel,
-            farbe: AMPEL_FARBE[z.ampel] ?? AMPEL_FARBE.unbekannt,
-          },
+          properties: (() => {
+            // Dieselbe Stunde wie Liste und Kachel. Vorher faerbte die Karte
+            // immer den Jetzt-Zustand, auch wenn oben "Heute Nachmittag" stand.
+            const a = statusFuerZeit(z, stunde ?? null, leihen ?? false)?.ampel ?? "aufbau";
+            return {
+              id: z.id,
+              name: z.name,
+              ampel: a,
+              farbe: AMPEL_FARBE[a] ?? AMPEL_FARBE.unbekannt,
+            };
+          })(),
         })),
       } as GeoJSON.FeatureCollection);
 
+      zieleRef.current = ziele;
       if (ersteDaten.current && ziele.length && !start) {
         const b = new maplibregl.LngLatBounds();
         for (const z of ziele) b.extend([z.lon, z.lat]);
@@ -207,7 +231,35 @@ export default function LiveMap({
 
     if (bereit.current) einspielen();
     else m.once("bp:bereit", einspielen);
-  }, [ziele, start]);
+  }, [ziele, start, stunde, leihen]);
+
+  // --- Auf die gefilterte Menge zentrieren, wenn sich die AUSWAHL aendert
+  //
+  // Frueher gab es dafuer gar nichts: Der einzige fitBounds-Aufruf hing an
+  // `!start`, und die Regionsansicht uebergibt `start` immer — der Zweig war
+  // toter Code. Wer "Bergbahn" waehlte, sah unten neun Eintraege und auf der
+  // Karte weiterhin den Ausschnitt des ganzen Gebiets.
+  //
+  // Die Punkte kommen aus einem Ref, damit `ziele` NICHT in der Dep-Liste steht.
+  useEffect(() => {
+    const m = map.current;
+    if (!m || ausschnittSchluessel == null) return;
+    if (ersterAusschnitt.current) { ersterAusschnitt.current = false; return; }
+
+    const zoomen = () => {
+      const punkte = zieleRef.current;
+      if (!punkte.length) return;
+      if (punkte.length === 1) {
+        m.easeTo({ center: [punkte[0].lon, punkte[0].lat], zoom: 12, duration: 600 });
+        return;
+      }
+      const b = new maplibregl.LngLatBounds();
+      for (const z of punkte) b.extend([z.lon, z.lat]);
+      m.fitBounds(b, { padding: 70, maxZoom: 13, duration: 600 });
+    };
+    if (bereit.current) zoomen();
+    else m.once("bp:bereit", zoomen);
+  }, [ausschnittSchluessel]);
 
   // --- Auswahl hervorheben und anfliegen
   useEffect(() => {
@@ -215,11 +267,16 @@ export default function LiveMap({
     if (!m || !bereit.current || !m.getLayer("ziele-halo")) return;
     m.setFilter("ziele-halo", ["==", ["get", "id"], ausgewaehlt ?? "___keiner___"]);
 
-    if (!ausgewaehlt) return;
-    const z = ziele.find((x) => x.id === ausgewaehlt);
+    // NUR beim Wechsel anfliegen. `ziele` stand hier frueher in der Dep-Liste;
+    // weil dessen Referenz bei jedem Minuten-Refresh wechselt, flog die Karte
+    // alle 60 Sekunden erneut auf das gewaehlte Ziel und ueberschrieb das
+    // Verschieben des Nutzers.
+    if (!ausgewaehlt || ausgewaehlt === zuletztGeflogen.current) return;
+    const z = zieleRef.current.find((x) => x.id === ausgewaehlt);
     if (!z) return;
+    zuletztGeflogen.current = ausgewaehlt;
     m.easeTo({ center: [z.lon, z.lat], zoom: Math.max(m.getZoom(), 11), duration: 700 });
-  }, [ausgewaehlt, ziele]);
+  }, [ausgewaehlt]);
 
   // data-ziele traegt die Zahl der eingespielten Punkte nach aussen. Die Karte
   // zeichnet auf Canvas — ohne diesen Wert laesst sich von aussen nicht pruefen,

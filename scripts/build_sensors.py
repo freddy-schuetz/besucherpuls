@@ -213,7 +213,13 @@ for r in live:
         "lat": float(k["Lat"]), "lon": float(k["Lon"]),
         "quelle": "zh_baeder", "quelle_id": r["uid"],
         "metrik": "personen", "einheit": "Badegäste", "kapazitaet": None,
-        "hinweis": "Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall",
+        # Zuerich zaehlt wirklich (currentfill), veroeffentlicht aber schubweise:
+        # zwischen zwei Ausgaben lagen gemessen 94 Minuten 46 Sekunden, mittags
+        # am Sonntag. Deshalb steht die Frischeschwelle auf 120 Minuten.
+        "hinweis": ("Zählsensoren an den Zugängen — nachts korrekt 0, das ist kein Ausfall. "
+                    "Die Stadt veröffentlicht schubweise, rund alle anderthalb Stunden. "
+                    "Die Auslastungsstufe stammt von der Stadt selbst; eine Kapazität je "
+                    "Bad ist nicht veröffentlicht."),
         "quelle_url": "https://data.stadt-zuerich.ch/dataset/ssd_spo_badi_aktuell",
     })
     n_zh += 1
@@ -326,8 +332,15 @@ for f in d.get("features", []):
         "lat": round(float(c[1]), 6), "lon": round(float(c[0]), 6),
         "quelle": "wien_baeder", "quelle_id": name,
         "metrik": "ampelstufe", "einheit": "Auslastungsstufe", "kapazitaet": 5,
+        # EHRLICH BLEIBEN: Das Feld heisst AUSLASTUNG_AMPEL_KATEGORIE_0 und hat
+        # drei Geschwister fuer die naechsten drei Tage. Gemessen am 02.08.2026
+        # trugen 32 von 33 Baedern fuer ALLE VIER Tage denselben Wert. Das ist
+        # eine Tagesprognose, keine Live-Zaehlung — auch wenn der Zeitstempel
+        # stuendlich erneuert wird und "vor 1 Minute" suggeriert.
         "hinweis": ("Die Stadt Wien veröffentlicht je Bad eine Ampelstufe von 1 (noch Platz) "
-                    "bis 5 (derzeit voll). 0 heisst geschlossen."),
+                    "bis 5 (derzeit voll), 0 heisst geschlossen. Es ist eine Einschätzung "
+                    "für den TAG, keine Live-Zählung: Besucherzahlen veröffentlicht die "
+                    "Stadt nicht."),
         "quelle_url": "https://www.data.gv.at/katalog/dataset/stadt-wien_schwimmbderwien",
         "bezirk": p.get("BEZIRK"),
     })

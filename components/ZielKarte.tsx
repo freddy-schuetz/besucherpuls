@@ -1,6 +1,15 @@
 "use client";
 
-import { ART_TEXT, STATUS_FARBE, messwertZiel, type Region } from "@/lib/regionen";
+import {
+  ART_TEXT,
+  STATUS_FARBE,
+  alternativeFuer,
+  kleinAnfang,
+  messwertAbsicht,
+  messwertZiel,
+  statusFuerZeit,
+  type Region,
+} from "@/lib/regionen";
 import { ArtZeichen } from "@/components/Zielsuche";
 import { alterText, type ZielProps } from "@/lib/types";
 
@@ -56,17 +65,27 @@ export default function ZielKarte({
   verzug,
   onWaehlen,
   aktiv,
+  stunde,
+  leihen = false,
 }: {
   z: ZielProps;
   region: Region;
   verzug: number;
   onWaehlen: () => void;
   aktiv: boolean;
+  /** Gewählte Stunde, oder null für „jetzt". Steuert Farbe UND Text. */
+  stunde: number | null;
+  /** Nur bei Leihrädern: Absicht des Gastes. */
+  leihen?: boolean;
 }) {
-  const farben = STATUS_FARBE[z.ampel];
+  // Ein Ziel konnte unter „Heute Nachmittag" ganz oben stehen und trotzdem rot
+  // leuchten: Die Liste sortierte nach 15 Uhr, die Ampel zeigte den Jetzt-Wert.
+  // Beides kommt jetzt aus derselben Stunde.
+  const st = statusFuerZeit(z, stunde, leihen);
+  const farben = STATUS_FARBE[st?.ampel ?? "aufbau"];
   // Die Skala vergleicht mit der Vergangenheit — sie darf nur erscheinen, wenn
   // die Aussage auch von dort kommt, nicht bei reiner Kapazitaetsangabe.
-  const zeigtSkala = z.status.art === "vergleich" && z.quote != null;
+  const zeigtSkala = stunde == null && z.status.art === "vergleich" && z.quote != null;
 
   return (
     <button
@@ -95,23 +114,31 @@ export default function ZielKarte({
           className="shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold"
           style={{ background: farben.feld, color: farben.farbe }}
         >
-          {z.status.kurz}
+          {st ? (stunde == null ? st.kurz : `Meist ${kleinAnfang(st.kurz)}`) : "Kein Verlauf"}
         </span>
       </div>
 
-      {z.ampel === "veraltet" ? (
+      {stunde != null ? (
+        <p className="zahl text-sm text-tinte-weich">
+          {z.tagesgang?.[stunde] != null
+            ? `Um ${stunde}:00 Uhr typischerweise ${Math.round(z.tagesgang[stunde]!)} % belegt`
+            : `Für ${stunde}:00 Uhr fehlt der Verlauf`}
+        </p>
+      ) : z.ampel === "veraltet" ? (
         <p className="zahl text-sm text-tinte-weich">
           Zuletzt gemeldet {alterText(z.alter_min)}
         </p>
       ) : z.metrik === "ampelstufe" ? (
         <AmpelStufen stufe={z.wert} farbe={farben.farbe} />
       ) : (
-        <p className="zahl text-sm text-tinte-weich">{messwertZiel(z)}</p>
+        <p className="zahl text-sm text-tinte-weich">
+          {z.leihen ? messwertAbsicht(z, leihen) : messwertZiel(z)}
+        </p>
       )}
 
       {zeigtSkala && <Vergleichsskala quote={z.quote!} farbe={farben.farbe} />}
 
-      {z.ampel === "aufbau" && (
+      {stunde == null && z.ampel === "aufbau" && (
         <p className="text-[13px] leading-relaxed text-tinte-zart">
           Für diese Tageszeit fehlen noch Vergleichswerte.
         </p>
@@ -120,7 +147,7 @@ export default function ZielKarte({
       {/* Dieselben Aussagen wie in der Ansage, nur kurz — und in derselben
           Reihenfolge der Stufenleiter, damit die Karte nicht etwas anderes
           empfiehlt als das Detailfeld daneben. */}
-      {z.zugang_tipp ? (
+      {stunde != null ? null : z.zugang_tipp ? (
         <p
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
@@ -136,13 +163,15 @@ export default function ZielKarte({
           <span className="zahl">ab {z.spaeter.stunde}:00 Uhr</span> rund {z.spaeter.anteil} %
           ruhiger
         </p>
-      ) : z.alternative ? (
+      ) : alternativeFuer(z, leihen) ? (
         <p
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
         >
-          <strong className="font-semibold">Heute besser dorthin:</strong>{" "}
-          {z.alternative.name} · {z.alternative.km} km
+          <strong className="font-semibold">
+            {leihen ? "Rad gibt es hier:" : "Heute besser dorthin:"}
+          </strong>{" "}
+          {alternativeFuer(z, leihen)!.name} · {alternativeFuer(z, leihen)!.km} km
         </p>
       ) : null}
     </button>

@@ -109,9 +109,16 @@ KIEL_WORTE = ("strand", "laboe", "foerde", "förde", "kiellinie", "falckenstein"
 GRUPPEN_ORT = {
     "Luzern": "luzern-altstadt",
     "Zürich": "zuerich-baeder",
-    "valgardena": "groeden",
+    "Gröden - Val Gardena": "groeden",
     "Meran - Merano": "meran",
 }
+
+# Der Open Data Hub schreibt `municipality` fuer die meisten Suedtiroler
+# Gemeinden zweisprachig aus ("Meran - Merano"), fuer Groeden aber den nackten
+# Slug "valgardena". Ungefiltert steht der so auf der Zielkarte, im Suchfeld und
+# auf jeder Grafik — sechs Ziele lang. Korrigiert wird nur, was nachweislich
+# kein Ortsname ist; alles andere kommt weiter unveraendert aus der Quelle.
+ST_ORT_KORREKTUR = {"valgardena": "Gröden - Val Gardena"}
 
 # ---------------------------------------------------------------- BayernCloud
 # Die mit Abstand beste Quelle im Bestand: 248 Parkplaetze, CC0, Kapazitaet UND
@@ -247,7 +254,9 @@ for name in ST_PARKEN:
         continue
     sensoren.append({
         "id": f"st-p-{slug(name)}"[:44], "name": name,
-        "ort": md.get("municipality") or "Südtirol", "land": "IT",
+        "ort": ST_ORT_KORREKTUR.get(md.get("municipality"),
+                                    md.get("municipality") or "Südtirol"),
+        "land": "IT",
         "lat": float(c["y"]), "lon": float(c["x"]),
         "quelle": "st_parken", "quelle_id": r.get("scode") or name,
         "metrik": "frei_plaetze", "einheit": "freie Plätze", "kapazitaet": int(kap),

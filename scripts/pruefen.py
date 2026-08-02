@@ -96,6 +96,16 @@ for f in features:
         schlimm.append(f"{p['name']}: {a} %")
     if a is not None and k and a > 100:
         schlimm.append(f"{p['name']}: {round(a/100*k)} von {k}")
+# Und dieselbe Pruefung auf der ZIELEBENE. Punkt 1 sah bisher nur die
+# Messpunkte — "198 von 197 Plaetzen frei" stand trotzdem auf der Kachel,
+# weil die Summe je Ziel eigenstaendig gerechnet wird.
+for z in ziele:
+    k, fr = z.get("kapazitaet"), z.get("frei_plaetze")
+    if k and fr is not None and (fr > k or fr < 0):
+        schlimm.append(f"{z['name']}: {fr} von {k} frei")
+    a = z.get("auslastung")
+    if a is not None and (a > 100 or a < 0):
+        schlimm.append(f"{z['name']}: Auslastung {a} %")
 print(f"  Zugaenge ueber 100 % Auslastung: {len(schlimm)}")
 for s in schlimm[:10]:
     print(f"     {s}")

@@ -307,7 +307,14 @@ for (const s of SENSOREN) {
   const istWert = a.auslastung != null ? Number(a.auslastung) : Number(a.wert);
 
   let quote = null, referenz = null, referenzArt = null, tage = 0;
-  const auslastung = a.auslastung != null ? Number(a.auslastung) : null;
+  // AUF 0-100 BEGRENZEN. Das Nationalparkzentrum Falkenstein meldete -0,5 % —
+  // also 198 freie von 197 Plaetzen. Auf der Kachel stand "198 von 197 Plaetzen
+  // frei", was offensichtlich Unsinn ist. Ein Geber, der mehr Freies meldet als
+  // er hat, wird hier auf "leer" gekappt statt weitergereicht; erfunden wird
+  // dabei nichts, denn leerer als leer gibt es nicht.
+  const auslastung = a.auslastung != null
+    ? Math.min(100, Math.max(0, Number(a.auslastung)))
+    : null;
 
   if (vgl) {
     referenzArt = vgl.art;
@@ -358,7 +365,9 @@ for (const s of SENSOREN) {
       quelle: s.quelle, quelle_url: s.quelle_url, hinweis: s.hinweis,
       einheit: s.einheit, metrik: s.metrik, kapazitaet: s.kapazitaet,
       wert: Number(a.wert),
-      auslastung: a.auslastung != null ? Number(a.auslastung) : null,
+      // Die GEKAPPTE Auslastung — nicht der Rohwert. Sonst rechnet der Status
+      // mit 0 % und die Kachel zeigt trotzdem "198 von 197 Plaetzen frei".
+      auslastung,
       vergleichswert: referenz,
       vergleich_art: referenzArt,
       vergleich_tage: tage,
@@ -486,6 +495,12 @@ for (const z of ZIELE) {
     id: z.id, name: z.name, gebiet: z.gebiet,
     art: z.art, arten: z.arten || [z.art],
     ort: z.ort || bp.ort || '',
+    // Zusatzinfos aus scripts/anreichern.py — Gebietsname, Tour, Badtyp, Lage.
+    // Zur Bauzeit erhoben und geprueft eingefroren; zur Laufzeit wird nichts
+    // nachgeschlagen. Ein Ziel ohne Fakten bekommt hier ein leeres Objekt und
+    // die Oberflaeche schweigt dazu, statt etwas zu behaupten.
+    info: z.info || {},
+    ortsziel: !!z.ortsziel,
     lat: z.lat, lon: z.lon,
     status: bp.status,
     ampel: bp.ampel,
@@ -493,7 +508,10 @@ for (const z of ZIELE) {
     quote: bp.quote,
     wert: bp.wert,
     kapazitaet, belegt,
-    frei_plaetze: kapazitaet != null ? kapazitaet - belegt : null,
+    // Nie mehr frei als vorhanden und nie weniger als null — siehe oben.
+    frei_plaetze: kapazitaet != null
+      ? Math.min(kapazitaet, Math.max(0, kapazitaet - belegt))
+      : null,
     einheit: bp.einheit, metrik: bp.metrik,
     quelle: bp.quelle, quelle_url: bp.quelle_url, hinweis: bp.hinweis,
     alter_min: bp.alter_min, quell_ts: bp.quell_ts,

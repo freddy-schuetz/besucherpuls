@@ -110,6 +110,8 @@ if os.path.exists(CACHE):
 for _k in [k for k in cache if k.startswith("flaechen:")]:
     if cache[_k] and not cache[_k][0].get("id"):
         del cache[_k]          # alter Cache ohne id/typ ist unbrauchbar
+for _k in [k for k in cache if k.startswith("geom:")]:
+    del cache[_k]              # alter Cache mit offenen Segmenten statt Ringen
 
 
 def cache_sichern():
@@ -185,6 +187,11 @@ ZU_GROSS = {
     "schwaben", "franken", "wien", "zürich", "zuerich", "kanton zürich",
     "schleswig-holstein", "trentino-alto adige/südtirol", "südtirol", "suedtirol",
     "mitteleuropa", "central europe", "dolomiti", "dolomiten",
+    # Landschaftsraeume, die zwar stimmen, aber niemandem helfen. "Kalifornien
+    # liegt in Holstein" beantwortet keine Frage, die ein Gast stellt.
+    "holstein", "südschleswig", "suedschleswig", "schwansen", "angeln",
+    "marchfeld", "wienerwald", "simmeringer haide", "emmentaler alpen",
+    "swiss alps", "schweizer alpen", "nordtiroler kalkalpen",
 }
 
 
@@ -247,6 +254,39 @@ def flaechen_holen(gruppe):
     return raus
 
 
+def ringe_bauen(segmente):
+    """Setzt die Teilstuecke einer Multipolygon-Relation zu geschlossenen Ringen.
+
+    DAS WAR DIE ZWEITE FALLE. Overpass liefert bei `out geom` fuer eine Relation
+    ihre MITGLIEDER — offene Linienzuege, nicht fertige Ringe. Die "Allgaeuer
+    Alpen" kamen als 48 Teilstuecke mit 5255 Punkten an; ein Strahlenschnitt auf
+    ein offenes Segment ist bedeutungslos. Ergebnis: Nebelhorn lag angeblich in
+    keinem einzigen Gebiet, obwohl die Flaeche vollstaendig vorlag.
+
+    Die Enden passen exakt zusammen (OSM teilt sich die Knoten), deshalb reicht
+    ein Vergleich auf Gleichheit — keine Toleranz noetig.
+    """
+    offen = [list(s) for s in segmente if len(s) >= 2]
+    ringe = []
+    while offen:
+        akt = offen.pop(0)
+        while akt[0] != akt[-1]:
+            for i, s in enumerate(offen):
+                if s[0] == akt[-1]:
+                    akt.extend(s[1:]); offen.pop(i); break
+                if s[-1] == akt[-1]:
+                    akt.extend(reversed(s[:-1])); offen.pop(i); break
+                if s[-1] == akt[0]:
+                    akt = s[:-1] + akt; offen.pop(i); break
+                if s[0] == akt[0]:
+                    akt = list(reversed(s[1:])) + akt; offen.pop(i); break
+            else:
+                break          # kein Anschluss mehr — offener Zug, verwerfen
+        if len(akt) >= 4 and akt[0] == akt[-1]:
+            ringe.append(akt)
+    return ringe
+
+
 def im_polygon(lat, lon, ring):
     """Strahlenschnitt. `ring` ist eine Liste von (lat, lon)."""
     drin = False
@@ -276,7 +316,7 @@ def geometrie_holen(gruppe, flaechen):
     ids = [f["id"] for f in flaechen if f.get("id")][:60]
     if not ids:
         return {}
-    schluessel = f"geom:{gruppe}"
+    schluessel = f"geom2:{gruppe}"
     if schluessel in cache:
         return {int(k): v for k, v in cache[schluessel].items()}
     wege = [str(i) for i, f in zip(ids, flaechen) if f["typ"] == "way"]
@@ -291,13 +331,15 @@ def geometrie_holen(gruppe, flaechen):
         return {}
     raus = {}
     for el in d.get("elements", []):
-        ringe = []
         if el.get("geometry"):
-            ringe.append([(p["lat"], p["lon"]) for p in el["geometry"]])
-        for m in el.get("members", []):
-            if m.get("role") in (None, "", "outer") and m.get("geometry"):
-                ringe.append([(p["lat"], p["lon"]) for p in m["geometry"]])
-        ringe = [r for r in ringe if len(r) >= 4]
+            # Ein einzelner Weg ist schon der Ring — sofern er geschlossen ist.
+            r = [(pt["lat"], pt["lon"]) for pt in el["geometry"]]
+            ringe = [r] if len(r) >= 4 and r[0] == r[-1] else []
+        else:
+            segmente = [[(pt["lat"], pt["lon"]) for pt in m["geometry"]]
+                        for m in el.get("members", [])
+                        if m.get("role") in (None, "", "outer") and m.get("geometry")]
+            ringe = ringe_bauen(segmente)
         if ringe:
             raus[el["id"]] = ringe
     cache[schluessel] = {str(k): v for k, v in raus.items()}

@@ -103,6 +103,80 @@ for weg in (PUFFER_NODE, PROFIL_NODE):
     wf["connections"].pop(weg, None)
 print(f"  Lese-Knoten entfernt, Kette: Webhook -> Secret pruefen -> {CODE_NODE}")
 
+# ---------------------------------------------------------------- KI-Begruendung
+# Drei Knoten hinter dem Sammler: Auftraege bilden -> Modell -> einsetzen.
+#
+# Der Modellaufruf MUSS ein HTTP-Knoten sein: Code-Nodes haben in n8n keinen
+# Zugriff auf Credentials. Der Schluessel liegt damit in n8n, nicht im Repo.
+#
+# `onError: continueRegularOutput` und `alwaysOutputData` sind nicht Kosmetik —
+# ohne sie bricht bei einer Zeitueberschreitung des Modells die ganze Kette ab
+# und der Webhook antwortet gar nicht. Die Seite faellt stattdessen still auf
+# den Regelsatz zurueck.
+KI_CRED = "XWSWbWfP0BbrDriD"          # "Anthropic API" (httpHeaderAuth)
+KI_MODELL = "claude-haiku-4-5-20251001"
+
+
+def code_knoten(name, datei, x, y):
+    quelle = io.open(os.path.join(HIER, datei), encoding="utf-8").read()
+    for platz, wert in (("/*__API_BASE__*/", BASE), ("/*__API_KEY__*/", H["X-N8N-API-KEY"])):
+        quelle = quelle.replace(platz, wert)
+    return {
+        "id": name.lower().replace(" ", "-"),
+        "name": name,
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [x, y],
+        "parameters": {"mode": "runOnceForAllItems", "jsCode": quelle},
+    }
+
+
+ki_knoten = [
+    code_knoten("Texte vorbereiten", "texte_vor_node.js", 1180, -90),
+    {
+        "id": "ki-text",
+        "name": "KI-Text",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [1420, -90],
+        "alwaysOutputData": True,
+        "retryOnFail": True,
+        "maxTries": 2,
+        "waitBetweenTries": 1500,
+        "onError": "continueRegularOutput",
+        "parameters": {
+            "method": "POST",
+            "url": "https://api.anthropic.com/v1/messages",
+            "authentication": "genericCredentialType",
+            "genericAuthType": "httpHeaderAuth",
+            "sendHeaders": True,
+            "headerParameters": {"parameters": [
+                {"name": "anthropic-version", "value": "2023-06-01"},
+                {"name": "content-type", "value": "application/json"},
+            ]},
+            "sendBody": True,
+            "specifyBody": "json",
+            "jsonBody": (
+                '={{ $json.leerlauf ? JSON.stringify({model:"' + KI_MODELL + '",'
+                'max_tokens:16,messages:[{role:"user",content:"ok"}]}) : '
+                'JSON.stringify({model:"' + KI_MODELL + '",max_tokens:120,'
+                'messages:[{role:"user",content:$json.prompt}]}) }}'
+            ),
+            "options": {"timeout": 12000},
+        },
+        "credentials": {"httpHeaderAuth": {"id": KI_CRED, "name": "Anthropic API"}},
+    },
+    code_knoten("Texte einsetzen", "texte_ein_node.js", 1660, -90),
+]
+
+wf["nodes"] = [n for n in wf["nodes"]
+               if n["name"] not in ("Texte vorbereiten", "KI-Text", "Texte einsetzen")]
+wf["nodes"].extend(ki_knoten)
+wf["connections"][CODE_NODE] = {"main": [[{"node": "Texte vorbereiten", "type": "main", "index": 0}]]}
+wf["connections"]["Texte vorbereiten"] = {"main": [[{"node": "KI-Text", "type": "main", "index": 0}]]}
+wf["connections"]["KI-Text"] = {"main": [[{"node": "Texte einsetzen", "type": "main", "index": 0}]]}
+print("  KI-Kette: GeoJSON bauen -> Texte vorbereiten -> KI-Text -> Texte einsetzen")
+
 nutzlast = {
     "name": wf["name"],
     "nodes": wf["nodes"],

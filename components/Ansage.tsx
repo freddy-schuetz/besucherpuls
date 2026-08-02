@@ -192,6 +192,17 @@ export default function Ansage({
         <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "#0b6b46" }}>
           {ART_TEXT[a.art]} · {a.km} km entfernt · dort {platz}
         </p>
+        {/* Warum das passt — aus den geprüften Fakten des Ziels formuliert.
+            Fehlt der Satz, trägt die Zeile darüber die Aussage allein; es
+            wird nichts erfunden, um die Lücke zu füllen. */}
+        {a.begruendung && (
+          <p
+            className="mt-2 border-t pt-2 text-sm leading-relaxed"
+            style={{ color: "#0b6b46", borderColor: "rgba(11,107,70,0.18)" }}
+          >
+            {a.begruendung}
+          </p>
+        )}
       </>
     );
     return onZiel ? (

@@ -200,7 +200,41 @@ for gruppe in sorted({s.get("gruppe") for s in sensoren if s.get("gruppe")}):
             })
         continue
 
-    offen = list(punkte)
+    # ORTSPARKPLAETZE JE GEMEINDE BUENDELN.
+    #
+    # 33 der 81 bayerischen Ziele hiessen Feuerwehrhaus, Dorf, Halde, Klause
+    # oder Bechen 2 — fuer einen Gast nichtssagend, und als 33 einzelne Kacheln
+    # erschlagen sie die touristischen Ziele daneben. Zusammengefasst wird
+    # ausschliesslich ueber die KATEGORIE, nie ueber die Gemeinde als solche:
+    # Sonst verschwaenden Nebelhorn, Fellhorn, Ifen und Soellereck in einer
+    # Kachel "Oberstdorf" mit 11 km Durchmesser — also genau die Ziele, um die
+    # es geht. Die Zugaenge stehen einzeln mit Entfernung in der Kachel; in
+    # Pfronten liegen Kappel und Steinach 4,96 km auseinander, das darf die
+    # Sammelzahl nicht verschweigen.
+    offen = []
+    je_gemeinde = defaultdict(list)
+    for s in punkte:
+        if kategorie_von(s["name"]) in ("ort", "sonstiges") and s.get("ort"):
+            je_gemeinde[s["ort"]].append(s)
+        else:
+            offen.append(s)
+    for gemeinde, gruppe_p in je_gemeinde.items():
+        if len(gruppe_p) < 2:
+            offen.extend(gruppe_p)          # eine einzelne Kachel bleibt einzeln
+            continue
+        ziele.append({
+            "id": "z-ort-" + re.sub(r"[^a-z0-9]+", "-", entzerrt(gemeinde)).strip("-")[:32],
+            "name": gemeinde,
+            "gebiet": gruppe,
+            "art": "ort",
+            "arten": ["ort"],
+            "ort": gemeinde,
+            "lat": round(sum(h["lat"] for h in gruppe_p) / len(gruppe_p), 6),
+            "lon": round(sum(h["lon"] for h in gruppe_p) / len(gruppe_p), 6),
+            "zugaenge": [h["id"] for h in gruppe_p],
+            "ortsziel": True,
+        })
+
     while offen:
         kern = offen.pop(0)
         k_stamm, k_art = stamm(kern["name"]), kategorie_von(kern["name"])

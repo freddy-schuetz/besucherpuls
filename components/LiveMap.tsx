@@ -99,6 +99,31 @@ export default function LiveMap({
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
       });
+      // ZUGAENGE UND SPEICHEN. Nur bei Zielen mit MEHREREN Zugaengen: Bei 152
+      // der 173 Ziele liegt die Zugangskoordinate bitidentisch auf dem Ziel
+      // (gemessen, Abweichung 0,0). Dort gaebe es Doppelkreise, Linien der
+      // Laenge null und einen Klick-Layer, der die Zielauswahl verdeckt.
+      m.addSource("zugaenge", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+      m.addSource("speichen", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+
+      // Die Linien zuerst — sie muessen UNTER den Punkten liegen.
+      m.addLayer({
+        id: "speichen-linie",
+        type: "line",
+        source: "speichen",
+        paint: {
+          "line-color": "#7d8f87",
+          "line-width": 1.4,
+          "line-opacity": 0.55,
+          "line-dasharray": [2, 2],
+        },
+      });
 
       // Weicher Hof in der Statusfarbe — laesst die Punkte auf der hellen
       // Grundkarte plastisch wirken, ohne dass ein Schlagschatten noetig waere.
@@ -145,6 +170,22 @@ export default function LiveMap({
         },
       });
 
+      // Zugaenge als HOHLE Ringe in derselben Statusfarbe: Das Ziel ist der
+      // volle Punkt, seine Zugaenge sind die Ringe daran. Gleiche Farbsprache,
+      // eindeutig unterscheidbare Form.
+      m.addLayer({
+        id: "zugaenge-punkt",
+        type: "circle",
+        source: "zugaenge",
+        minzoom: 9,
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 4, 13, 7],
+          "circle-color": "#ffffff",
+          "circle-stroke-width": 2.2,
+          "circle-stroke-color": ["get", "farbe"],
+        },
+      });
+
       // Name am Punkt, sobald man nah genug ist. Ohne Beschriftung muss man
       // jeden Punkt antippen, um zu wissen, was er ist — bei einer Karte, die
       // Ziele zeigt statt Messstellen, ist der Name die halbe Information.
@@ -173,6 +214,19 @@ export default function LiveMap({
         const f = e.features?.[0];
         if (f?.properties?.id) onSelectRef.current(String(f.properties.id));
       });
+      m.on("click", "zugaenge-punkt", (e) => {
+        // Ein Zugang ist kein eigenes Ziel — der Klick fuehrt zum Ziel, zu dem
+        // er gehoert. Sonst waere der Ring eine Sackgasse.
+        const f = e.features?.[0];
+        if (f?.properties?.zielId) onSelectRef.current(String(f.properties.zielId));
+      });
+      m.on("mouseenter", "zugaenge-punkt", () => {
+        m.getCanvas().style.cursor = "pointer";
+      });
+      m.on("mouseleave", "zugaenge-punkt", () => {
+        m.getCanvas().style.cursor = "";
+      });
+
       m.on("mouseenter", "ziele-punkt", () => {
         m.getCanvas().style.cursor = "pointer";
       });
@@ -219,6 +273,45 @@ export default function LiveMap({
           })(),
         })),
       } as GeoJSON.FeatureCollection);
+
+      // Zugaenge und Speichen — nur wo es mehr als einen gibt.
+      const mehrfach = ziele.filter((z) => (z.zugaenge?.length ?? 0) > 1);
+      const zq = m.getSource("zugaenge") as maplibregl.GeoJSONSource | undefined;
+      const sq = m.getSource("speichen") as maplibregl.GeoJSONSource | undefined;
+      if (zq) {
+        zq.setData({
+          type: "FeatureCollection",
+          features: mehrfach.flatMap((z) =>
+            z.zugaenge.map((g) => ({
+              type: "Feature" as const,
+              geometry: { type: "Point" as const, coordinates: [g.lon, g.lat] },
+              properties: {
+                id: g.id,
+                zielId: z.id,
+                farbe: AMPEL_FARBE[g.ampel] ?? AMPEL_FARBE.unbekannt,
+              },
+            })),
+          ),
+        } as GeoJSON.FeatureCollection);
+      }
+      if (sq) {
+        sq.setData({
+          type: "FeatureCollection",
+          features: mehrfach.flatMap((z) =>
+            z.zugaenge
+              // Luftlinien der Laenge null zeichnen nichts als Rauschen.
+              .filter((g) => Math.abs(g.lat - z.lat) > 1e-6 || Math.abs(g.lon - z.lon) > 1e-6)
+              .map((g) => ({
+                type: "Feature" as const,
+                geometry: {
+                  type: "LineString" as const,
+                  coordinates: [[g.lon, g.lat], [z.lon, z.lat]],
+                },
+                properties: { zielId: z.id },
+              })),
+          ),
+        } as GeoJSON.FeatureCollection);
+      }
 
       zieleRef.current = ziele;
       if (ersteDaten.current && ziele.length && !start) {

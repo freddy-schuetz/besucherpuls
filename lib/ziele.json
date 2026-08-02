@@ -1,20 +1,289 @@
 {
-  "anzahl": 175,
+  "anzahl": 150,
   "ziele": [
     {
-      "id": "z-leonhardsplatz",
-      "name": "Leonhardsplatz",
+      "id": "z-ort-pfronten",
+      "name": "Pfronten",
       "gebiet": "allgaeu",
       "art": "ort",
       "arten": [
         "ort"
       ],
       "ort": "Pfronten",
-      "lat": 47.57895,
-      "lon": 10.55769,
+      "lat": 47.581664,
+      "lon": 10.555369,
       "zugaenge": [
-        "by-parkplatz-leonhardsplatz"
-      ]
+        "by-parkplatz-leonhardsplatz",
+        "by-parkplatz-heitlern-eissporthalle-p1",
+        "by-parkplatz-meilingen",
+        "by-parkplatz-roefleuten",
+        "by-parkplatz-kappel-p1",
+        "by-parkplatz-steinach-skizentrum-p2",
+        "by-parkplatz-steinach-skizentrum-p1"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
+    },
+    {
+      "id": "z-ort-balderschwang",
+      "name": "Balderschwang",
+      "gebiet": "allgaeu",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Balderschwang",
+      "lat": 47.462373,
+      "lon": 10.10302,
+      "zugaenge": [
+        "by-parkplatz-feuerwehrhaus",
+        "by-parkplatz-dorf",
+        "by-parkplatz-gschwend",
+        "by-parkplatz-schwabenhof"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Dorfloipe - Langlaufen in Balderschwang",
+          "km": 1.7,
+          "hm": 19,
+          "min": 30,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-ort-obermaiselstein",
+      "name": "Obermaiselstein",
+      "gebiet": "allgaeu",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Obermaiselstein",
+      "lat": 47.447317,
+      "lon": 10.235417,
+      "zugaenge": [
+        "by-parkplatz-tunnelparkplatz",
+        "by-parkplatz-haus-des-gastes",
+        "by-parkplatz-burgschrofenplatz"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Verbindungsloipe Sonderdorf-Obermaiselstein",
+          "km": 1.6,
+          "min": 15,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-ort-burgberg-i-allgaeu",
+      "name": "Burgberg i.Allgäu",
+      "gebiet": "allgaeu",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Burgberg i.Allgäu",
+      "lat": 47.54035,
+      "lon": 10.284415,
+      "zugaenge": [
+        "by-parkplatz-vitalpark-wohnmobil",
+        "by-parkplatz-an-der-halde"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Sonthofer See und Ortwanger See in einer Radrunde",
+          "km": 24.7,
+          "hm": 140,
+          "min": 120,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-ort-buchenberg",
+      "name": "Buchenberg",
+      "gebiet": "allgaeu",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Buchenberg",
+      "lat": 47.688495,
+      "lon": 10.23379,
+      "zugaenge": [
+        "by-parkplatz-schwarzerd",
+        "by-parkplatz-bechen-2"
+      ],
+      "ortsziel": true,
+      "info": {}
+    },
+    {
+      "id": "z-ort-sonthofen",
+      "name": "Sonthofen",
+      "gebiet": "allgaeu",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Sonthofen",
+      "lat": 47.51125,
+      "lon": 10.27841,
+      "zugaenge": [
+        "by-parkplatz-immenstaedter-strasse",
+        "by-parkplatz-alemannenplatz"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Tiefenberger Moos - Spazieren im Moor bei Ofterschwang",
+          "km": 4.1,
+          "hm": 45,
+          "min": 60,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-soellereck",
+      "name": "Söllereck",
+      "gebiet": "allgaeu",
+      "art": "bergbahn",
+      "arten": [
+        "bergbahn",
+        "wandern"
+      ],
+      "ort": "Oberstdorf",
+      "lat": 47.399415,
+      "lon": 10.24148,
+      "zugaenge": [
+        "by-parkplatz-soellereck-sued",
+        "by-parkplatz-soellereck-nord"
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Wanderung um den Ochsenberg ab Obermaiselstein",
+          "km": 10.3,
+          "hm": 313,
+          "min": 210,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-nebelhorn",
+      "name": "Nebelhorn",
+      "gebiet": "allgaeu",
+      "art": "bergbahn",
+      "arten": [
+        "bergbahn",
+        "wandern"
+      ],
+      "ort": "Oberstdorf",
+      "lat": 47.4042,
+      "lon": 10.287235,
+      "zugaenge": [
+        "by-parkplatz-nebelhorn-talstation",
+        "by-parkplatz-nebelhorn-oybele"
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Radtour zum Illerursprung",
+          "km": 6.4,
+          "hm": 25,
+          "min": 45,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-ifenbahn",
+      "name": "Ifenbahn",
+      "gebiet": "allgaeu",
+      "art": "bergbahn",
+      "arten": [
+        "bergbahn",
+        "wandern"
+      ],
+      "ort": "Oberstdorf",
+      "lat": 47.39892,
+      "lon": 10.13845,
+      "zugaenge": [
+        "by-parkplatz-ifenbahn-talstation"
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Alpwanderung von Balderschwang über den Piesenkopf mit Halt am Scheuenwasserfall",
+          "km": 13.6,
+          "hm": 560,
+          "min": 280,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-fellhornbahn",
+      "name": "Fellhornbahn",
+      "gebiet": "allgaeu",
+      "art": "bergbahn",
+      "arten": [
+        "bergbahn",
+        "wandern"
+      ],
+      "ort": "Oberstdorf",
+      "lat": 47.35295,
+      "lon": 10.26542,
+      "zugaenge": [
+        "by-parkplatz-fellhornbahn-talstation"
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Oberstdorfer Trettachtalrunde - mit dem Fahrrad ab Bolsterlang",
+          "km": 32.6,
+          "hm": 378,
+          "min": 180,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-weissbach-bahnhof",
@@ -29,22 +298,11 @@
       "lon": 10.55661,
       "zugaenge": [
         "by-parkplatz-weissbach-bahnhof"
-      ]
-    },
-    {
-      "id": "z-heitlern-eissporthalle",
-      "name": "Heitlern Eissporthalle",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
       ],
-      "ort": "Pfronten",
-      "lat": 47.5809,
-      "lon": 10.55171,
-      "zugaenge": [
-        "by-parkplatz-heitlern-eissporthalle-p1"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-meilingen-falkensteinweg",
@@ -56,12 +314,15 @@
         "wandern"
       ],
       "ort": "Pfronten",
-      "lat": 47.58114,
-      "lon": 10.57298,
+      "lat": 47.58184,
+      "lon": 10.57064,
       "zugaenge": [
-        "by-meilingen-falkensteinweg",
-        "by-parkplatz-meilingen"
-      ]
+        "by-meilingen-falkensteinweg"
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-ried-bahnhof",
@@ -76,7 +337,11 @@
       "lon": 10.56019,
       "zugaenge": [
         "by-parkplatz-ried-bahnhof-p1"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-berg-hansmarte-weg",
@@ -91,22 +356,11 @@
       "lon": 10.55662,
       "zugaenge": [
         "by-parkplatz-berg-hansmarte-weg"
-      ]
-    },
-    {
-      "id": "z-roefleuten",
-      "name": "Röfleuten",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
       ],
-      "ort": "Pfronten",
-      "lat": 47.59094,
-      "lon": 10.54568,
-      "zugaenge": [
-        "by-parkplatz-roefleuten"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-halden-sonnenlifte",
@@ -122,22 +376,11 @@
       "lon": 10.54041,
       "zugaenge": [
         "by-parkplatz-halden-sonnenlifte"
-      ]
-    },
-    {
-      "id": "z-kappel",
-      "name": "Kappel",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
       ],
-      "ort": "Pfronten",
-      "lat": 47.60752,
-      "lon": 10.5353,
-      "zugaenge": [
-        "by-parkplatz-kappel-p1"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-vilstal",
@@ -153,7 +396,11 @@
       "zugaenge": [
         "by-parkplatz-vilstal-p1",
         "by-parkplatz-vilstal-p2-edelsberg-sued"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-achtal",
@@ -170,68 +417,11 @@
         "by-parkplatz-achtal-p3",
         "by-parkplatz-achtal-p2",
         "by-parkplatz-achtal-p1"
-      ]
-    },
-    {
-      "id": "z-steinach-skizentrum",
-      "name": "Steinach Skizentrum",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
       ],
-      "ort": "Pfronten",
-      "lat": 47.56645,
-      "lon": 10.56094,
-      "zugaenge": [
-        "by-parkplatz-steinach-skizentrum-p2",
-        "by-parkplatz-steinach-skizentrum-p1"
-      ]
-    },
-    {
-      "id": "z-klostergarten",
-      "name": "Klostergarten",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Immenstadt i.Allgäu",
-      "lat": 47.56101,
-      "lon": 10.22074,
-      "zugaenge": [
-        "by-parkplatz-tg-klostergarten"
-      ]
-    },
-    {
-      "id": "z-bahnhof",
-      "name": "Bahnhof",
-      "gebiet": "allgaeu",
-      "art": "anreise",
-      "arten": [
-        "anreise"
-      ],
-      "ort": "Immenstadt i.Allgäu",
-      "lat": 47.55914,
-      "lon": 10.21644,
-      "zugaenge": [
-        "by-parkplattz-tg-bahnhof"
-      ]
-    },
-    {
-      "id": "z-saege",
-      "name": "Säge",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Bad Hindelang",
-      "lat": 47.48391,
-      "lon": 10.38902,
-      "zugaenge": [
-        "by-parkplatz-saege"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-mittagbahn",
@@ -247,7 +437,20 @@
       "lon": 10.21895,
       "zugaenge": [
         "by-parkplatz-mittagbahn"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Radtour zum Inselsee Blaichach - Abkühlung garantiert",
+          "km": 27.4,
+          "hm": 39,
+          "min": 150,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-breitenbergbahn",
@@ -264,7 +467,11 @@
       "zugaenge": [
         "by-parkplatz-breitenbergbahn-parkplatz-p3",
         "by-parkplatz-an-der-breitenbergbahn"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747"
+      }
     },
     {
       "id": "z-passhoehe-schoenberg",
@@ -279,7 +486,20 @@
       "lon": 10.17347,
       "zugaenge": [
         "by-parkplatz-passhoehe-schoenberg"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
+          "km": 1.8,
+          "hm": 30,
+          "min": 45,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-obermaiselstein-grasgehren",
@@ -294,67 +514,20 @@
       "lon": 10.176383,
       "zugaenge": [
         "by-parkplatz-obermaiselstein-grasgehren"
-      ]
-    },
-    {
-      "id": "z-feuerwehrhaus",
-      "name": "Feuerwehrhaus",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
       ],
-      "ort": "Balderschwang",
-      "lat": 47.46561,
-      "lon": 10.10549,
-      "zugaenge": [
-        "by-parkplatz-feuerwehrhaus"
-      ]
-    },
-    {
-      "id": "z-dorf",
-      "name": "Dorf",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Balderschwang",
-      "lat": 47.46348,
-      "lon": 10.08794,
-      "zugaenge": [
-        "by-parkplatz-dorf"
-      ]
-    },
-    {
-      "id": "z-tunnelparkplatz",
-      "name": "Tunnelparkplatz",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Obermaiselstein",
-      "lat": 47.44746,
-      "lon": 10.23158,
-      "zugaenge": [
-        "by-parkplatz-tunnelparkplatz"
-      ]
-    },
-    {
-      "id": "z-gschwend",
-      "name": "Gschwend",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Balderschwang",
-      "lat": 47.46348,
-      "lon": 10.08794,
-      "zugaenge": [
-        "by-parkplatz-gschwend"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
+          "km": 1.8,
+          "hm": 30,
+          "min": 45,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-alpsee",
@@ -372,37 +545,20 @@
         "by-parkplatz-des-freibades-am-kleinen-alpsee",
         "by-parkplatz-alpsee-p3",
         "by-parkplatz-alpsee-p6"
-      ]
-    },
-    {
-      "id": "z-vitalpark-wohnmobil",
-      "name": "Vitalpark Wohnmobil",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
       ],
-      "ort": "Burgberg i.Allgäu",
-      "lat": 47.54059,
-      "lon": 10.27782,
-      "zugaenge": [
-        "by-parkplatz-vitalpark-wohnmobil"
-      ]
-    },
-    {
-      "id": "z-p5-missener-strasse",
-      "name": "P5 Missener Straße",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Immenstadt i.Allgäu",
-      "lat": 47.55997,
-      "lon": 10.21214,
-      "zugaenge": [
-        "by-p5-missener-strasse"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Die Allgäuer Mitte - eine Erkundungsfahrt von Fischen nach Untermaiselstein",
+          "km": 42.2,
+          "hm": 260,
+          "min": 210,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-passhoehe-mittelalpe",
@@ -417,118 +573,20 @@
       "lon": 10.1737,
       "zugaenge": [
         "by-parkplatz-passhoehe-mittelalpe"
-      ]
-    },
-    {
-      "id": "z-schwabenhof",
-      "name": "Schwabenhof",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
       ],
-      "ort": "Balderschwang",
-      "lat": 47.45692,
-      "lon": 10.13071,
-      "zugaenge": [
-        "by-parkplatz-schwabenhof"
-      ]
-    },
-    {
-      "id": "z-haus-des-gastes",
-      "name": "Haus des Gastes",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Obermaiselstein",
-      "lat": 47.44644,
-      "lon": 10.24143,
-      "zugaenge": [
-        "by-parkplatz-haus-des-gastes"
-      ]
-    },
-    {
-      "id": "z-soellereck",
-      "name": "Söllereck",
-      "gebiet": "allgaeu",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Oberstdorf",
-      "lat": 47.399415,
-      "lon": 10.24148,
-      "zugaenge": [
-        "by-parkplatz-soellereck-sued",
-        "by-parkplatz-soellereck-nord"
-      ]
-    },
-    {
-      "id": "z-nebelhorn",
-      "name": "Nebelhorn",
-      "gebiet": "allgaeu",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Oberstdorf",
-      "lat": 47.4042,
-      "lon": 10.287235,
-      "zugaenge": [
-        "by-parkplatz-nebelhorn-talstation",
-        "by-parkplatz-nebelhorn-oybele"
-      ]
-    },
-    {
-      "id": "z-ifenbahn",
-      "name": "Ifenbahn",
-      "gebiet": "allgaeu",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Oberstdorf",
-      "lat": 47.39892,
-      "lon": 10.13845,
-      "zugaenge": [
-        "by-parkplatz-ifenbahn-talstation"
-      ]
-    },
-    {
-      "id": "z-fellhornbahn",
-      "name": "Fellhornbahn",
-      "gebiet": "allgaeu",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Oberstdorf",
-      "lat": 47.35295,
-      "lon": 10.26542,
-      "zugaenge": [
-        "by-parkplatz-fellhornbahn-talstation"
-      ]
-    },
-    {
-      "id": "z-burgschrofenplatz",
-      "name": "Burgschrofenplatz",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Obermaiselstein",
-      "lat": 47.44805,
-      "lon": 10.23324,
-      "zugaenge": [
-        "by-parkplatz-burgschrofenplatz"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
+          "km": 1.8,
+          "hm": 30,
+          "min": 45,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-lappachweg",
@@ -543,7 +601,20 @@
       "lon": 10.09703,
       "zugaenge": [
         "by-parkplatz-lappachweg"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Dorfloipe - Langlaufen in Balderschwang",
+          "km": 1.7,
+          "hm": 19,
+          "min": 30,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-scheuen-alpe",
@@ -558,7 +629,20 @@
       "lon": 10.1377,
       "zugaenge": [
         "by-parkplatz-scheuen-alpe"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Vordere Scheuen Loipe - Langlaufen in Balderschwang",
+          "km": 1.8,
+          "hm": 30,
+          "min": 45,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-erlebnisbad-aquaria",
@@ -573,7 +657,20 @@
       "lon": 10.01996,
       "zugaenge": [
         "by-parkplatz-am-erlebnisbad-aquaria"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Zwei Länder Radtour via Riedbergpass",
+          "km": 74.0,
+          "hm": 1160,
+          "min": 280,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-eschacher-weiher",
@@ -588,67 +685,11 @@
       "lon": 10.19004,
       "zugaenge": [
         "by-parkplatz-eschacher-weiher"
-      ]
-    },
-    {
-      "id": "z-halde",
-      "name": "Halde",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
       ],
-      "ort": "Burgberg i.Allgäu",
-      "lat": 47.54011,
-      "lon": 10.29101,
-      "zugaenge": [
-        "by-parkplatz-an-der-halde"
-      ]
-    },
-    {
-      "id": "z-schwarzerd",
-      "name": "Schwarzerd",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Buchenberg",
-      "lat": 47.68657,
-      "lon": 10.21521,
-      "zugaenge": [
-        "by-parkplatz-schwarzerd"
-      ]
-    },
-    {
-      "id": "z-immenstaedter-strasse",
-      "name": "Immenstädter Straße",
-      "gebiet": "allgaeu",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Sonthofen",
-      "lat": 47.5111,
-      "lon": 10.27713,
-      "zugaenge": [
-        "by-parkplatz-immenstaedter-strasse"
-      ]
-    },
-    {
-      "id": "z-bechen-2",
-      "name": "Bechen 2",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Buchenberg",
-      "lat": 47.69042,
-      "lon": 10.25237,
-      "zugaenge": [
-        "by-parkplatz-bechen-2"
-      ]
+      "info": {
+        "gebiet": "Adelegg",
+        "gebiet_wikidata": "Q354557"
+      }
     },
     {
       "id": "z-moorweiher-sommerau",
@@ -663,7 +704,8 @@
       "lon": 10.23045,
       "zugaenge": [
         "by-parkplatz-moorweiher-sommerau"
-      ]
+      ],
+      "info": {}
     },
     {
       "id": "z-zufahrt-autal-stubenbach",
@@ -678,7 +720,20 @@
       "lon": 10.18574,
       "zugaenge": [
         "by-parkplatz-zufahrt-autal-stubenbach"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Spaziergang über den Verbindungsweg Allgäuer Berghof zur Hochbichl-Hütte",
+          "km": 1.5,
+          "hm": 20,
+          "min": 30,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-alpenblick",
@@ -693,7 +748,20 @@
       "lon": 10.30926,
       "zugaenge": [
         "by-parkplatz-alpenblick"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Radtour zu Füßen des Wächters - Rund um den Grünten ab Ofterschwang",
+          "km": 41.3,
+          "hm": 563,
+          "min": 300,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-ostertal",
@@ -708,38 +776,20 @@
       "lon": 10.19186,
       "zugaenge": [
         "by-parkplatz-ostertal"
-      ]
-    },
-    {
-      "id": "z-gunzesried-saege",
-      "name": "Gunzesried-Säge",
-      "gebiet": "allgaeu",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
       ],
-      "ort": "Blaichach",
-      "lat": 47.5076,
-      "lon": 10.19479,
-      "zugaenge": [
-        "by-parkplatz-gunzesried-saege"
-      ]
-    },
-    {
-      "id": "z-ossi-reichert-bahn",
-      "name": "Ossi-Reichert-Bahn",
-      "gebiet": "allgaeu",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Blaichach",
-      "lat": 47.51795,
-      "lon": 10.22468,
-      "zugaenge": [
-        "by-parkplatz-ossi-reichert-bahn"
-      ]
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Spaziergang über den Verbindungsweg Allgäuer Berghof zur Hochbichl-Hütte",
+          "km": 1.5,
+          "hm": 20,
+          "min": 30,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-starzlachklamm",
@@ -755,22 +805,116 @@
       "lon": 10.29902,
       "zugaenge": [
         "by-parkplatz-starzlachklamm"
-      ]
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Sonthofer See und Ortwanger See in einer Radrunde",
+          "km": 24.7,
+          "hm": 140,
+          "min": 120,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
-      "id": "z-alemannenplatz",
-      "name": "Alemannenplatz",
+      "id": "z-p5-missener-strasse",
+      "name": "P5 Missener Straße",
       "gebiet": "allgaeu",
       "art": "ort",
       "arten": [
         "ort"
       ],
-      "ort": "Sonthofen",
-      "lat": 47.5114,
-      "lon": 10.27969,
+      "ort": "Immenstadt i.Allgäu",
+      "lat": 47.55997,
+      "lon": 10.21214,
       "zugaenge": [
-        "by-parkplatz-alemannenplatz"
-      ]
+        "by-p5-missener-strasse"
+      ],
+      "info": {
+        "gebiet": "Allgäuer Alpen",
+        "gebiet_wikidata": "Q655747",
+        "tour": {
+          "name": "Radtour zum Inselsee Blaichach - Abkühlung garantiert",
+          "km": 27.4,
+          "hm": 39,
+          "min": 150,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-ort-bodenmais",
+      "name": "Bodenmais",
+      "gebiet": "bayerischer-wald",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Bodenmais",
+      "lat": 49.072049,
+      "lon": 13.096671,
+      "zugaenge": [
+        "by-parkplatz-tiefgarage-rathaus",
+        "by-parkplatz-steinhuettlstrasse",
+        "by-parkplatz-oberlohwies-2",
+        "by-parkplatz-marktplatz",
+        "by-parkplatz-koetztingerstrasse",
+        "by-parkplatz-klause",
+        "by-parkplatz-hallenbad",
+        "by-parkplatz-ameisenstrasse"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
+          "km": 5.9,
+          "hm": 5497,
+          "min": 90,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-ort-philippsreut",
+      "name": "Philippsreut",
+      "gebiet": "bayerischer-wald",
+      "art": "ort",
+      "arten": [
+        "ort"
+      ],
+      "ort": "Philippsreut",
+      "lat": 48.891472,
+      "lon": 13.647635,
+      "zugaenge": [
+        "by-parkplatz-philippsreut-p2",
+        "by-parkplatz-philippsreut-p3",
+        "by-parkplatz-philippsreut-p1",
+        "by-parkplatz-philippsreut-p5"
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig N 19 Mauth – Philippsreut",
+          "km": 9.9,
+          "hm": 4777,
+          "min": 210,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-nationalparkzentrum-falkenstein",
@@ -786,29 +930,24 @@
       "lon": 13.236515,
       "zugaenge": [
         "by-parkplatz-nationalparkzentrum-falkenstein"
-      ]
-    },
-    {
-      "id": "z-philippsreut",
-      "name": "Philippsreut",
-      "gebiet": "bayerischer-wald",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
       ],
-      "ort": "Philippsreut",
-      "lat": 48.891472,
-      "lon": 13.647635,
-      "zugaenge": [
-        "by-parkplatz-philippsreut-p2",
-        "by-parkplatz-philippsreut-p3",
-        "by-parkplatz-philippsreut-p1",
-        "by-parkplatz-philippsreut-p5"
-      ]
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Eine Reise in die Steinzeit",
+          "km": 2.5,
+          "hm": 50,
+          "min": 90,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
-      "id": "z-waldhaeuser-kirche",
-      "name": "Waldhäuser Kirche",
+      "id": "z-nationalparkzentrum-lusen",
+      "name": "Nationalparkzentrum Lusen",
       "gebiet": "bayerischer-wald",
       "art": "nationalpark",
       "arten": [
@@ -816,26 +955,198 @@
         "wandern"
       ],
       "ort": "Neuschönau",
-      "lat": 48.928001,
-      "lon": 13.462259,
+      "lat": 48.89123,
+      "lon": 13.48951,
       "zugaenge": [
-        "by-parkplatz-waldhaeuser-kirche"
-      ]
+        "by-parkplatz-nationalparkzentrum-lusen-p2",
+        "by-parkplatz-nationalparkzentrum-lusen-p1"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald",
+        "tour": {
+          "name": "Rundweg Flusskrebs - Familienfreundliche Tour über Stock und Stein",
+          "km": 2.0,
+          "hm": 60,
+          "min": 45,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
-      "id": "z-schillerstrasse",
-      "name": "Schillerstraße",
+      "id": "z-silberbergbahn",
+      "name": "Silberbergbahn",
       "gebiet": "bayerischer-wald",
-      "art": "ort",
+      "art": "bergbahn",
       "arten": [
-        "ort"
+        "bergbahn",
+        "wandern"
       ],
-      "ort": "Lindberg",
-      "lat": 49.08805,
-      "lon": 13.24864,
+      "ort": "Bodenmais",
+      "lat": 49.0615,
+      "lon": 13.1178,
       "zugaenge": [
-        "by-parkplatz-schillerstrasse"
-      ]
+        "by-parkplatz-silberbergbahn"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
+          "km": 5.9,
+          "hm": 5497,
+          "min": 90,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-schoenebene",
+      "name": "Schönebene",
+      "gebiet": "bayerischer-wald",
+      "art": "nationalpark",
+      "arten": [
+        "nationalpark",
+        "wandern"
+      ],
+      "ort": "Bodenmais",
+      "lat": 49.0637,
+      "lon": 13.1374,
+      "zugaenge": [
+        "by-parkplatz-schoenebene"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
+          "km": 5.9,
+          "hm": 5497,
+          "min": 90,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-risslochfaelle",
+      "name": "Rißlochfälle",
+      "gebiet": "bayerischer-wald",
+      "art": "klamm",
+      "arten": [
+        "klamm",
+        "wandern"
+      ],
+      "ort": "Bodenmais",
+      "lat": 49.0795,
+      "lon": 13.1098,
+      "zugaenge": [
+        "by-parkplatz-risslochfaelle"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Auerhahn-Höhenloipe - Erweiterung",
+          "km": 1.7,
+          "hm": 1003,
+          "min": 30,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-huettenparkplatz",
+      "name": "Hüttenparkplatz",
+      "gebiet": "bayerischer-wald",
+      "art": "wandern",
+      "arten": [
+        "wandern"
+      ],
+      "ort": "Bodenmais",
+      "lat": 49.0658,
+      "lon": 13.103,
+      "zugaenge": [
+        "by-parkplatz-huettenparkplatz"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
+          "km": 5.9,
+          "hm": 5497,
+          "min": 90,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-freibad",
+      "name": "Freibad",
+      "gebiet": "bayerischer-wald",
+      "art": "see",
+      "arten": [
+        "see"
+      ],
+      "ort": "Bodenmais",
+      "lat": 49.0726,
+      "lon": 13.1026,
+      "zugaenge": [
+        "by-parkplatz-freibad"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
+          "km": 5.9,
+          "hm": 5497,
+          "min": 90,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
+    },
+    {
+      "id": "z-arberhochstrasse",
+      "name": "Arberhochstraße",
+      "gebiet": "bayerischer-wald",
+      "art": "bergbahn",
+      "arten": [
+        "bergbahn",
+        "wandern"
+      ],
+      "ort": "Bodenmais",
+      "lat": 49.07,
+      "lon": 13.1298,
+      "zugaenge": [
+        "by-parkplatz-arberhochstrasse"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "tour": {
+          "name": "Goldsteig-Zuweg Nr. 18 Bodenmais – Kleiner Arber / Chamer Hütte",
+          "km": 5.9,
+          "hm": 5497,
+          "min": 90,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-skiwanderzentrum-zwieslerwaldhaus",
@@ -853,53 +1164,21 @@
         "by-skiwanderzentrum-zwieslerwaldhaus",
         "by-parkplatz-zwieslerwaldhaus-nord",
         "by-parkplatz-zwieslerwaldhaus"
-      ]
-    },
-    {
-      "id": "z-tiefgarage-rathaus",
-      "name": "Tiefgarage Rathaus",
-      "gebiet": "bayerischer-wald",
-      "art": "ort",
-      "arten": [
-        "ort"
       ],
-      "ort": "Bodenmais",
-      "lat": 49.07009,
-      "lon": 13.10277,
-      "zugaenge": [
-        "by-parkplatz-tiefgarage-rathaus"
-      ]
-    },
-    {
-      "id": "z-steinhuettlstrasse",
-      "name": "Steinhüttlstraße",
-      "gebiet": "bayerischer-wald",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0881,
-      "lon": 13.0905,
-      "zugaenge": [
-        "by-parkplatz-steinhuettlstrasse"
-      ]
-    },
-    {
-      "id": "z-silberbergbahn",
-      "name": "Silberbergbahn",
-      "gebiet": "bayerischer-wald",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0615,
-      "lon": 13.1178,
-      "zugaenge": [
-        "by-parkplatz-silberbergbahn"
-      ]
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald",
+        "tour": {
+          "name": "Wanderlinie Einbeere (Seebachschleife - Schwellhäusl)",
+          "km": 2.2,
+          "hm": 140,
+          "min": 60,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-spiegelau",
@@ -914,179 +1193,25 @@
       "lon": 13.355041,
       "zugaenge": [
         "by-p-r-spiegelau"
-      ]
-    },
-    {
-      "id": "z-schoenebene",
-      "name": "Schönebene",
-      "gebiet": "bayerischer-wald",
-      "art": "nationalpark",
-      "arten": [
-        "nationalpark",
-        "wandern"
       ],
-      "ort": "Bodenmais",
-      "lat": 49.0637,
-      "lon": 13.1374,
-      "zugaenge": [
-        "by-parkplatz-schoenebene"
-      ]
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald",
+        "tour": {
+          "name": "Rundweg Tagpfauenauge durch das Waldspielgelände",
+          "km": 1.7,
+          "hm": 30,
+          "min": 30,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
-      "id": "z-risslochfaelle",
-      "name": "Rißlochfälle",
-      "gebiet": "bayerischer-wald",
-      "art": "klamm",
-      "arten": [
-        "klamm",
-        "wandern"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0795,
-      "lon": 13.1098,
-      "zugaenge": [
-        "by-parkplatz-risslochfaelle"
-      ]
-    },
-    {
-      "id": "z-oberlohwies-2",
-      "name": "Oberlohwies 2",
-      "gebiet": "bayerischer-wald",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0788,
-      "lon": 13.0914,
-      "zugaenge": [
-        "by-parkplatz-oberlohwies-2"
-      ]
-    },
-    {
-      "id": "z-marktplatz",
-      "name": "Marktplatz",
-      "gebiet": "bayerischer-wald",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0661,
-      "lon": 13.0982,
-      "zugaenge": [
-        "by-parkplatz-marktplatz"
-      ]
-    },
-    {
-      "id": "z-koetztingerstrasse",
-      "name": "Kötztingerstraße",
-      "gebiet": "bayerischer-wald",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0712,
-      "lon": 13.0927,
-      "zugaenge": [
-        "by-parkplatz-koetztingerstrasse"
-      ]
-    },
-    {
-      "id": "z-klause",
-      "name": "Klause",
-      "gebiet": "bayerischer-wald",
-      "art": "sonstiges",
-      "arten": [
-        "sonstiges"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0748,
-      "lon": 13.0967,
-      "zugaenge": [
-        "by-parkplatz-klause"
-      ]
-    },
-    {
-      "id": "z-huettenparkplatz",
-      "name": "Hüttenparkplatz",
-      "gebiet": "bayerischer-wald",
-      "art": "wandern",
-      "arten": [
-        "wandern"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0658,
-      "lon": 13.103,
-      "zugaenge": [
-        "by-parkplatz-huettenparkplatz"
-      ]
-    },
-    {
-      "id": "z-hallenbad",
-      "name": "Hallenbad",
-      "gebiet": "bayerischer-wald",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0719,
-      "lon": 13.101,
-      "zugaenge": [
-        "by-parkplatz-hallenbad"
-      ]
-    },
-    {
-      "id": "z-freibad",
-      "name": "Freibad",
-      "gebiet": "bayerischer-wald",
-      "art": "see",
-      "arten": [
-        "see"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0726,
-      "lon": 13.1026,
-      "zugaenge": [
-        "by-parkplatz-freibad"
-      ]
-    },
-    {
-      "id": "z-ameisenstrasse",
-      "name": "Ameisenstraße",
-      "gebiet": "bayerischer-wald",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.0554,
-      "lon": 13.1001,
-      "zugaenge": [
-        "by-parkplatz-ameisenstrasse"
-      ]
-    },
-    {
-      "id": "z-arberhochstrasse",
-      "name": "Arberhochstraße",
-      "gebiet": "bayerischer-wald",
-      "art": "bergbahn",
-      "arten": [
-        "bergbahn",
-        "wandern"
-      ],
-      "ort": "Bodenmais",
-      "lat": 49.07,
-      "lon": 13.1298,
-      "zugaenge": [
-        "by-parkplatz-arberhochstrasse"
-      ]
-    },
-    {
-      "id": "z-nationalparkzentrum-lusen",
-      "name": "Nationalparkzentrum Lusen",
+      "id": "z-waldhaeuser-kirche",
+      "name": "Waldhäuser Kirche",
       "gebiet": "bayerischer-wald",
       "art": "nationalpark",
       "arten": [
@@ -1094,12 +1219,25 @@
         "wandern"
       ],
       "ort": "Neuschönau",
-      "lat": 48.89123,
-      "lon": 13.48951,
+      "lat": 48.928001,
+      "lon": 13.462259,
       "zugaenge": [
-        "by-parkplatz-nationalparkzentrum-lusen-p1",
-        "by-parkplatz-nationalparkzentrum-lusen-p2"
-      ]
+        "by-parkplatz-waldhaeuser-kirche"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald",
+        "tour": {
+          "name": "Rundweg Bockkäfer - Rund um Guglöd",
+          "km": 3.2,
+          "hm": 100,
+          "min": 60,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-waldhaeuser-ausblick",
@@ -1115,22 +1253,50 @@
       "lon": 13.470689,
       "zugaenge": [
         "by-parkplatz-waldhaeuser-ausblick"
-      ]
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald",
+        "tour": {
+          "name": "Rundweg Bockkäfer - Rund um Guglöd",
+          "km": 3.2,
+          "hm": 100,
+          "min": 60,
+          "rund": true,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
-      "id": "z-pfeiffenmacher",
-      "name": "Pfeiffenmacher",
-      "gebiet": "berchtesgaden",
-      "art": "sonstiges",
+      "id": "z-schillerstrasse",
+      "name": "Schillerstraße",
+      "gebiet": "bayerischer-wald",
+      "art": "ort",
       "arten": [
-        "sonstiges"
+        "ort"
       ],
-      "ort": "Ramsau b.Berchtesgaden",
-      "lat": 47.60828,
-      "lon": 12.88706,
+      "ort": "Lindberg",
+      "lat": 49.08805,
+      "lon": 13.24864,
       "zugaenge": [
-        "by-parkplatz-pfeiffenmacher"
-      ]
+        "by-parkplatz-schillerstrasse"
+      ],
+      "info": {
+        "gebiet": "Bayerischer Wald",
+        "gebiet_wikidata": "Q4207",
+        "schutzgebiet": "Nationalpark Bayerischer Wald",
+        "tour": {
+          "name": "Wanderlinie Einbeere (Seebachschleife - Schwellhäusl)",
+          "km": 2.2,
+          "hm": 140,
+          "min": 60,
+          "rund": false,
+          "lizenz": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "quelle": "BayernCloud Tourismus"
+        }
+      }
     },
     {
       "id": "z-wachterl",
@@ -1145,7 +1311,11 @@
       "lon": 12.85642,
       "zugaenge": [
         "by-parkplatz-wachterl"
-      ]
+      ],
+      "info": {
+        "gebiet": "Lattengebirge",
+        "gebiet_wikidata": "Q1710694"
+      }
     },
     {
       "id": "z-thumsee",
@@ -1163,7 +1333,11 @@
         "by-parkplatz-thumsee-ost",
         "by-parkplatz-thumsee-seerosenteich",
         "by-parkplatz-thumsee-seewirt"
-      ]
+      ],
+      "info": {
+        "gebiet": "Chiemgauer Alpen",
+        "gebiet_wikidata": "Q572571"
+      }
     },
     {
       "id": "z-paldingeralm",
@@ -1178,7 +1352,11 @@
       "lon": 12.84877,
       "zugaenge": [
         "by-parkplatz-paldingeralm"
-      ]
+      ],
+      "info": {
+        "gebiet": "Chiemgauer Alpen",
+        "gebiet_wikidata": "Q572571"
+      }
     },
     {
       "id": "z-kehlstein",
@@ -1195,7 +1373,11 @@
       "zugaenge": [
         "by-parkplatz-kehlstein-p2",
         "by-parkplatz-kehlstein-p1"
-      ]
+      ],
+      "info": {
+        "gebiet": "Göllstock",
+        "gebiet_wikidata": "Q1559321"
+      }
     },
     {
       "id": "z-hirschbichl",
@@ -1211,7 +1393,11 @@
       "lon": 12.85225,
       "zugaenge": [
         "by-parkplatz-hirschbichl"
-      ]
+      ],
+      "info": {
+        "gebiet": "Reiter Alpe",
+        "gebiet_wikidata": "Q2142096"
+      }
     },
     {
       "id": "z-wimbachbruecke",
@@ -1227,7 +1413,11 @@
       "lon": 12.92493,
       "zugaenge": [
         "by-parkplatz-wimbachbruecke"
-      ]
+      ],
+      "info": {
+        "gebiet": "Hochkalterstock",
+        "gebiet_wikidata": "Q883041"
+      }
     },
     {
       "id": "z-neuhausenbruecke",
@@ -1242,7 +1432,11 @@
       "lon": 12.9026,
       "zugaenge": [
         "by-parkplatz-neuhausenbruecke"
-      ]
+      ],
+      "info": {
+        "gebiet": "Lattengebirge",
+        "gebiet_wikidata": "Q1710694"
+      }
     },
     {
       "id": "z-seeklause",
@@ -1257,7 +1451,30 @@
       "lon": 12.86193,
       "zugaenge": [
         "by-parkplatz-seeklause"
-      ]
+      ],
+      "info": {
+        "gebiet": "Hochkalterstock",
+        "gebiet_wikidata": "Q883041"
+      }
+    },
+    {
+      "id": "z-pfeiffenmacher",
+      "name": "Pfeiffenmacher",
+      "gebiet": "berchtesgaden",
+      "art": "sonstiges",
+      "arten": [
+        "sonstiges"
+      ],
+      "ort": "Ramsau b.Berchtesgaden",
+      "lat": 47.60828,
+      "lon": 12.88706,
+      "zugaenge": [
+        "by-parkplatz-pfeiffenmacher"
+      ],
+      "info": {
+        "gebiet": "Lattengebirge",
+        "gebiet_wikidata": "Q1710694"
+      }
     },
     {
       "id": "z-passo-sella",
@@ -1272,7 +1489,10 @@
       "lon": 11.757709,
       "zugaenge": [
         "st-p-passo-sella"
-      ]
+      ],
+      "info": {
+        "gebiet": "Gruppo del Sassolungo"
+      }
     },
     {
       "id": "z-plan-de-gralba",
@@ -1287,7 +1507,10 @@
       "lon": 11.772501,
       "zugaenge": [
         "st-p-plan-de-gralba"
-      ]
+      ],
+      "info": {
+        "gebiet": "Grupa dl Sëla - Gruppo del Sella - Sellagruppe"
+      }
     },
     {
       "id": "z-dantercepies",
@@ -1303,7 +1526,10 @@
       "lon": 11.7677,
       "zugaenge": [
         "st-p-garage-dantercepies"
-      ]
+      ],
+      "info": {
+        "gebiet": "Puez Gruppe - Gruppo del Puez"
+      }
     },
     {
       "id": "z-seceda",
@@ -1319,7 +1545,11 @@
       "lon": 11.675275,
       "zugaenge": [
         "st-p-parcheggio-garage-seceda"
-      ]
+      ],
+      "info": {
+        "gebiet": "Geislergruppe",
+        "gebiet_wikidata": "Q163554"
+      }
     },
     {
       "id": "z-vallunga",
@@ -1334,7 +1564,10 @@
       "lon": 11.773173,
       "zugaenge": [
         "st-p-parcheggio-vallunga"
-      ]
+      ],
+      "info": {
+        "gebiet": "Puez Gruppe - Gruppo del Puez"
+      }
     },
     {
       "id": "z-p1-monte-pana",
@@ -1349,7 +1582,10 @@
       "lon": 11.7178,
       "zugaenge": [
         "st-p-parcheggio-p1-monte-pana"
-      ]
+      ],
+      "info": {
+        "gebiet": "Gruppo del Sassolungo"
+      }
     },
     {
       "id": "kiel-wendtorf-marina",
@@ -1364,7 +1600,13 @@
       "lon": 10.28788,
       "zugaenge": [
         "kiel-wendtorf-marina"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-moenkeberg-anleger",
@@ -1379,7 +1621,14 @@
       "lon": 10.178445,
       "zugaenge": [
         "kiel-moenkeberg-anleger"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-parkplatz-suedstrand",
@@ -1394,7 +1643,13 @@
       "lon": 9.855381,
       "zugaenge": [
         "kiel-parkplatz-suedstrand"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-falkensteiner-strand-apr-okt",
@@ -1409,7 +1664,13 @@
       "lon": 10.190463,
       "zugaenge": [
         "kiel-falkensteiner-strand-apr-okt"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-kalifornien",
@@ -1424,7 +1685,12 @@
       "lon": 10.374933,
       "zugaenge": [
         "kiel-kalifornien"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-holsten-hafenstrasse",
@@ -1439,7 +1705,14 @@
       "lon": 10.135389,
       "zugaenge": [
         "kiel-holsten-hafenstrasse"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof",
+          "hafen",
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-wendtorf-bottsand",
@@ -1454,7 +1727,13 @@
       "lon": 10.295774,
       "zugaenge": [
         "kiel-wendtorf-bottsand"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-schilksee-olympiazentrum",
@@ -1469,7 +1748,14 @@
       "lon": 10.168224,
       "zugaenge": [
         "kiel-schilksee-olympiazentrum"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-westring-eckernfoerder-str",
@@ -1484,7 +1770,8 @@
       "lon": 10.117925,
       "zugaenge": [
         "kiel-westring-eckernfoerder-str"
-      ]
+      ],
+      "info": {}
     },
     {
       "id": "kiel-strandbad-lanker-see-april-oktober",
@@ -1499,7 +1786,13 @@
       "lon": 10.281562,
       "zugaenge": [
         "kiel-strandbad-lanker-see-april-oktober"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-stein-dorfring",
@@ -1514,7 +1807,13 @@
       "lon": 10.26938,
       "zugaenge": [
         "kiel-stein-dorfring"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-foerde-sparkasse-fockbek",
@@ -1529,7 +1828,12 @@
       "lon": 9.605646,
       "zugaenge": [
         "kiel-foerde-sparkasse-fockbek"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-hafenplatz-opt-station",
@@ -1544,7 +1848,14 @@
       "lon": 10.218238,
       "zugaenge": [
         "kiel-hafenplatz-opt-station"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-anleger-reventlou",
@@ -1559,7 +1870,13 @@
       "lon": 10.152089,
       "zugaenge": [
         "kiel-anleger-reventlou"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-hafen-eckernfoerde",
@@ -1574,7 +1891,14 @@
       "lon": 9.83861,
       "zugaenge": [
         "kiel-hafen-eckernfoerde"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof",
+          "hafen",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-anleger-bellevue",
@@ -1589,7 +1913,13 @@
       "lon": 10.154735,
       "zugaenge": [
         "kiel-anleger-bellevue"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-hafen-laboe",
@@ -1604,7 +1934,14 @@
       "lon": 10.219689,
       "zugaenge": [
         "kiel-hafen-laboe"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-foerde-sparkasse-preetz",
@@ -1619,7 +1956,13 @@
       "lon": 10.280925,
       "zugaenge": [
         "kiel-foerde-sparkasse-preetz"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof",
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-foerde-sparkasse-lorentzendamm",
@@ -1634,7 +1977,12 @@
       "lon": 10.134318,
       "zugaenge": [
         "kiel-foerde-sparkasse-lorentzendamm"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "see"
+        ]
+      }
     },
     {
       "id": "kiel-bahnhof-eckernfoerde",
@@ -1649,7 +1997,14 @@
       "lon": 9.83553,
       "zugaenge": [
         "kiel-bahnhof-eckernfoerde"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof",
+          "hafen",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-foerde-sparkasse-teplitzer-allee",
@@ -1664,7 +2019,12 @@
       "lon": 10.187263,
       "zugaenge": [
         "kiel-foerde-sparkasse-teplitzer-allee"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof"
+        ]
+      }
     },
     {
       "id": "kiel-bahnhof-schoenberg",
@@ -1679,7 +2039,12 @@
       "lon": 10.374004,
       "zugaenge": [
         "kiel-bahnhof-schoenberg"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof"
+        ]
+      }
     },
     {
       "id": "kiel-schoenberg-eichkamp-max-anz-5-bis-ende-",
@@ -1694,7 +2059,12 @@
       "lon": 10.380611,
       "zugaenge": [
         "kiel-schoenberg-eichkamp-max-anz-5-bis-ende-"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof"
+        ]
+      }
     },
     {
       "id": "kiel-schoenberger-strand",
@@ -1709,7 +2079,13 @@
       "lon": 10.414665,
       "zugaenge": [
         "kiel-schoenberger-strand"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-gemeindeverwaltung-laboe-opt-station",
@@ -1724,7 +2100,14 @@
       "lon": 10.220063,
       "zugaenge": [
         "kiel-gemeindeverwaltung-laboe-opt-station"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-foerde-sparkasse-sehestedter-strasse",
@@ -1739,7 +2122,13 @@
       "lon": 9.837995,
       "zugaenge": [
         "kiel-foerde-sparkasse-sehestedter-strasse"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-feuerwehrhaus-schoenberg",
@@ -1754,7 +2143,12 @@
       "lon": 10.372166,
       "zugaenge": [
         "kiel-feuerwehrhaus-schoenberg"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "bahnhof"
+        ]
+      }
     },
     {
       "id": "kiel-toez-eckernfoerde",
@@ -1769,7 +2163,8 @@
       "lon": 9.832705,
       "zugaenge": [
         "kiel-toez-eckernfoerde"
-      ]
+      ],
+      "info": {}
     },
     {
       "id": "kiel-rathaus-heikendorf",
@@ -1784,7 +2179,14 @@
       "lon": 10.205576,
       "zugaenge": [
         "kiel-rathaus-heikendorf"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "see",
+          "strand"
+        ]
+      }
     },
     {
       "id": "kiel-wendtorf-edeka",
@@ -1799,7 +2201,13 @@
       "lon": 10.285885,
       "zugaenge": [
         "kiel-wendtorf-edeka"
-      ]
+      ],
+      "info": {
+        "lage": [
+          "hafen",
+          "strand"
+        ]
+      }
     },
     {
       "id": "lu-kapellbruecke",
@@ -1814,7 +2222,8 @@
       "lon": 8.30759,
       "zugaenge": [
         "lu-kapellbruecke"
-      ]
+      ],
+      "info": {}
     },
     {
       "id": "lu-rathausquai",
@@ -1829,7 +2238,8 @@
       "lon": 8.3072,
       "zugaenge": [
         "lu-rathausquai"
-      ]
+      ],
+      "info": {}
     },
     {
       "id": "lu-hertensteinstrasse",
@@ -1844,37 +2254,29 @@
       "lon": 8.3085,
       "zugaenge": [
         "lu-hertensteinstrasse"
-      ]
+      ],
+      "info": {}
     },
     {
-      "id": "z-park-terme",
-      "name": "Park Terme",
+      "id": "z-ort-meran-merano",
+      "name": "Meran - Merano",
       "gebiet": "meran",
       "art": "ort",
       "arten": [
         "ort"
       ],
       "ort": "Meran - Merano",
-      "lat": 46.669426,
-      "lon": 11.161318,
+      "lat": 46.671235,
+      "lon": 11.160001,
       "zugaenge": [
-        "st-p-park-terme"
-      ]
-    },
-    {
-      "id": "z-park-plaza",
-      "name": "Park Plaza",
-      "gebiet": "meran",
-      "art": "ort",
-      "arten": [
-        "ort"
-      ],
-      "ort": "Meran - Merano",
-      "lat": 46.673044,
-      "lon": 11.158684,
-      "zugaenge": [
+        "st-p-park-terme",
         "st-p-park-plaza"
-      ]
+      ],
+      "ortsziel": true,
+      "info": {
+        "gebiet": "Texelgruppe",
+        "gebiet_wikidata": "Q2012019"
+      }
     },
     {
       "id": "st-r-toblach",
@@ -1889,7 +2291,10 @@
       "lon": 12.219844,
       "zugaenge": [
         "st-r-toblach"
-      ]
+      ],
+      "info": {
+        "gebiet": "Sextner Dolomiten - Dolomiti di Sesto"
+      }
     },
     {
       "id": "st-r-bruneck",
@@ -1904,7 +2309,10 @@
       "lon": 11.95029,
       "zugaenge": [
         "st-r-bruneck"
-      ]
+      ],
+      "info": {
+        "gebiet": "Östliche Dolomiten"
+      }
     },
     {
       "id": "st-r-brixen",
@@ -1919,7 +2327,11 @@
       "lon": 11.65104,
       "zugaenge": [
         "st-r-brixen"
-      ]
+      ],
+      "info": {
+        "gebiet": "Zillertaler Alpen",
+        "gebiet_wikidata": "Q203151"
+      }
     },
     {
       "id": "st-r-sterzing",
@@ -1934,7 +2346,11 @@
       "lon": 11.43281,
       "zugaenge": [
         "st-r-sterzing"
-      ]
+      ],
+      "info": {
+        "gebiet": "Stubaier Alpen",
+        "gebiet_wikidata": "Q679261"
+      }
     },
     {
       "id": "st-r-marling",
@@ -1949,7 +2365,11 @@
       "lon": 11.14552,
       "zugaenge": [
         "st-r-marling"
-      ]
+      ],
+      "info": {
+        "gebiet": "Ortleralpen - Alpi dell'Ortles",
+        "gebiet_wikidata": "Q63521967"
+      }
     },
     {
       "id": "st-r-staben",
@@ -1964,7 +2384,11 @@
       "lon": 10.965896,
       "zugaenge": [
         "st-r-staben"
-      ]
+      ],
+      "info": {
+        "gebiet": "Ötztaler Alpen",
+        "gebiet_wikidata": "Q307518"
+      }
     },
     {
       "id": "st-r-st-leonhard",
@@ -1979,7 +2403,11 @@
       "lon": 11.24101,
       "zugaenge": [
         "st-r-st-leonhard"
-      ]
+      ],
+      "info": {
+        "gebiet": "Sarntaler Alpen",
+        "gebiet_wikidata": "Q1757258"
+      }
     },
     {
       "id": "st-r-riffian",
@@ -1994,7 +2422,11 @@
       "lon": 11.193154,
       "zugaenge": [
         "st-r-riffian"
-      ]
+      ],
+      "info": {
+        "gebiet": "Texelgruppe",
+        "gebiet_wikidata": "Q2012019"
+      }
     },
     {
       "id": "st-r-muehlbach",
@@ -2009,7 +2441,11 @@
       "lon": 11.68623,
       "zugaenge": [
         "st-r-muehlbach"
-      ]
+      ],
+      "info": {
+        "gebiet": "Zillertaler Alpen",
+        "gebiet_wikidata": "Q203151"
+      }
     },
     {
       "id": "st-r-ehrenburg",
@@ -2024,7 +2460,10 @@
       "lon": 11.844544,
       "zugaenge": [
         "st-r-ehrenburg"
-      ]
+      ],
+      "info": {
+        "gebiet": "Plose-Peitlerkofel-Gruppe - Gruppo Plose-Putia"
+      }
     },
     {
       "id": "wien-familienbad-hofferplatz",
@@ -2039,7 +2478,11 @@
       "lon": 16.333372,
       "zugaenge": [
         "wien-familienbad-hofferplatz"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-hugo-wolf-park",
@@ -2054,7 +2497,11 @@
       "lon": 16.334692,
       "zugaenge": [
         "wien-familienbad-hugo-wolf-park"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-gudrunstrasse",
@@ -2069,7 +2516,11 @@
       "lon": 16.389868,
       "zugaenge": [
         "wien-familienbad-gudrunstrasse"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-herderplatz",
@@ -2084,7 +2535,11 @@
       "lon": 16.409846,
       "zugaenge": [
         "wien-familienbad-herderplatz"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-einsiedlerplatz",
@@ -2099,7 +2554,8 @@
       "lon": 16.349391,
       "zugaenge": [
         "wien-familienbad-einsiedlerplatz"
-      ]
+      ],
+      "info": {}
     },
     {
       "id": "wien-familienbad-waehringer-park",
@@ -2114,7 +2570,11 @@
       "lon": 16.348841,
       "zugaenge": [
         "wien-familienbad-waehringer-park"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-augarten",
@@ -2129,7 +2589,11 @@
       "lon": 16.375415,
       "zugaenge": [
         "wien-familienbad-augarten"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-stammersdorf",
@@ -2144,7 +2608,11 @@
       "lon": 16.411577,
       "zugaenge": [
         "wien-familienbad-stammersdorf"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-strebersdorf",
@@ -2159,7 +2627,11 @@
       "lon": 16.384711,
       "zugaenge": [
         "wien-familienbad-strebersdorf"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-strandbad-alte-donau",
@@ -2174,7 +2646,15 @@
       "lon": 16.416815,
       "zugaenge": [
         "wien-strandbad-alte-donau"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Beachvolleyballplatz",
+          "<br />Rasenplatz"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-kombibad-brigittenau",
@@ -2189,7 +2669,14 @@
       "lon": 16.364957,
       "zugaenge": [
         "wien-kombibad-brigittenau"
-      ]
+      ],
+      "info": {
+        "badtyp": "Hallenbad",
+        "ausstattung": [
+          "<br />Tischtennis"
+        ],
+        "drinnen": true
+      }
     },
     {
       "id": "wien-laaerbergbad",
@@ -2204,7 +2691,17 @@
       "lon": 16.384734,
       "zugaenge": [
         "wien-laaerbergbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />2 Tischtennis",
+          "<br />Beachvolleyballplatz",
+          "<br />3 Rasen",
+          "<br />Basketball"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-strandbad-gaensehaeufel",
@@ -2219,7 +2716,17 @@
       "lon": 16.427394,
       "zugaenge": [
         "wien-strandbad-gaensehaeufel"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Hochseilkletterpark",
+          "<br />Beachvolleyballplatz",
+          "<br />Rasenplatz",
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-liesinger-bad",
@@ -2234,7 +2741,14 @@
       "lon": 16.281118,
       "zugaenge": [
         "wien-liesinger-bad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-schafbergbad",
@@ -2249,7 +2763,17 @@
       "lon": 16.301039,
       "zugaenge": [
         "wien-schafbergbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Rasen",
+          "<br />Volleyballplatz",
+          "<br />1 Beachvolleyballplatz",
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-hietzinger-bad",
@@ -2264,7 +2788,16 @@
       "lon": 16.29454,
       "zugaenge": [
         "wien-hietzinger-bad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />Hallenbad",
+          "<br />Beachvolleyballfeld",
+          "<br />Rasen"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-kombibad-joergerbad",
@@ -2279,7 +2812,11 @@
       "lon": 16.335007,
       "zugaenge": [
         "wien-kombibad-joergerbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Hallenbad",
+        "drinnen": true
+      }
     },
     {
       "id": "wien-kombibad-simmering",
@@ -2294,7 +2831,15 @@
       "lon": 16.429548,
       "zugaenge": [
         "wien-kombibad-simmering"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />Beachvolleyballfeld",
+          "<br />Kunstrasenplatz"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-amalienbad",
@@ -2309,7 +2854,11 @@
       "lon": 16.378968,
       "zugaenge": [
         "wien-amalienbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Hallenbad",
+        "drinnen": true
+      }
     },
     {
       "id": "wien-kombibad-donaustadt",
@@ -2324,7 +2873,14 @@
       "lon": 16.443015,
       "zugaenge": [
         "wien-kombibad-donaustadt"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-familienbad-reinlgasse",
@@ -2339,7 +2895,11 @@
       "lon": 16.311481,
       "zugaenge": [
         "wien-familienbad-reinlgasse"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-strandbad-angelibad",
@@ -2354,7 +2914,17 @@
       "lon": 16.403348,
       "zugaenge": [
         "wien-strandbad-angelibad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Beachvolleyballfeld",
+          "<br />Rasen",
+          "<br />Hartplatz",
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-kongressbad",
@@ -2369,7 +2939,15 @@
       "lon": 16.312347,
       "zugaenge": [
         "wien-kongressbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />1 Beachsoccerplatz",
+          "<br />1 Rasenplatz"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-hallenbad-huetteldorf",
@@ -2384,7 +2962,11 @@
       "lon": 16.264293,
       "zugaenge": [
         "wien-hallenbad-huetteldorf"
-      ]
+      ],
+      "info": {
+        "badtyp": "Hallenbad",
+        "drinnen": true
+      }
     },
     {
       "id": "wien-familienbad-schweizergarten",
@@ -2399,7 +2981,11 @@
       "lon": 16.388129,
       "zugaenge": [
         "wien-familienbad-schweizergarten"
-      ]
+      ],
+      "info": {
+        "badtyp": "Familienbad",
+        "drinnen": false
+      }
     },
     {
       "id": "wien-hallenbad-floridsdorf",
@@ -2414,7 +3000,11 @@
       "lon": 16.402281,
       "zugaenge": [
         "wien-hallenbad-floridsdorf"
-      ]
+      ],
+      "info": {
+        "badtyp": "Hallenbad",
+        "drinnen": true
+      }
     },
     {
       "id": "wien-hoepflerbad",
@@ -2429,7 +3019,17 @@
       "lon": 16.285886,
       "zugaenge": [
         "wien-hoepflerbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Beachvolleyballplatz",
+          "<br />2 Tischtennis",
+          "<br />Fitnessparkur",
+          "<br />Rasenplatz"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-ottakringerbad",
@@ -2444,7 +3044,15 @@
       "lon": 16.291675,
       "zugaenge": [
         "wien-ottakringerbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />1 Rasenplatz",
+          "<br />1 Beachvolleyballplatz"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-krapfenwaldl-bad",
@@ -2459,7 +3067,17 @@
       "lon": 16.331024,
       "zugaenge": [
         "wien-krapfenwaldl-bad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Hartplatz",
+          "<br />Wiese",
+          "<br />Beachvolleyballplatz",
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-theresienbad",
@@ -2474,7 +3092,16 @@
       "lon": 16.328055,
       "zugaenge": [
         "wien-theresienbad"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />Hallen- und Sommerbad",
+          "<br />Tischtennis",
+          "<br />Fitnessgeräte"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-sommerbad-hadersdorf-weidlingau",
@@ -2489,7 +3116,15 @@
       "lon": 16.223274,
       "zugaenge": [
         "wien-sommerbad-hadersdorf-weidlingau"
-      ]
+      ],
+      "info": {
+        "badtyp": "Sommerbad",
+        "ausstattung": [
+          "<br />Fitness",
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-kombibad-grossfeldsiedlung",
@@ -2504,7 +3139,16 @@
       "lon": 16.448543,
       "zugaenge": [
         "wien-kombibad-grossfeldsiedlung"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />Rasen",
+          "<br />Beachvolleyballplatz",
+          "<br />Tischtennis"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "wien-kombibad-doebling",
@@ -2519,7 +3163,14 @@
       "lon": 16.358049,
       "zugaenge": [
         "wien-kombibad-doebling"
-      ]
+      ],
+      "info": {
+        "badtyp": "Kombibad",
+        "ausstattung": [
+          "<br />Beachvolleyballplatz"
+        ],
+        "drinnen": false
+      }
     },
     {
       "id": "zh-flb6939",
@@ -2534,7 +3185,20 @@
       "lon": 8.534912,
       "zugaenge": [
         "zh-flb6939"
-      ]
+      ],
+      "info": {
+        "badtyp": "Flussbad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Lettensteg 10"
+      }
     },
     {
       "id": "zh-flb6940",
@@ -2549,7 +3213,20 @@
       "lon": 8.528601,
       "zugaenge": [
         "zh-flb6940"
-      ]
+      ],
+      "info": {
+        "badtyp": "Flussbad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Wasserwerkstrasse 131"
+      }
     },
     {
       "id": "zh-flb6941",
@@ -2564,7 +3241,20 @@
       "lon": 8.542017,
       "zugaenge": [
         "zh-flb6941"
-      ]
+      ],
+      "info": {
+        "badtyp": "Flussbad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Stadthausquai 12"
+      }
     },
     {
       "id": "zh-flb6942",
@@ -2579,7 +3269,20 @@
       "lon": 8.532611,
       "zugaenge": [
         "zh-flb6942"
-      ]
+      ],
+      "info": {
+        "badtyp": "Flussbad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Badweg 10"
+      }
     },
     {
       "id": "zh-letzi-1",
@@ -2594,7 +3297,20 @@
       "lon": 8.50139,
       "zugaenge": [
         "zh-letzi-1"
-      ]
+      ],
+      "info": {
+        "badtyp": "Freibad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Edelweissstrasse 5"
+      }
     },
     {
       "id": "zh-seb6946",
@@ -2609,7 +3325,20 @@
       "lon": 8.535363,
       "zugaenge": [
         "zh-seb6946"
-      ]
+      ],
+      "info": {
+        "badtyp": "Seebad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Mythenquai 95"
+      }
     },
     {
       "id": "zh-seb6947",
@@ -2624,7 +3353,20 @@
       "lon": 8.557418,
       "zugaenge": [
         "zh-seb6947"
-      ]
+      ],
+      "info": {
+        "badtyp": "Seebad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Bellerivestrasse 200"
+      }
     },
     {
       "id": "zh-seb6948",
@@ -2639,7 +3381,20 @@
       "lon": 8.537292,
       "zugaenge": [
         "zh-seb6948"
-      ]
+      ],
+      "info": {
+        "badtyp": "Seebad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Seestrasse 451"
+      }
     },
     {
       "id": "zh-ssd-10",
@@ -2654,7 +3409,20 @@
       "lon": 8.547116,
       "zugaenge": [
         "zh-ssd-10"
-      ]
+      ],
+      "info": {
+        "badtyp": "Seebad",
+        "oeffnung": [
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a.",
+          "n.a."
+        ],
+        "haltestelle": "Utoquai 50"
+      }
     },
     {
       "id": "zh-ssd-13",
@@ -2669,7 +3437,8 @@
       "lon": 8.545094,
       "zugaenge": [
         "zh-ssd-13"
-      ]
+      ],
+      "info": {}
     }
   ]
 }

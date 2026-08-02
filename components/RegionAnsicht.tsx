@@ -7,6 +7,7 @@ import ZielKarte, { AmpelStufen } from "@/components/ZielKarte";
 import Tagesverlauf from "@/components/Tagesverlauf";
 import Ansage from "@/components/Ansage";
 import Zielsuche, { ArtZeichen } from "@/components/Zielsuche";
+import Zielinfo from "@/components/Zielinfo";
 import {
   ART_TEXT,
   GAST_REIHENFOLGE,
@@ -183,7 +184,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
                 <path d="M13 8H4m0 0 3.5-3.5M4 8l3.5 3.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Besucherpuls
+              Alle Regionen
             </Link>
             {REGIONEN.filter((r) => r.slug !== region.slug).map((r) => (
               <Link
@@ -262,6 +263,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                     {detail.art === "sonstiges"
                       ? detail.ort || "Parkplatz"
                       : ART_TEXT[detail.art]}
+                    {detail.info?.gebiet && ` · ${detail.info.gebiet}`}
                     {detail.zugaenge.length > 1 && ` · ${detail.zugaenge.length} Zugänge`}
                   </p>
                   <h2 className="mt-1.5 text-2xl font-semibold leading-tight text-tinte sm:text-[1.9rem]">
@@ -318,6 +320,8 @@ export default function RegionAnsicht({ region }: { region: Region }) {
                       {einordnungText(detail)}
                     </p>
                   )}
+
+                  <Zielinfo z={detail} />
 
                   {/* Mehrere Zugänge einzeln zeigen — das ist die konkrete
                       Handlungsinformation: nicht „am Alpsee ist Platz", sondern

@@ -106,8 +106,15 @@ export default function ZielKarte({
               lieber die Gemeinde — die hilft beim Einordnen wirklich. */}
           <p className="mt-1 flex items-center gap-1.5 text-[12px] text-tinte-zart">
             <ArtZeichen art={z.art} groesse={13} />
-            {z.art === "sonstiges" ? z.ort || "Parkplatz" : ART_TEXT[z.art]}
-            {z.zugaenge.length > 1 && ` · ${z.zugaenge.length} Zugänge`}
+            {z.ortsziel
+              ? `${z.zugaenge.length} Parkplätze im Ort`
+              : z.art === "sonstiges"
+                ? z.ort || "Parkplatz"
+                : ART_TEXT[z.art]}
+            {/* Der Gebietsname ist die Antwort auf „kennt der Gast das?" —
+                „Neuhausenbrücke · Lattengebirge" sagt mehr als der Name allein. */}
+            {!z.ortsziel && z.info?.gebiet && ` · ${z.info.gebiet}`}
+            {!z.ortsziel && z.zugaenge.length > 1 && ` · ${z.zugaenge.length} Zugänge`}
           </p>
         </div>
         <span
@@ -172,6 +179,11 @@ export default function ZielKarte({
             {leihen ? "Rad gibt es hier:" : "Heute besser dorthin:"}
           </strong>{" "}
           {alternativeFuer(z, leihen)!.name} · {alternativeFuer(z, leihen)!.km} km
+          {alternativeFuer(z, leihen)!.begruendung && (
+            <span className="mt-1 block opacity-90">
+              {alternativeFuer(z, leihen)!.begruendung}
+            </span>
+          )}
         </p>
       ) : null}
     </button>

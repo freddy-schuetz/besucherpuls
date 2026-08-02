@@ -76,6 +76,48 @@ export interface Alternative {
   stufe: "ziel";
   /** Nur bei Leihrädern: wie viele Räder dort stehen */
   raeder?: number | null;
+  /**
+   * Ein Satz, warum diese Alternative passt — im Workflow erzeugt, aus den
+   * geprüften Fakten des Ziels (Gebiet, Tour, Badtyp). Fehlt, wenn es keine
+   * Fakten gibt oder das Modell nicht geantwortet hat; dann trägt der
+   * Regelsatz die Aussage allein.
+   */
+  begruendung?: string;
+}
+
+/**
+ * Beschreibende Zusatzinfos je Ziel — erhoben in scripts/anreichern.py, geprüft
+ * eingefroren in lib/ziele.json. Alle Felder sind optional: Wo eine Quelle
+ * nichts hergibt, steht nichts. „Feuerwehrhaus" bekommt keine erfundene Tour.
+ */
+export interface ZielInfo {
+  /** Übergeordnetes Gebiet — „Allgäuer Alpen" statt „Rubi". Per Punkt-in-Fläche
+   *  aus OpenStreetMap, nicht per Bounding Box: Die Näherung ergab „Nebelhorn
+   *  liegt in den Nordtiroler Kalkalpen". */
+  gebiet?: string;
+  gebiet_wikidata?: string;
+  /** Nationalpark oder Naturpark, in dem das Ziel wirklich liegt */
+  schutzgebiet?: string;
+  /** Die kürzeste taugliche Tour im 3-km-Umkreis (BayernCloud Tourismus) */
+  tour?: {
+    name?: string;
+    km?: number;
+    hm?: number;
+    min?: number;
+    schwierigkeit?: string;
+    rund?: boolean;
+    lizenz?: string;
+    quelle?: string;
+  };
+  /** Wien und Zürich: Hallenbad, Freibad, Kombibad, Familienbad, Seebad … */
+  badtyp?: string;
+  ausstattung?: string[];
+  drinnen?: boolean;
+  /** Zürich: Öffnungszeiten Mo–So */
+  oeffnung?: (string | null)[];
+  haltestelle?: string;
+  /** Kiel: strand | hafen | bahnhof | see */
+  lage?: string[];
 }
 
 /** Ein Zugang zu einem Ziel — Parkplatz, Eingang, Station. */
@@ -107,6 +149,10 @@ export interface ZielProps {
   /** Gemeinde. Wo die Kategorie „sonstiges" bleibt, steht auf der Kachel sonst
    *  ein Wort, das nichts sagt — der Ortsname ist echte Information. */
   ort: string;
+  /** Beschreibende Zusatzinfos, zur Bauzeit erhoben */
+  info: ZielInfo;
+  /** Sammelkachel für die Parkplätze einer Gemeinde („Bodenmais, 8 Zugänge") */
+  ortsziel?: boolean;
   lat: number;
   lon: number;
 
@@ -241,6 +287,7 @@ export interface StatusAntwort {
     geschlossen: number;
     gedaempft: number;
     mit_empfehlung: number;
+    mit_begruendung?: number;
     zeit_tipps: number;
     zugang_tipps: number;
   };

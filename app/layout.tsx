@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
+import Wortmarke from "@/components/Wortmarke";
 import "./globals.css";
 
 // Beide Schriften liefert Next selbst aus — kein Fremdaufruf zur Laufzeit,
 // kein Layoutsprung beim Nachladen.
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  // 800 kam fuer die Wortmarke dazu — der Schriftzug traegt sie, es gibt kein
+  // zweites Bildelement daneben.
+  weight: ["500", "600", "700", "800"],
   variable: "--schrift-display",
   display: "swap",
 });
@@ -17,21 +21,48 @@ const text = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://besucherpuls.friedemann-schuetz.de"),
   title: "Besucherpuls — wo ist gerade Platz?",
   description:
-    "Live-Auslastung von Wanderparkplätzen, Bädern und Leihrad-Stationen in vier Regionen. Ist es voll, nennt Besucherpuls die nächste Alternative mit Platz — aus offenen Daten.",
+    "Live-Auslastung von Wanderparkplätzen, Bädern und Leihrad-Stationen in sieben Regionen. Ist es voll, nennt Besucherpuls die nächste Alternative mit Platz — aus offenen Daten.",
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    siteName: "Besucherpuls",
+    title: "Besucherpuls — wo ist gerade Platz?",
+    description:
+      "Besucherlenkung aus offenen Daten: Ist ein Ziel voll, steht hier, wohin sonst.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" className={`${display.variable} ${text.variable}`}>
       <body className="min-h-dvh">
+        {/* Die Startseite hatte gar keinen Kopf — die Marke stand nur in der
+            Fussleiste und im Browser-Tab. */}
+        <header className="border-b border-linie/70 bg-karte/80 backdrop-blur">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+            <Link
+              href="/"
+              className="text-tinte transition hover:opacity-80"
+              aria-label="Besucherpuls — zur Startseite"
+            >
+              <Wortmarke />
+            </Link>
+            <span className="text-[13px] text-tinte-zart">
+              Besucherlenkung aus offenen Daten
+            </span>
+          </div>
+        </header>
         {children}
         <footer className="border-t border-linie bg-karte">
           <div className="mx-auto max-w-6xl px-6 py-10">
             <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-7">
               <div className="max-w-sm">
-                <p className="font-display text-base font-semibold text-tinte">Besucherpuls</p>
+                <span className="text-tinte">
+                  <Wortmarke />
+                </span>
                 <p className="mt-1.5 text-sm leading-relaxed text-tinte-weich">
                   Demonstrator auf Basis offener Daten. Keine amtliche Auskunft, keine
                   personenbezogenen Daten — alle Quellen liefern aggregierte Zählwerte.

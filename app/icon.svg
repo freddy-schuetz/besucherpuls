@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Das Linienfragment der Wortmarke im abgerundeten Quadrat. Eine rein
+       typografische Marke ist als Kachel schwach; so funktioniert sie auch
+       im Browser-Tab und auf einem Startbildschirm. -->
+  <rect width="64" height="64" rx="15" fill="#0c1a17"/>
+  <path d="M9 40h7.5l4-3.5 4.5-15 5 22 4-10 4.5 7 4.5-13 4 12h4"
+        fill="none" stroke="#3fd694" stroke-width="5.2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

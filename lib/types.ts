@@ -206,6 +206,8 @@ export interface ZielProps {
   vergleich_tage: number;
   tagesgang: (number | null)[] | null;
   tagesgang_status: (Status | null)[] | null;
+  tagesgang_morgen?: (number | null)[] | null;
+  tagesgang_morgen_status?: (Status | null)[] | null;
   sparkline: [string, number][];
 
   /** Der Zugang, dessen Werte das Ziel repräsentieren (der mit dem meisten Platz) */
@@ -294,6 +296,19 @@ export interface SensorProps {
    * die Radzähler Räder) — dort wäre eine absolute Schwelle erfunden.
    */
   tagesgang_status: (Status | null)[] | null;
+  /**
+   * Dieselbe Kurve für den Tagestyp von MORGEN — nur vorhanden, wenn er
+   * wechselt, also freitags und sonntags.
+   *
+   * „Morgen früh" griff vorher auf `tagesgang` zu, und der ist nach heute
+   * gebaut. Sonntags bekam man für Montag 9 Uhr das typische Sonntagsniveau,
+   * freitags für Samstag ein Werktagsniveau — ausgerechnet an den beiden
+   * Übergängen mit dem grössten Unterschied. RegionAnsicht tauscht die Kurve,
+   * sobald „Morgen früh" gewählt ist; alles Nachgelagerte liest weiter
+   * `tagesgang` und braucht davon nichts zu wissen.
+   */
+  tagesgang_morgen?: (number | null)[] | null;
+  tagesgang_morgen_status?: (Status | null)[] | null;
   /** [ISO-Zeitstempel, Wert] — jüngste zuletzt */
   sparkline: [string, number][];
   /** Zu welchem Ziel dieser Zugang gehört */

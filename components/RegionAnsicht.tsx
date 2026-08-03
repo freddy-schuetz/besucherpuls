@@ -101,11 +101,26 @@ export default function RegionAnsicht({ region }: { region: Region }) {
     };
   }, [holen]);
 
-  /** Alle Ziele dieses Gebiets, nach Platz sortiert. */
+  /** Alle Ziele dieses Gebiets, nach Platz sortiert.
+   *
+   *  Hier wird auch die Tagesgang-Kurve gesetzt, die für die gewählte Zeit
+   *  gilt. „Morgen früh" meint morgen — und morgen ist freitags und sonntags
+   *  ein anderer Tagestyp als heute. Der Workflow liefert dafür eine zweite
+   *  Kurve; getauscht wird sie an dieser einen Stelle, weil hier alles
+   *  durchläuft: Liste, Kachel, Karte, Ansage und Kurve lesen danach weiter
+   *  `tagesgang` und bekommen von der Unterscheidung nichts mit. Eine zweite
+   *  Flagge durch fünf Komponenten zu reichen wäre die Variante, bei der eine
+   *  davon sie irgendwann nicht mitbekommt. */
   const ziele = useMemo(() => {
     if (!daten?.ziele) return [];
+    const morgen = zeit === "morgen";
     return daten.ziele
       .filter((z) => z.gebiet === region.gruppe)
+      .map((z) =>
+        morgen && z.tagesgang_morgen
+          ? { ...z, tagesgang: z.tagesgang_morgen, tagesgang_status: z.tagesgang_morgen_status ?? null }
+          : z,
+      )
       .sort((a, b) => {
         // Sortierung folgt der Absicht: Wer ein Rad LEIHEN will, soll die
         // Stationen mit Rädern oben sehen, nicht die mit freien Docks.
@@ -116,7 +131,7 @@ export default function RegionAnsicht({ region }: { region: Region }) {
         if (ra !== rb) return ra - rb;
         return (fuellungFuer(a, leihen) ?? 999) - (fuellungFuer(b, leihen) ?? 999);
       });
-  }, [daten, region.gruppe, leihen]);
+  }, [daten, region.gruppe, leihen, zeit]);
 
   /**
    * Die Auswahl — und zwar EINE für Liste und Karte.
@@ -433,7 +448,9 @@ export default function RegionAnsicht({ region }: { region: Region }) {
               <span className="text-sm font-normal text-tinte-zart">
                 {zeit === "jetzt"
                   ? "— die mit dem meisten Platz zuerst"
-                  : `— nach dem typischen Wert um ${ZEITEN.find((z) => z.wert === zeit)?.stunde}:00 Uhr`}
+                  : `— nach dem typischen Wert ${zeit === "morgen" ? "morgen" : "heute"} um ${
+                      ZEITEN.find((z) => z.wert === zeit)?.stunde
+                    }:00 Uhr`}
               </span>
             </h2>
             {hatTagesgang && (

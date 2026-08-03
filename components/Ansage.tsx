@@ -149,16 +149,32 @@ export default function Ansage({
 
   // 2. Später — kein Ortswechsel nötig, für eine Destination die verträglichste
   //    Lenkung überhaupt.
+  //
+  // Auch hier gilt: DIE FARBE GEHOERT DEM AUSGANGSZIEL. Der Kasten war fest
+  // bernsteinfarben — auch unter „Passo Sella, 7 von 199 Plätzen frei, Voll".
+  // Dieselbe Regel war für den Ortswechsel unten schon gezogen, für diesen
+  // Zweig aber nicht; ein gedämpftes Gelb über einem vollen Ziel redet den
+  // Zustand klein. Der Rat selbst bleibt unverändert, nur der Ton stimmt jetzt.
   if (z.spaeter) {
+    const rot = eigene.ampel === "rot";
     return (
-      <div className="rounded-2xl p-5" style={{ background: "var(--color-mittel-weich)" }}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "#95580f" }}>
-          Lieber später
+      <div
+        className="rounded-2xl p-5"
+        style={{ background: rot ? "var(--color-voll-weich)" : "var(--color-mittel-weich)" }}
+      >
+        <p
+          className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+          style={{ color: rot ? "#a02b39" : "#95580f" }}
+        >
+          {rot ? "Hier ist voll — lieber später" : "Lieber später"}
         </p>
-        <p className="mt-2 text-lg font-semibold leading-snug" style={{ color: "#7c4708" }}>
+        <p
+          className="mt-2 text-lg font-semibold leading-snug"
+          style={{ color: rot ? "#8a1f2c" : "#7c4708" }}
+        >
           Ab {z.spaeter.stunde}:00 Uhr
         </p>
-        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "#95580f" }}>
+        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: rot ? "#a02b39" : "#95580f" }}>
           Dann ist es hier typischerweise rund {z.spaeter.anteil} % ruhiger — gleiches
           Ziel, nur ein anderer Zeitpunkt.
         </p>

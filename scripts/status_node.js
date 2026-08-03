@@ -140,6 +140,9 @@ const lokal = new Date(jetzt.toLocaleString('en-US', { timeZone: 'Europe/Berlin'
 const stunde = lokal.getHours();
 const dow = (lokal.getDay() + 6) % 7;   // Mo=0, wie Python weekday()
 const istWochenende = dow >= 5;
+// „Morgen frueh" meint morgen — und morgen kann ein anderer Tagestyp sein.
+const istWochenendeMorgen = ((dow + 1) % 7) >= 5;
+const tagestypWechselt = istWochenende !== istWochenendeMorgen;
 
 // ---------------------------------------------------------------- Hilfsfunktionen
 function poolen(dh, stunden, tage) {
@@ -241,13 +244,20 @@ function statusVon({ istVeraltet, referenzArt, auslastung, quote, geschlossen })
 }
 
 /** Typischer Tagesverlauf: je Stunde der Median aller beobachteten Tage.
- *  Das ist der Inhalt fuer das Schaufenster "Ausweichen in der Zeit". */
-function tagesgang(dh) {
+ *  Das ist der Inhalt fuer das Schaufenster "Ausweichen in der Zeit".
+ *
+ *  Der Tagestyp ist ein PARAMETER, kein fester Bezug auf heute. Vorher stand
+ *  hier `istWochenende` — und "Morgen frueh" griff auf dieselbe Kurve zu. An
+ *  zwei Tagen der Woche war das der falsche Tagestyp, ausgerechnet an den
+ *  beiden mit dem groessten Unterschied: Freitag zeigte fuer Samstag ein
+ *  Werktagsniveau, Sonntag fuer Montag ein Wochenendniveau. An einem Allgaeuer
+ *  Wanderparkplatz sind das keine Nuancen. */
+function tagesgang(dh, wochenende) {
   if (!dh) return null;
   const kurve = [];
   let getroffen = 0;
   for (let h = 0; h < 24; h++) {
-    const teil = istWochenende ? [5, 6] : [0, 1, 2, 3, 4];
+    const teil = wochenende ? [5, 6] : [0, 1, 2, 3, 4];
     let w = poolen(dh, [h], teil);
     if (w.length < 2) w = poolen(dh, [h], [0, 1, 2, 3, 4, 5, 6]);
     if (!w.length) { kurve.push(null); continue; }
@@ -332,7 +342,11 @@ for (const s of SENSOREN) {
   // Wien: Stufe 0 heisst geschlossen (siehe collect_node.js).
   const meldetZu = s.metrik === 'ampelstufe' && Number(a.wert) === 0;
   const st = statusVon({ istVeraltet, referenzArt, auslastung, quote, geschlossen: meldetZu });
-  const kurve = p ? tagesgang(p.dh) : null;
+  const kurve = p ? tagesgang(p.dh, istWochenende) : null;
+  // Nur mitliefern, wenn der Tagestyp morgen wirklich wechselt (Fr und So).
+  // An den uebrigen fuenf Tagen waere es eine bitgleiche Kopie von 24 Werten
+  // und 24 Statusobjekten je Ziel — die Antwort ist ohnehin gross genug.
+  const kurveMorgen = tagestypWechselt && p ? tagesgang(p.dh, istWochenendeMorgen) : null;
 
   const ampel = st.ampel;
   if (ampel === 'veraltet') veraltet++;
@@ -380,6 +394,8 @@ for (const s of SENSOREN) {
       basis_n: p ? p.n : 0,
       tagesgang: kurve,
       tagesgang_status: tagesgangStatus(kurve, auslastung != null),
+      tagesgang_morgen: kurveMorgen,
+      tagesgang_morgen_status: tagesgangStatus(kurveMorgen, auslastung != null),
       sparkline,
     },
   });
@@ -524,6 +540,8 @@ for (const z of ZIELE) {
     vergleich_art: bp.vergleich_art, vergleich_tage: bp.vergleich_tage,
     tagesgang: bp.tagesgang,
     tagesgang_status: bp.tagesgang_status,
+    tagesgang_morgen: bp.tagesgang_morgen,
+    tagesgang_morgen_status: bp.tagesgang_morgen_status,
     sparkline: bp.sparkline,
     haupt_zugang: bp.id,
     zugaenge: zug.map((f) => ({

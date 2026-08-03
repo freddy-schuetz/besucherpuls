@@ -178,10 +178,17 @@ FARBE DES EMPFEHLUNGSKASTENS`);
     await p.waitForTimeout(500);
     await p.click(`ul li button:has-text("${voll.name.slice(0, 12)}")`);
     await p.waitForTimeout(900);
+    // Geprueft wird die REGEL, nicht ein Zweig: Der Ratschlagkasten traegt die
+    // Farbe des Ausgangsziels. Vorher suchte die Pruefung nur den Ortswechsel —
+    // steht dort der Zeit-Tipp ("Lieber später", Stufe 2 der Leiter), fand sie
+    // gar nichts und meldete "Kasten null". Genau so blieb monatelang
+    // unbemerkt, dass der Zeit-Tipp ueber einem vollen Ziel bernsteinfarben
+    // war. Jetzt zaehlt jeder Kasten, den die Kaskade liefern kann.
     const bg = await p.evaluate(() => {
-      const b = [...document.querySelectorAll("button")]
-        .find((x) => /besser dorthin|ruhiger ist es bei/.test(x.textContent || ""));
-      return b ? getComputedStyle(b).backgroundColor : null;
+      const treffer = /besser dorthin|ruhiger ist es bei|lieber später|anderer Zugang/i;
+      const el = [...document.querySelectorAll("main div, main button")]
+        .find((x) => treffer.test(x.textContent || "") && /rounded-2xl/.test(x.className));
+      return el ? getComputedStyle(el).backgroundColor : null;
     });
     // var(--color-voll-weich) = #fdecec -> rgb(253, 236, 236)
     const istRot = bg && /^rgb\(25[0-5], 2[0-4]\d, 2[0-4]\d\)$/.test(bg);

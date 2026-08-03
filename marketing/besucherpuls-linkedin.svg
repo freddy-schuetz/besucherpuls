@@ -15,41 +15,41 @@ text { font-family: 'BP Text', system-ui, sans-serif; fill: #0c1a17; }
 <g transform="translate(244 50)"><path d="M0 11.5h6.5l3-2.2 3.2-7.8 3.4 11.4 2.6-5.2 2.8 3.8 3-6.6 3.4 8.4 3-4.6 3 2.6H40" fill="none" stroke="#0f9d63" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></g>
 <text class="d" x="292" y="72" font-size="34" font-weight="800">puls</text>
 <text x="1124" y="62" text-anchor="end" font-size="17" fill="#7d8f87">besucherpuls.friedemann-schuetz.de</text>
-<text class="zahl" x="1124" y="86" text-anchor="end" font-size="14" fill="#7d8f87">Live-Stand 02.08.2026, 23:47 Uhr</text>
+<text class="zahl" x="1124" y="86" text-anchor="end" font-size="14" fill="#7d8f87">Live-Stand 03.08.2026, 09:58 Uhr</text>
 <text x="76" y="196" font-size="15" font-weight="600" fill="#0f9d63" letter-spacing="2.2">BESUCHERLENKUNG AUS OFFENEN DATEN</text>
 <text class="d" x="76" y="264" font-size="52" font-weight="700">Die meisten Seiten zeigen,</text>
 <text class="d" x="76" y="326" font-size="52" font-weight="700">wo es voll ist. Diese sagt,</text>
 <text class="d" x="76" y="388" font-size="52" font-weight="700" fill="#0f9d63">wohin sonst.</text>
 <rect x="76" y="438" width="1048" height="176" rx="24" fill="#ffffff" stroke="#e6e4dc"/>
 <rect x="76" y="438" width="6" height="176" rx="3" fill="#cf7a1d"/>
-<rect x="952" y="472" width="132" height="42" rx="21" fill="#fdf1e2"/>
-<text x="1018.0" y="499" text-anchor="middle" font-size="18" font-weight="600" fill="#cf7a1d">Wird eng</text>
+<rect x="919" y="472" width="165" height="42" rx="21" fill="#fdf1e2"/>
+<text x="1001.5" y="499" text-anchor="middle" font-size="18" font-weight="600" fill="#cf7a1d">Gut besucht</text>
 <rect x="784" y="546" width="300" height="14" rx="7" fill="#e6e4dc"/>
-<rect x="784" y="546" width="232.8" height="14" rx="7" fill="#cf7a1d"/>
-<text class="zahl" x="1084" y="584" text-anchor="end" font-size="17" fill="#7d8f87">78 % belegt</text>
-<text class="d" x="116" y="500" font-size="30" font-weight="600">Dantercëpies</text>
-<text x="116" y="532" font-size="18" fill="#7d8f87">Puez Gruppe · Gröden - Val Gardena</text>
-<text class="zahl" x="116" y="570" font-size="22" font-weight="600" fill="#43574f">112 von 500 Plätzen frei</text>
+<rect x="784" y="546" width="210.0" height="14" rx="7" fill="#cf7a1d"/>
+<text class="zahl" x="1084" y="584" text-anchor="end" font-size="17" fill="#7d8f87">70 % belegt</text>
+<text class="d" x="116" y="500" font-size="30" font-weight="600">Waldhäuser Kirche</text>
+<text x="116" y="532" font-size="18" fill="#7d8f87">Bayerischer Wald · Neuschönau</text>
+<text class="zahl" x="116" y="570" font-size="22" font-weight="600" fill="#43574f">24 von 80 Plätzen frei</text>
 <g transform="translate(600.0 644)"><path d="M0 -14 V14 M-11 3 L0 14 L11 3" fill="none" stroke="#7d8f87" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
-<text x="630.0" y="651" font-size="18" font-weight="600" fill="#7d8f87">1 km entfernt</text>
+<text x="630.0" y="651" font-size="18" font-weight="600" fill="#7d8f87">4,5 km entfernt</text>
 <rect x="76" y="676" width="1048" height="220" rx="24" fill="#e7f6ee" stroke="#0f9d63" stroke-opacity='0.22'/>
 <rect x="76" y="676" width="6" height="220" rx="3" fill="#0f9d63"/>
 <text x="116" y="718" font-size="15" font-weight="600" fill="#0f9d63" letter-spacing="2">HEUTE BESSER DORTHIN</text>
 <rect x="930" y="754" width="154" height="42" rx="21" fill="#ffffff"/>
 <text x="1007.0" y="781" text-anchor="middle" font-size="18" font-weight="600" fill="#0f9d63">Viel Platz</text>
 <rect x="784" y="828" width="300" height="14" rx="7" fill="#e6e4dc"/>
-<rect x="784" y="828" width="8.3" height="14" rx="7" fill="#0f9d63"/>
+<rect x="784" y="828" width="10.3" height="14" rx="7" fill="#0f9d63"/>
 <text class="zahl" x="1084" y="866" text-anchor="end" font-size="17" fill="#7d8f87">3 % belegt</text>
-<text class="d" x="116" y="782" font-size="30" font-weight="600">Vallunga</text>
-<text x="116" y="814" font-size="18" fill="#7d8f87">Puez Gruppe · Gröden - Val Gardena</text>
-<text class="zahl" x="116" y="852" font-size="22" font-weight="600" fill="#0f9d63">106 von 109 Plätzen frei</text>
+<text class="d" x="116" y="782" font-size="30" font-weight="600">Nationalparkzentrum Lusen</text>
+<text x="116" y="814" font-size="18" fill="#7d8f87">Bayerischer Wald · Neuschönau</text>
+<text class="zahl" x="116" y="852" font-size="22" font-weight="600" fill="#0f9d63">449 von 465 Plätzen frei</text>
 <text x="76" y="940" font-size="17" font-weight="500" fill="#43574f">Offene Schnittstellen</text>
 <path d="M276.9 934 h16 m-5 -5 l5 5 l-5 5" fill="none" stroke="#7d8f87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="308.9" y="940" font-size="17" font-weight="500" fill="#43574f">n8n, alle 5 Minuten</text>
 <path d="M492.0 934 h16 m-5 -5 l5 5 l-5 5" fill="none" stroke="#7d8f87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="524.0" y="940" font-size="17" font-weight="500" fill="#43574f">Rang gegen 30 Tage Historie</text>
-<path d="M778.3 934 h16 m-5 -5 l5 5 l-5 5" fill="none" stroke="#7d8f87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="810.3" y="940" font-size="17" font-weight="500" fill="#43574f">Ampel + Empfehlung</text>
+<text x="524.0" y="940" font-size="17" font-weight="500" fill="#43574f">Rang gegen den eigenen Verlauf</text>
+<path d="M805.0 934 h16 m-5 -5 l5 5 l-5 5" fill="none" stroke="#7d8f87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="837.0" y="940" font-size="17" font-weight="500" fill="#43574f">Ampel + Empfehlung</text>
 <rect x="76" y="1002" width="1048" height="1" fill="#e6e4dc"/>
 <text class="d zahl" x="180.8" y="1070" text-anchor="middle" font-size="42" font-weight="700">7</text>
 <text x="180.8" y="1100" text-anchor="middle" font-size="17" fill="#7d8f87">Regionen</text>

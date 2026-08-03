@@ -327,8 +327,12 @@ for i, zeile in enumerate(saetze):
 # Wie es zustande kommt ------------------------------------------------------
 # Fuellt die Luecke unter den Karten mit dem, was die Zielgruppe auf LinkedIn
 # eigentlich wissen will: nicht nur was herauskommt, sondern woraus.
+# "30 Tage Historie" stand hier und war frei erfunden: verdichten_node.js haelt
+# MAX_DATEN = 60 Beobachtungstage und je Wochentag-Stunde-Zelle MAX_TAGE = 12
+# Werte. Eine Zahl, die man auf der Grafik nicht nachpruefen kann, gehoert nicht
+# darauf — erst recht nicht die falsche.
 schritte = ["Offene Schnittstellen", "n8n, alle 5 Minuten",
-            "Rang gegen 30 Tage Historie", "Ampel + Empfehlung"]
+            "Rang gegen den eigenen Verlauf", "Ampel + Empfehlung"]
 x = RAND
 for i, s in enumerate(schritte):
     a(f'<text x="{x}" y="{yw}" font-size="17" font-weight="500" fill="{WEICH}">'

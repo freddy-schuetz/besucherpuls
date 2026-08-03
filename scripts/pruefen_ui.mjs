@@ -199,6 +199,44 @@ FARBE DES EMPFEHLUNGSKASTENS`);
   }
 }
 
+// -------------------------------------------------- Vokabular passt zur Region
+//
+// Die Absicht „Rad ausleihen / Rad abgeben" ist regionsweit vorbelegt und steht
+// deshalb auch dort auf „ausleihen", wo es gar keine Räder gibt. Ein Etikett,
+// das nur diese Flagge abfragt und nicht das Ziel, schreibt dann „Rad gibt es
+// hier: Nationalparkzentrum Lusen · 4,5 km" unter einen Parkplatz im
+// Bayerischen Wald. Das ist keine Schönheitsfrage — es beschreibt eine Sache,
+// die es dort nicht gibt.
+{
+  console.log(`\nVOKABULAR PASST ZUR REGION`);
+  const radWorte = /Rad gibt es hier|Kein Rad hier|Räder zum Mitnehmen|Rad zum Mitnehmen|Rad ausleihen|Rad abgeben/;
+  for (const slug of ["bayerischer-wald", "groeden", "wien", "zuerich", "allgaeu"]) {
+    const { ctx, p } = await seite(1440, 1400);
+    await p.goto(`${BASIS}/region/${slug}`, { waitUntil: "networkidle" });
+    await p.waitForSelector("text=Wohin willst du?", { timeout: 30_000 });
+    await p.waitForTimeout(1200);
+    const text = (await p.textContent("main")) ?? "";
+    const treffer = text.match(radWorte);
+    console.log(`  ${treffer ? "FEHL" : "OK  "} ${slug}${treffer ? `: „${treffer[0]}"` : ""}`);
+    if (treffer) {
+      befunde.push(`${slug} zeigt Leihrad-Vokabular („${treffer[0]}"), obwohl es dort keine Räder gibt`);
+      await p.screenshot({ path: `${AUS}/vokabular-${slug}.png`, fullPage: true });
+    }
+    await ctx.close();
+  }
+  // Gegenprobe: In Kiel MUSS das Vokabular vorkommen — sonst prüft der Test
+  // nur, ob eine Zeichenkette zufällig nirgends steht.
+  const { ctx, p } = await seite(1440, 1400);
+  await p.goto(`${BASIS}/region/kieler-foerde`, { waitUntil: "networkidle" });
+  await p.waitForSelector("text=Wohin willst du?", { timeout: 30_000 });
+  await p.waitForTimeout(1200);
+  const kiel = (await p.textContent("main")) ?? "";
+  const hatRad = radWorte.test(kiel);
+  console.log(`  ${hatRad ? "OK  " : "FEHL"} kieler-foerde: Rad-Vokabular ${hatRad ? "vorhanden" : "FEHLT"}`);
+  if (!hatRad) befunde.push("Kiel zeigt kein Leihrad-Vokabular — die Gegenprobe greift nicht");
+  await ctx.close();
+}
+
 // ------------------------------------------------------------------ mobil
 for (const [slug, name] of [["wien", "Wien"], ["groeden", "Groeden"], ["allgaeu", "Allgaeu"]]) {
   const { ctx, p } = await seite(390, 844);

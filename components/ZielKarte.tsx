@@ -175,8 +175,15 @@ export default function ZielKarte({
           className="rounded-xl px-3 py-2 text-[13px] leading-snug"
           style={{ background: "var(--color-frei-weich)", color: "#0b6b46" }}
         >
+          {/* `leihen` allein reicht hier NICHT als Bedingung. Die Absicht steht
+              regionsweit auf „Rad ausleihen" (Vorgabe in RegionAnsicht), auch im
+              Bayerischen Wald und in Gröden — dort stand deshalb „Rad gibt es
+              hier: Nationalparkzentrum Lusen · 4,5 km" unter einem Parkplatz.
+              Es braucht beides: die Absicht UND ein Ziel, das überhaupt Räder
+              führt. Genau so prüfen es alternativeFuer(), statusFuerZeit() und
+              die Ansage schon; nur dieses Etikett fragte nicht nach. */}
           <strong className="font-semibold">
-            {leihen ? "Rad gibt es hier:" : "Heute besser dorthin:"}
+            {leihen && z.leihen ? "Rad gibt es hier:" : "Heute besser dorthin:"}
           </strong>{" "}
           {alternativeFuer(z, leihen)!.name} · {alternativeFuer(z, leihen)!.km} km
           {alternativeFuer(z, leihen)!.begruendung && (

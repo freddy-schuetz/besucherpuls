@@ -82,26 +82,11 @@ export default function LiveMap({
 
     const m = new maplibregl.Map({
       container: container.current,
-      style: {
-        version: 8,
-        sources: {
-          carto: {
-            type: "raster",
-            // Positron statt Voyager: eine fast farblose Grundkarte. Voyager bringt
-            // eigene kraeftige Gruen- und Gelbtoene mit, gegen die sich die
-            // Statuspunkte nicht durchsetzen — genau die sollen hier aber tragen.
-            tiles: [
-              "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png",
-              "https://b.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png",
-              "https://c.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png",
-            ],
-            tileSize: 256,
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          },
-        },
-        layers: [{ id: "carto", type: "raster", source: "carto" }],
-      },
+      // Positron statt Voyager: eine fast farblose Grundkarte, gegen die sich die
+      // Statuspunkte durchsetzen. Vektor-Style statt Raster-Kacheln, weil CARTO seit
+      // 26.08.2026 ein "API KEY REQUIRED"-Wasserzeichen IN die keylosen Raster-Kacheln
+      // rendert (HTTP 200, gueltiges PNG, der Fehler steckt im Bild).
+      style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
       center: start ? start.mitte : [10.5, 48.5],
       zoom: start ? start.zoom : 4.6,
       attributionControl: false,

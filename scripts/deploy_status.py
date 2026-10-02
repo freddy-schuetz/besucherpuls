@@ -134,6 +134,26 @@ def code_knoten(name, datei, x, y):
 ki_knoten = [
     code_knoten("Texte vorbereiten", "texte_vor_node.js", 1180, -90),
     {
+        # Nichts Neues zu schreiben (alles im Textcache): direkt zu "Texte einsetzen",
+        # ohne Modellaufruf. Vorher ging dafuer bei jedem Poll ein "ok"-Aufruf raus,
+        # dessen Antwort "Texte einsetzen" nie liest.
+        "id": "leerlauf",
+        "name": "Leerlauf?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [1300, -90],
+        "parameters": {
+            "conditions": {
+                "options": {"caseSensitive": True, "leftValue": "", "typeValidation": "loose", "version": 2},
+                "conditions": [{"id": "ist-leerlauf", "leftValue": "={{ $json.leerlauf === true }}",
+                                "rightValue": "",
+                                "operator": {"type": "boolean", "operation": "true", "singleValue": True}}],
+                "combinator": "and",
+            },
+            "options": {},
+        },
+    },
+    {
         "id": "ki-text",
         "name": "KI-Text",
         "type": "n8n-nodes-base.httpRequest",
@@ -157,9 +177,7 @@ ki_knoten = [
             "sendBody": True,
             "specifyBody": "json",
             "jsonBody": (
-                '={{ $json.leerlauf ? JSON.stringify({model:"' + KI_MODELL + '",'
-                'max_tokens:16,messages:[{role:"user",content:"ok"}]}) : '
-                'JSON.stringify({model:"' + KI_MODELL + '",max_tokens:120,'
+                '={{ JSON.stringify({model:"' + KI_MODELL + '",max_tokens:120,'
                 'messages:[{role:"user",content:$json.prompt}]}) }}'
             ),
             "options": {"timeout": 12000},
@@ -170,12 +188,16 @@ ki_knoten = [
 ]
 
 wf["nodes"] = [n for n in wf["nodes"]
-               if n["name"] not in ("Texte vorbereiten", "KI-Text", "Texte einsetzen")]
+               if n["name"] not in ("Texte vorbereiten", "Leerlauf?", "KI-Text", "Texte einsetzen")]
 wf["nodes"].extend(ki_knoten)
 wf["connections"][CODE_NODE] = {"main": [[{"node": "Texte vorbereiten", "type": "main", "index": 0}]]}
-wf["connections"]["Texte vorbereiten"] = {"main": [[{"node": "KI-Text", "type": "main", "index": 0}]]}
+wf["connections"]["Texte vorbereiten"] = {"main": [[{"node": "Leerlauf?", "type": "main", "index": 0}]]}
+wf["connections"]["Leerlauf?"] = {"main": [
+    [{"node": "Texte einsetzen", "type": "main", "index": 0}],  # true: alles aus dem Textcache
+    [{"node": "KI-Text", "type": "main", "index": 0}],          # false: neue Auftraege ans Modell
+]}
 wf["connections"]["KI-Text"] = {"main": [[{"node": "Texte einsetzen", "type": "main", "index": 0}]]}
-print("  KI-Kette: GeoJSON bauen -> Texte vorbereiten -> KI-Text -> Texte einsetzen")
+print("  KI-Kette: GeoJSON bauen -> Texte vorbereiten -> Leerlauf? -> KI-Text -> Texte einsetzen")
 
 nutzlast = {
     "name": wf["name"],
